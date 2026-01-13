@@ -1,0 +1,37 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/font/MaisonNeue-Bold.ttf",
+      "sha1": "4def3d80b6b3b89f7176710862ae58c4c2ab55e4"
+    },
+    {
+      "path": "src/assets/font/MaisonNeue-Book.ttf",
+      "sha1": "43d1c8c3770b218352e29a04052419098447995a"
+    },
+    {
+      "path": "src/assets/font/MaisonNeue-Light.ttf",
+      "sha1": "8938ad19ad3f782b6b97943a7a9ec9cc256301da"
+    },
+    {
+      "path": "src/assets/font/opensans.xml",
+      "sha1": "344fed58d5ee8bb9f75ec3cd21687d1263715a57"
+    },
+    {
+      "path": "src/assets/font/opensans_bold.ttf",
+      "sha1": "c1691e8168b2596af8a00162bac60dbe605e9e36"
+    },
+    {
+      "path": "src/assets/font/opensans_italic.ttf",
+      "sha1": "f1692eac564e95023e4da341a1b89baae7a65155"
+    },
+    {
+      "path": "src/assets/font/opensans_regular.ttf",
+      "sha1": "3564ed0b5363df5cf277c16e0c6bedc5a682217f"
+    },
+    {
+      "path": "src/assets/font/opensans_semibold.ttf",
+      "sha1": "f1ee7a9c6d13ee2d642a806c09e737275e613792"
+    }
+  ]
+}
