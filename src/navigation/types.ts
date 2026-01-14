@@ -1,9 +1,16 @@
 export type RootStackParamList = {
   Splash: { showWelcome?: boolean };
   Login: undefined;
-  Home: { showWelcome?: boolean };
+  MainTabs: undefined;
   Parts: undefined;
-  SukuCadang: undefined;
   Cart: undefined;
-  Profile: undefined;
+  CampaignList: undefined;
+  CampaignDetail: { campaignId: string };
+};
+
+export type MainTabParamList = {
+  HomeTab: { showWelcome?: boolean };
+  OrderTab: undefined;
+  CollectionTab: undefined;
+  ProfileTab: undefined;
 };

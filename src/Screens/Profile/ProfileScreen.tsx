@@ -10,15 +10,20 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { authService } from '../../services/auth';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
-import { RootStackParamList } from '../../navigation/types';
+import { RootStackParamList, MainTabParamList } from '../../navigation/types';
 import CustomAlert from '../../components/CustomAlert';
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList>;
+type ProfileScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'ProfileTab'>,
+  StackNavigationProp<RootStackParamList>
+>;
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
@@ -55,7 +60,10 @@ const ProfileScreen: React.FC = () => {
 
   const handleLogoutSuccess = () => {
     setShowLogoutSuccess(false);
-    navigation.replace('Login');
+    navigation.getParent()?.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
   };
 
   const MenuItem = ({ icon, title, subtitle, onPress }: any) => (
@@ -94,16 +102,9 @@ const ProfileScreen: React.FC = () => {
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.headerSection}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
-          </TouchableOpacity>
-
           <View style={styles.profileCard}>
             <View style={styles.logoContainer}>
-              <Image source={getImage('logomd.png')} style={styles.logo} />
+              <Image source={getImage('malogo.png')} style={styles.logo} />
             </View>
             <Text style={styles.userName}>{userName}</Text>
             <Text style={styles.userEmail}>{userEmail}</Text>
@@ -114,32 +115,8 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.content}>
-          {/* <View style={styles.statsRow}>
-            <StatBox
-              value="24"
-              label="Orders"
-              icon={getImage('ic_order.png')}
-            />
-            <StatBox
-              value="12"
-              label="Pending"
-              icon={getImage('ic_warning.png')}
-            />
-            <StatBox
-              value="156"
-              label="Completed"
-              icon={getImage('ic_check.png')}
-            />
-          </View> */}
-
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Account Settings</Text>
-            <MenuItem
-              icon={getImage('ic_profile.png')}
-              title="Edit Profile"
-              subtitle="Update your personal information"
-              onPress={() => {}}
-            />
             <MenuItem
               icon={getImage('ic_order.png')}
               title="Order History"
@@ -171,7 +148,6 @@ const ProfileScreen: React.FC = () => {
           </View>
 
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
-            {/* <Image source={getImage('ic_arrow_back.png')} style={styles.logoutIcon} /> */}
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
 
@@ -205,46 +181,39 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   backgroundImage: {
     position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
     width: '100%',
-    height: 400,
+    height: '100%',
     resizeMode: 'cover',
+    zIndex: -1, 
   },
   scrollView: {
     flex: 1,
+    backgroundColor: 'transparent', 
   },
   headerSection: {
-    paddingTop: 16,
+    paddingTop: 40,
     paddingBottom: 80,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginBottom: 24,
-  },
-  backIcon: {
-    width: 24,
-    height: 24,
-    tintColor: colors.white,
-    resizeMode: 'contain',
   },
   profileCard: {
     alignItems: 'center',
     paddingHorizontal: 24,
   },
-  logoContainer: {
+logoContainer: {
+    width: 80,
+    height: 80, 
     backgroundColor: colors.white,
     borderRadius: 20,
-    padding: 16,
-    marginBottom: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16, 
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -252,9 +221,9 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   logo: {
-    width: 200,
-    height: 60,
-    resizeMode: 'contain',
+    width: 50, 
+    height: 50,
+    resizeMode: 'contain', 
   },
   userName: {
     fontSize: fonts.sizes.huge + 4,

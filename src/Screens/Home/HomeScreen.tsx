@@ -11,17 +11,22 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { authService } from '../../services/auth';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
-import { RootStackParamList } from '../../navigation/types';
+import { RootStackParamList, MainTabParamList } from '../../navigation/types';
 import QuickMenuButton from '../../components/home/QuickMenuButton';
 import CampaignCard from '../../components/home/CampaignCard';
 import StatCard from '../../components/home/StatCard';
 
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
+type HomeScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'HomeTab'>,
+  StackNavigationProp<RootStackParamList>
+>;
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
@@ -143,7 +148,7 @@ const HomeScreen: React.FC = () => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>CURRENT CAMPAIGN</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>
             </View>
@@ -151,7 +156,7 @@ const HomeScreen: React.FC = () => {
               badge="NEW CONTRACT"
               title="Gear Up & Get Rewarded"
               description="Ends Dec 31, 2025 • Target: 85% Reach"
-              onPress={() => console.log('Campaign pressed')}
+              onPress={() => navigation.navigate('CampaignDetail', { campaignId: '1' })}
             />
           </View>
 
@@ -182,25 +187,6 @@ const HomeScreen: React.FC = () => {
           <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
-
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Image source={getImage('ic_homepage.png')} style={styles.navIconActive} />
-          <Text style={styles.navLabelActive}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image source={getImage('ic_menu_katalog_dis.png')} style={styles.navIcon} />
-          <Text style={styles.navLabel}>Order</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image source={getImage('ic_menu_katalog_dis.png')} style={styles.navIcon} />
-          <Text style={styles.navLabel}>Collection</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
-          <Image source={getImage('ic_profile.png')} style={styles.navIcon} />
-          <Text style={styles.navLabel}>Profile</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
@@ -362,42 +348,6 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 100,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    paddingVertical: 8,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  navIcon: {
-    width: 24,
-    height: 24,
-    marginBottom: 4,
-    resizeMode: 'contain',
-    tintColor: colors.grayInactive,
-  },
-  navIconActive: {
-    width: 24,
-    height: 24,
-    marginBottom: 4,
-    resizeMode: 'contain',
-    tintColor: colors.primary,
-  },
-  navLabel: {
-    fontSize: fonts.sizes.tiny + 1,
-    fontFamily: fonts.regular,
-    color: colors.grayInactive,
-  },
-  navLabelActive: {
-    fontSize: fonts.sizes.tiny + 1,
-    fontFamily: fonts.bold,
-    color: colors.primary,
   },
 });
 

@@ -43,7 +43,7 @@ const LoginScreen: React.FC = () => {
     setLoading(false);
 
     if (result.success) {
-      navigation.replace('Splash', { showWelcome: true });
+      navigation.replace('MainTabs');
     } else {
       setAlertMessage(result.message || 'Login gagal');
       setAlertVisible(true);

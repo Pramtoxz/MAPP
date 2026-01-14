@@ -69,7 +69,7 @@ const IMAGES: Record<string, any> = {
 
   //Folder LogoF
   'logomd.png': require('./logo/logomd.png'),
-  'logo_md.png': require('./logo/logo_md.png'),
+  'malogo.png': require('./logo/malogo.png'),
   'lg_honda.jpg': require('./logo/lg_honda.jpg'),
   'lg_honda.webp': require('./logo/lg_honda.webp'),
 };

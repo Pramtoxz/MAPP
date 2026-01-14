@@ -22,7 +22,7 @@ const SplashScreen: React.FC = () => {
         const isLoggedIn = await authService.isLoggedIn();
 
         if (isLoggedIn) {
-          navigation.replace('Home', { showWelcome });
+          navigation.replace('MainTabs');
         } else {
           navigation.replace('Login');
         }
