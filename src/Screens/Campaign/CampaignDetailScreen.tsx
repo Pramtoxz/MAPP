@@ -7,6 +7,7 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -15,7 +16,7 @@ import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
-import { mockCampaigns } from './data';
+import { useCampaignDetail } from './hooks/useCampaignDetail';
 
 type CampaignDetailScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 type CampaignDetailScreenRouteProp = RouteProp<RootStackParamList, 'CampaignDetail'>;
@@ -26,10 +27,53 @@ const CampaignDetailScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { campaignId } = route.params;
 
-  const campaign = mockCampaigns.find((c) => c.id === campaignId);
+  const { campaign, loading } = useCampaignDetail(campaignId);
+
+  const formatDate = (dateString: string) => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [year, month, day] = dateString.split('-');
+    return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Campaign Detail</Text>
+          <View style={styles.headerRight} />
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={{ marginTop: 16, color: colors.grayText }}>Loading campaign...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (!campaign) {
-    return null;
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Campaign Detail</Text>
+          <View style={styles.headerRight} />
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: colors.grayText }}>Campaign not found</Text>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -59,44 +103,52 @@ const CampaignDetailScreen: React.FC = () => {
             <Text style={styles.sectionLabel}>Periode</Text>
             <View style={styles.periodBadge}>
               <Text style={styles.periodText}>
-                {campaign.startDate} - {campaign.endDate}
+                {formatDate(campaign.startDate)} - {formatDate(campaign.endDate)}
               </Text>
             </View>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Campaign Description</Text>
-            <Text style={styles.sectionText}>{campaign.fullDescription}</Text>
-          </View>
+          {campaign.fullDescription && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Campaign Description</Text>
+              <Text style={styles.sectionText}>{campaign.fullDescription}</Text>
+            </View>
+          )}
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Parts Included</Text>
-            {campaign.partsIncluded.map((part, index) => (
-              <Text key={index} style={styles.listItem}>
-                • {part}
-              </Text>
-            ))}
-          </View>
+          {campaign.partsIncluded && campaign.partsIncluded.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Parts Included</Text>
+              {campaign.partsIncluded.map((part, index) => (
+                <Text key={index} style={styles.listItem}>
+                  • {part}
+                </Text>
+              ))}
+            </View>
+          )}
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Syarat dan Ketentuan</Text>
-            <Text style={styles.sectionText}>{campaign.termsAndConditions}</Text>
-          </View>
+          {campaign.termsAndConditions && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Syarat dan Ketentuan</Text>
+              <Text style={styles.sectionText}>{campaign.termsAndConditions}</Text>
+            </View>
+          )}
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Reward</Text>
-            {campaign.rewards.map((reward, index) => (
-              <Text key={index} style={styles.listItem}>
-                • {reward}
-              </Text>
-            ))}
-          </View>
+          {campaign.rewards && campaign.rewards.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Reward</Text>
+              {campaign.rewards.map((reward, index) => (
+                <Text key={index} style={styles.listItem}>
+                  • {reward}
+                </Text>
+              ))}
+            </View>
+          )}
 
           <View style={{ height: 100 }} />
         </View>
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) + 30 }]}>
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
         <TouchableOpacity style={styles.joinButton}>
           <Text style={styles.joinButtonText}>Start Order</Text>
         </TouchableOpacity>

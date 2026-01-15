@@ -7,14 +7,15 @@ interface CampaignCardProps {
   title: string;
   description: string;
   badge: string;
+  image?: string;
   onPress: () => void;
 }
 
-const CampaignCard: React.FC<CampaignCardProps> = ({ title, description, badge, onPress }) => {
+const CampaignCard: React.FC<CampaignCardProps> = ({ title, description, badge, image, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
       <Image 
-        source={{ uri: 'https://hondampspandeglang.com/wp-content/uploads/2021/09/banner-program-sales-genio-1-02082021-094721.png' }}
+        source={{ uri: image || 'https://hondampspandeglang.com/wp-content/uploads/2021/09/banner-program-sales-genio-1-02082021-094721.png' }}
         style={styles.backgroundImage}
       />
       <View style={styles.overlay} />

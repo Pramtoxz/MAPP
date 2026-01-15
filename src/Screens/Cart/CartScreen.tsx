@@ -9,6 +9,7 @@ import {
   ScrollView,
   FlatList,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -20,72 +21,26 @@ import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
 import CartItemSwipeable from '../../components/cart/CartItemSwipeable';
 import CustomAlert from '../../components/CustomAlert';
+import { useCartScreen } from './hooks/useCartScreen';
 
 type CartScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const CartScreen: React.FC = () => {
   const navigation = useNavigation<CartScreenNavigationProp>();
-  const [cartItems, setCartItems] = useState([
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400',
-      partNumber: '17220-K56-N00',
-      name: 'Element Cleaner',
-      price: 23500,
-      quantity: 12,
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-      partNumber: '08CJ-A-K56-N00',
-      name: 'Coolant',
-      price: 19500,
-      quantity: 1,
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400',
-      partNumber: '06465-K56-N00',
-      name: 'Drive Belt',
-      price: 95000,
-      quantity: 2,
-    },
-  ]);
+  const {
+    cartItems,
+    loading,
+    handleMinus,
+    handlePlus,
+    handleQuantityChange,
+    handleDelete: deleteItem,
+    calculateTotal,
+    formatPrice,
+  } = useCartScreen();
+
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [voucherApplied, setVoucherApplied] = useState(false);
-
-  const handleMinus = (id: string) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id === id && item.quantity > 1) {
-        return { ...item, quantity: item.quantity - 1 };
-      }
-      return item;
-    }));
-  };
-
-  const handlePlus = (id: string) => {
-    setCartItems(cartItems.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity: item.quantity + 1 };
-      }
-      return item;
-    }));
-  };
-
-  const handleQuantityChange = (id: string, text: string) => {
-    const numericValue = text.replace(/[^0-9]/g, '');
-    const quantity = parseInt(numericValue) || 1;
-    setCartItems(cartItems.map(item => {
-      if (item.id === id) {
-        return { ...item, quantity };
-      }
-      return item;
-    }));
-  };
 
   const handleDelete = (id: string) => {
     setItemToDelete(id);
@@ -94,7 +49,7 @@ const CartScreen: React.FC = () => {
 
   const confirmDelete = () => {
     if (itemToDelete) {
-      setCartItems(cartItems.filter(item => item.id !== itemToDelete));
+      deleteItem(itemToDelete);
     }
     setShowDeleteAlert(false);
     setItemToDelete(null);
@@ -104,30 +59,6 @@ const CartScreen: React.FC = () => {
   const cancelDelete = () => {
     setShowDeleteAlert(false);
     setItemToDelete(null);
-  };
-
-  const handleApplyVoucher = () => {
-    if (voucherCode.trim() === '') {
-      return;
-    }
-    setDiscount(10);
-    setVoucherApplied(true);
-  };
-
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  };
-
-  const calculateDiscount = () => {
-    return (calculateSubtotal() * discount) / 100;
-  };
-
-  const calculateTotal = () => {
-    return calculateSubtotal() - calculateDiscount();
-  };
-
-  const formatPrice = (price: number) => {
-    return `Rp ${price.toLocaleString('id-ID')}`;
   };
 
   return (
@@ -144,7 +75,7 @@ const CartScreen: React.FC = () => {
         style={styles.backgroundImage}
       />
 
-      <Image source={getImage('ic_info_badge.png')} style={styles.badgeIcon} />
+      {/* <Image source={getImage('ic_info_badge.png')} style={styles.badgeIcon} /> */}
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
@@ -161,55 +92,38 @@ const CartScreen: React.FC = () => {
         </View>
 
         <View style={styles.content}>
-          <FlatList
-            data={cartItems}
-            scrollEnabled={false}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <CartItemSwipeable
-                item={item}
-                onMinus={handleMinus}
-                onPlus={handlePlus}
-                onQuantityChange={handleQuantityChange}
-                onDelete={handleDelete}
-                formatPrice={formatPrice}
-              />
-            )}
-          />
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={styles.loadingText}>Loading cart...</Text>
+            </View>
+          ) : cartItems.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Your cart is empty</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={cartItems}
+              scrollEnabled={false}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <CartItemSwipeable
+                  item={item}
+                  onMinus={handleMinus}
+                  onPlus={handlePlus}
+                  onQuantityChange={handleQuantityChange}
+                  onDelete={handleDelete}
+                  formatPrice={formatPrice}
+                />
+              )}
+            />
+          )}
         </View>
       </ScrollView>
 
       <View style={styles.bottomFiller} />
 
       <View style={styles.footer}>
-        <View style={styles.voucherContainer}>
-          <Image source={getImage('ic_promotion.png')} style={styles.ribbonIcon} />
-          <TextInput
-            style={styles.voucherInput}
-            placeholder="Masukkan kode voucher"
-            placeholderTextColor={colors.grayHint}
-            value={voucherCode}
-            onChangeText={setVoucherCode}
-            editable={!voucherApplied}
-          />
-          <TouchableOpacity 
-            style={[styles.applyButton, voucherApplied && styles.applyButtonDisabled]}
-            onPress={handleApplyVoucher}
-            disabled={voucherApplied}
-          >
-            <Text style={styles.applyButtonText}>
-              {voucherApplied ? 'Diterapkan' : 'Terapkan'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {voucherApplied && (
-          <View style={styles.discountRow}>
-            <Text style={styles.discountLabel}>Diskon ({discount}%)</Text>
-            <Text style={styles.discountValue}>- {formatPrice(calculateDiscount())}</Text>
-          </View>
-        )}
-
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabel}>Total</Text>
           <Text style={styles.totalAmount}>{formatPrice(calculateTotal())}</Text>
@@ -503,6 +417,27 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.medium,
     fontFamily: fonts.bold,
     color: colors.white,
+  },
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.regular,
+    color: colors.grayText,
+  },
+  emptyContainer: {
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: fonts.sizes.medium,
+    fontFamily: fonts.semibold,
+    color: colors.grayText,
   },
 });
 

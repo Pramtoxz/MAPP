@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,20 +8,21 @@ import {
   StatusBar,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { authService } from '../../services/auth';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList, MainTabParamList } from '../../navigation/types';
 import QuickMenuButton from '../../components/home/QuickMenuButton';
-import CampaignCard from '../../components/home/CampaignCard';
+import CampaignSlider from '../../components/home/CampaignSlider';
 import StatCard from '../../components/home/StatCard';
+import { useHomeScreen } from './hooks/useHomeScreen';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'HomeTab'>,
@@ -30,33 +31,17 @@ type HomeScreenNavigationProp = CompositeNavigationProp<
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [userName, setUserName] = useState('Demo User (Offline)');
-  const [cartCount] = useState(3);
-
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
-    try {
-      const userData = await authService.getUserData();
-      if (userData) {
-        setUserName(userData.name);
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
+  const { userName, cartCount, campaigns, stats } = useHomeScreen();
 
   const menuItems = [
-    { id: 1, icon: getImage('ic_spring.png'), label: 'PARTS', onPress: () => { console.log('Navigate to Parts'); navigation.navigate('Parts'); } },
-    { id: 2, icon: getImage('ic_dealer_active.png'), label: 'CATALOGUE', onPress: () => console.log('CATALOGUE') },
-    { id: 3, icon: getImage('ic_promotion.png'), label: 'PROMO', onPress: () => console.log('PROMO') },
+    { id: 1, icon: getImage('ic_spring.png'), label: 'PARTS', onPress: () => navigation.navigate('Parts') },
+    { id: 2, icon: getImage('ic_dealer_active.png'), label: 'CATALOGUE', onPress: () => {} },
+    { id: 3, icon: getImage('ic_promotion.png'), label: 'PROMO', onPress: () => {} },
     { id: 4, icon: getImage('ic_cart_response.png'), label: 'CART', badge: cartCount, onPress: () => navigation.navigate('Cart') },
-    { id: 5, icon: getImage('ic_menu_wallboard_en.png'), label: 'STATISTIK', onPress: () => { console.log('Navigate to Parts'); navigation.navigate('Parts'); } },
-    { id: 6, icon: getImage('ic_spk.png'), label: 'CP', onPress: () => console.log('CATALOGUE') },
-    { id: 7, icon: getImage('ic_piala.png'), label: 'FAVORITE', onPress: () => console.log('PROMO') },
-    { id: 8, icon: getImage('ic_contact_wa.png'), label: 'CHAT ME', onPress: () => console.log('CHAT ME') },
+    { id: 5, icon: getImage('ic_menu_wallboard_en.png'), label: 'STATISTIK', onPress: () => navigation.navigate('Parts') },
+    { id: 6, icon: getImage('ic_spk.png'), label: 'CP', onPress: () => {} },
+    { id: 7, icon: getImage('ic_piala.png'), label: 'FAVORITE', onPress: () => {} },
+    { id: 8, icon: getImage('ic_contact_wa.png'), label: 'CHAT ME', onPress: () => {} },
   ];
 
   return (
@@ -152,18 +137,24 @@ const HomeScreen: React.FC = () => {
                 <Text style={styles.viewAllText}>View All</Text>
               </TouchableOpacity>
             </View>
-            <CampaignCard
-              badge="NEW CONTRACT"
-              title="Gear Up & Get Rewarded"
-              description="Ends Dec 31, 2025 • Target: 85% Reach"
-              onPress={() => navigation.navigate('CampaignDetail', { campaignId: '1' })}
-            />
+            {campaigns.length > 0 ? (
+              <CampaignSlider
+                campaigns={campaigns}
+                onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
+                autoSlide={true}
+                interval={3000}
+              />
+            ) : (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color={colors.primary} />
+              </View>
+            )}
           </View>
 
           <View style={styles.section}>
             <View style={styles.statsContainer}>
               <StatCard
-                value="50%"
+                value={stats.deliveryProgress}
                 icon={
                   <Image
                     source={getImage('ic_pin_map.png')}
@@ -173,7 +164,7 @@ const HomeScreen: React.FC = () => {
               />
               <View style={styles.statSpacer} />
               <StatCard
-                value="Rp xx.xxx,xx"
+                value={stats.monthlyBuyIn}
                 icon={
                   <Image
                     source={getImage('ic_checklist_enable.png')}
@@ -345,6 +336,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     resizeMode: 'contain',
+  },
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.grayBorder,
   },
   bottomSpacer: {
     height: 100,

@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -15,12 +16,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
 import ProductCard from '../../components/parts/ProductCard';
-import CampaignCard from '../../components/home/CampaignCard';
+import CampaignSlider from '../../components/home/CampaignSlider';
 import ProductDetailModal from '../../components/parts/ProductDetailModal';
 import QuantityModal from '../../components/parts/QuantityModal';
-import { mockProducts } from './hooks/data';
 import { usePartsScreen } from './hooks/usePartsScreen';
 import { styles } from './styles/styles';
+import { colors } from '../../config/colors';
 
 type PartsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -31,6 +32,9 @@ const PartsScreen: React.FC = () => {
     detailModalVisible,
     quantityModalVisible,
     selectedProduct,
+    products,
+    campaigns,
+    loading,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
@@ -101,37 +105,50 @@ const PartsScreen: React.FC = () => {
                 <Text style={styles.seeMoreText}>See More &gt;</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.campaignWrapper}>
-              <CampaignCard
-                badge="NEW CONTRACT"
-                title="Gear Up & Get Rewarded"
-                description="Ends Dec 31, 2025 • Target: 85% Reach"
-                onPress={() => navigation.navigate('CampaignDetail', { campaignId: '1' })}
-              />
-            </View>
+            {campaigns.length > 0 ? (
+              <View style={styles.campaignWrapper}>
+                <CampaignSlider
+                  campaigns={campaigns}
+                  onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
+                  autoSlide={true}
+                  interval={3000}
+                />
+              </View>
+            ) : (
+              <View style={{ padding: 20, alignItems: 'center' }}>
+                <ActivityIndicator size="small" color={colors.primary} />
+              </View>
+            )}
           </View>
 
-          <View style={styles.productsContainer}>
-            <FlatList
-              data={mockProducts}
-              numColumns={2}
-              scrollEnabled={false}
-              keyExtractor={(item) => item.id}
-              columnWrapperStyle={styles.productRow}
-              renderItem={({ item }) => (
-                <View style={styles.productWrapper}>
-                  <ProductCard
-                    image={item.image}
-                    partNumber={item.partNumber}
-                    name={item.name}
-                    price={item.price}
-                    onPress={() => handleProductPress(item)}
-                    onAddPress={() => handleAddPress(item)}
-                  />
-                </View>
-              )}
-            />
-          </View>
+          {loading ? (
+            <View style={{ padding: 40, alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={{ marginTop: 16, color: colors.grayText }}>Loading parts...</Text>
+            </View>
+          ) : (
+            <View style={styles.productsContainer}>
+              <FlatList
+                data={products}
+                numColumns={2}
+                scrollEnabled={false}
+                keyExtractor={(item) => item.id}
+                columnWrapperStyle={styles.productRow}
+                renderItem={({ item }) => (
+                  <View style={styles.productWrapper}>
+                    <ProductCard
+                      image={item.image}
+                      partNumber={item.partNumber}
+                      name={item.name}
+                      price={item.price}
+                      onPress={() => handleProductPress(item)}
+                      onAddPress={() => handleAddPress(item)}
+                    />
+                  </View>
+                )}
+              />
+            </View>
+          )}
         </View>
       </ScrollView>
 

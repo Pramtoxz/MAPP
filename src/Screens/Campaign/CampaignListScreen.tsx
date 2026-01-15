@@ -7,6 +7,7 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -15,13 +16,14 @@ import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
-import { mockCampaigns } from './data';
-import { Campaign } from './types';
+import { Campaign } from '../../services';
+import { useCampaignList } from './hooks/useCampaignList';
 
 type CampaignListScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const CampaignListScreen: React.FC = () => {
   const navigation = useNavigation<CampaignListScreenNavigationProp>();
+  const { campaigns, loading, achievement } = useCampaignList();
 
   const handleCampaignPress = (campaign: Campaign) => {
     navigation.navigate('CampaignDetail', { campaignId: campaign.id });
@@ -61,23 +63,30 @@ const CampaignListScreen: React.FC = () => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <View style={styles.progressSection}>
+        <View style={styles.progressSection}>
           <Text style={styles.progressLabel}>My Achievement</Text>
           <View style={styles.progressCircle}>
-            <Text style={styles.progressText}>50%</Text>
+            <Text style={styles.progressText}>{achievement.label}</Text>
           </View>
           <View style={styles.campaignInfo}>
-            <Text style={styles.campaignInfoTitle}>Gear Up & Get Rewarded</Text>
-            <Text style={styles.campaignInfoDate}>End: 31 December 2025</Text>
+            <Text style={styles.campaignInfoTitle}>{achievement.title}</Text>
+            <Text style={styles.campaignInfoDate}>End: {achievement.endDate}</Text>
           </View>
-        </View> */}
-
-        <View style={styles.listContent}>
-          {mockCampaigns.map((item) => (
-            <View key={item.id}>{renderCampaignCard({ item })}</View>
-          ))}
-          <View style={{ height: 100 }} />
         </View>
+
+        {loading ? (
+          <View style={{ padding: 40, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={{ marginTop: 16, color: colors.grayText }}>Loading campaigns...</Text>
+          </View>
+        ) : (
+          <View style={styles.listContent}>
+            {campaigns.map((item) => (
+              <View key={item.id}>{renderCampaignCard({ item })}</View>
+            ))}
+            <View style={{ height: 100 }} />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

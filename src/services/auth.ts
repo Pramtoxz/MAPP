@@ -1,53 +1,96 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from './../config/api';
 
 const TOKEN_KEY = 'user_token';
 const USER_KEY = 'user_data';
 
 interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
 interface UserData {
   id: string;
-  username: string;
   name: string;
-  email: string;
+  email: string | null;
   role: string;
+  dealerCode: string;
+  dealerName: string;
+}
+
+export type { UserData };
+
+interface LoginResponse {
+  success: boolean;
+  data?: {
+    token: string;
+    user: UserData;
+  };
+  error?: {
+    code: string;
+    message: string;
+  };
 }
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<{ success: boolean; message?: string; data?: UserData }> {
     try {
-      const mockUser: UserData = {
-        id: '1',
-        username: credentials.username,
-        name: 'User Demo',
-        email: 'demo@menara-agung.com',
-        role: 'dealer',
-      };
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
 
-      await AsyncStorage.setItem(TOKEN_KEY, 'mock_token_12345');
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(mockUser));
+      const result: LoginResponse = await response.json();
 
-      return {
-        success: true,
-        data: mockUser,
-      };
+      if (result.success && result.data) {
+        await AsyncStorage.setItem(TOKEN_KEY, result.data.token);
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data.user));
+
+        return {
+          success: true,
+          data: result.data.user,
+        };
+      } else {
+        return {
+          success: false,
+          message: result.error?.message || 'Login gagal',
+        };
+      }
     } catch (error) {
+      console.error('Login error:', error);
       return {
         success: false,
-        message: 'Login gagal',
+        message: 'Koneksi ke server gagal',
       };
     }
   }
 
   async logout(): Promise<void> {
     try {
+      const token = await this.getToken();
+      
+      if (token) {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
     } catch (error) {
       console.error('Logout error:', error);
+      await AsyncStorage.removeItem(TOKEN_KEY);
+      await AsyncStorage.removeItem(USER_KEY);
     }
   }
 
@@ -73,6 +116,36 @@ class AuthService {
       const userData = await AsyncStorage.getItem(USER_KEY);
       return userData ? JSON.parse(userData) : null;
     } catch (error) {
+      return null;
+    }
+  }
+
+  async refreshProfile(): Promise<UserData | null> {
+    try {
+      const token = await this.getToken();
+      
+      if (!token) {
+        return null;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data));
+        return result.data;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Refresh profile error:', error);
       return null;
     }
   }

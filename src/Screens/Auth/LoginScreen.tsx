@@ -24,7 +24,7 @@ type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,14 +32,14 @@ const LoginScreen: React.FC = () => {
   const [alertMessage, setAlertMessage] = useState('');
 
   const handleLogin = async () => {
-    if (!username || !password) {
-      setAlertMessage('Username dan password harus diisi');
+    if (!email || !password) {
+      setAlertMessage('Email dan password harus diisi');
       setAlertVisible(true);
       return;
     }
 
     setLoading(true);
-    const result = await authService.login({ username, password });
+    const result = await authService.login({ email, password });
     setLoading(false);
 
     if (result.success) {
@@ -64,16 +64,17 @@ const LoginScreen: React.FC = () => {
 
       <View style={styles.formCard}>
         <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>User ID</Text>
+          <Text style={styles.inputLabel}>Email</Text>
           <View style={styles.inputContainer}>
             <Image source={getImage('ic_username.png')} style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Enter user ID"
+              placeholder="Enter email"
               placeholderTextColor={colors.grayHint}
-              value={username}
-              onChangeText={setUsername}
+              value={email}
+              onChangeText={setEmail}
               autoCapitalize="none"
+              keyboardType="email-address"
             />
           </View>
         </View>
