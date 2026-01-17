@@ -33,7 +33,7 @@ interface PartsListParams {
 class PartsService {
   async getPartsList(params?: PartsListParams) {
     const queryParams = new URLSearchParams();
-    
+
     if (params?.search) queryParams.append('search', params.search);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());

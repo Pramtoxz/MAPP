@@ -56,32 +56,39 @@ const CampaignListScreen: React.FC = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
+          <Image
+            source={getImage('ic_arrow_back.png')}
+            style={styles.backIcon}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Campaign</Text>
         <View style={styles.headerRight} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.progressSection}>
+        {/* <View style={styles.progressSection}>
           <Text style={styles.progressLabel}>My Achievement</Text>
           <View style={styles.progressCircle}>
             <Text style={styles.progressText}>{achievement.label}</Text>
           </View>
           <View style={styles.campaignInfo}>
             <Text style={styles.campaignInfoTitle}>{achievement.title}</Text>
-            <Text style={styles.campaignInfoDate}>End: {achievement.endDate}</Text>
+            <Text style={styles.campaignInfoDate}>
+              End: {achievement.endDate}
+            </Text>
           </View>
-        </View>
+        </View> */}
 
         {loading ? (
           <View style={{ padding: 40, alignItems: 'center' }}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={{ marginTop: 16, color: colors.grayText }}>Loading campaigns...</Text>
+            <Text style={{ marginTop: 16, color: colors.grayText }}>
+              Loading campaigns...
+            </Text>
           </View>
         ) : (
           <View style={styles.listContent}>
-            {campaigns.map((item) => (
+            {campaigns.map(item => (
               <View key={item.id}>{renderCampaignCard({ item })}</View>
             ))}
             <View style={{ height: 100 }} />

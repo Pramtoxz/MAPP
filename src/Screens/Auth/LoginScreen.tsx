@@ -7,7 +7,6 @@ import {
   Image,
   StyleSheet,
   StatusBar,
-  Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -18,9 +17,10 @@ import { getImage } from '../../assets/images';
 import CustomAlert from '../../components/CustomAlert';
 import LoadingDialog from '../../components/LoadingDialog';
 
-const { height } = Dimensions.get('window');
-
-type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Login'
+>;
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -45,7 +45,9 @@ const LoginScreen: React.FC = () => {
     if (result.success) {
       navigation.replace('MainTabs');
     } else {
-      setAlertMessage(result.message || 'Login gagal');
+      setAlertMessage(
+        result.message || 'Coba ingat-ingat lagi, jangan pake perasaan ya!',
+      );
       setAlertVisible(true);
     }
   };
@@ -53,8 +55,11 @@ const LoginScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
-      <Image source={getImage('bg_honda.webp')} style={styles.backgroundImage} />
-      
+      <Image
+        source={getImage('bg_honda.webp')}
+        style={styles.backgroundImage}
+      />
+
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Mobile Part{'\n'}Ordering</Text>
         <Text style={styles.headerSubtitle}>
@@ -66,7 +71,10 @@ const LoginScreen: React.FC = () => {
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Email</Text>
           <View style={styles.inputContainer}>
-            <Image source={getImage('ic_username.png')} style={styles.inputIcon} />
+            <Image
+              source={getImage('ic_username.png')}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Enter email"
@@ -82,7 +90,10 @@ const LoginScreen: React.FC = () => {
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>Password</Text>
           <View style={styles.inputContainer}>
-            <Image source={getImage('ic_password.png')} style={styles.inputIcon} />
+            <Image
+              source={getImage('ic_password.png')}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Type password"
@@ -96,7 +107,10 @@ const LoginScreen: React.FC = () => {
               onPress={() => setShowPassword(!showPassword)}
               style={styles.visibilityButton}
             >
-              <Image source={getImage('ic_visible.png')} style={styles.visibilityIcon} />
+              <Image
+                source={getImage('ic_visible.png')}
+                style={styles.visibilityIcon}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -113,7 +127,7 @@ const LoginScreen: React.FC = () => {
       <LoadingDialog visible={loading} message="Memproses login..." />
       <CustomAlert
         visible={alertVisible}
-        title="Informasi"
+        title="Email atau Password Salah"
         message={alertMessage}
         onConfirm={() => setAlertVisible(false)}
       />
@@ -193,7 +207,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: colors.grayInactive,
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   forgotPassword: {
     alignSelf: 'flex-end',

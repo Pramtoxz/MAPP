@@ -33,7 +33,9 @@ interface LoginResponse {
 }
 
 class AuthService {
-  async login(credentials: LoginCredentials): Promise<{ success: boolean; message?: string; data?: UserData }> {
+  async login(
+    credentials: LoginCredentials,
+  ): Promise<{ success: boolean; message?: string; data?: UserData }> {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -59,7 +61,9 @@ class AuthService {
       } else {
         return {
           success: false,
-          message: result.error?.message || 'Login gagal',
+          message:
+            result.error?.message ||
+            'Coba ingat-ingat lagi, jangan pake perasaan ya!',
         };
       }
     } catch (error) {
@@ -74,12 +78,12 @@ class AuthService {
   async logout(): Promise<void> {
     try {
       const token = await this.getToken();
-      
+
       if (token) {
         await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
@@ -123,7 +127,7 @@ class AuthService {
   async refreshProfile(): Promise<UserData | null> {
     try {
       const token = await this.getToken();
-      
+
       if (!token) {
         return null;
       }
@@ -131,7 +135,7 @@ class AuthService {
       const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
