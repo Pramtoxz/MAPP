@@ -12,7 +12,7 @@ interface QuantityModalProps {
     partNumber: string;
     name: string;
     price: number;
-    isReady: boolean;
+    isReady?: boolean;
   } | null;
   onConfirm: (quantity: number) => void;
 }

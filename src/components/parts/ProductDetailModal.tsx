@@ -13,7 +13,7 @@ interface ProductDetailModalProps {
     name: string;
     description: string;
     price: number;
-    isReady: boolean;
+    isReady?: boolean;
   } | null;
   onAddToCart: () => void;
 }
@@ -43,7 +43,16 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             <Image source={getImage('ic_close_rounded.png')} style={styles.closeIcon} />
           </TouchableOpacity>
 
-          <Image source={{ uri: product.image }} style={styles.image} />
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: product.image }} style={styles.image} />
+            {!product.isReady && (
+              <View style={styles.outOfStockOverlay}>
+                <View style={styles.outOfStockBadge}>
+                  <Text style={styles.outOfStockText}>OUT OF STOCK</Text>
+                </View>
+              </View>
+            )}
+          </View>
 
           <View style={styles.content}>
             <Text style={styles.partNumber}>{product.partNumber}</Text>
@@ -63,8 +72,14 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </View>
             </View>
 
-            <TouchableOpacity style={styles.addButton} onPress={onAddToCart}>
-              <Text style={styles.addButtonText}>Add to Cart</Text>
+            <TouchableOpacity 
+              style={[styles.addButton, !product.isReady && styles.addButtonDisabled]} 
+              onPress={product.isReady ? onAddToCart : undefined}
+              disabled={!product.isReady}
+            >
+              <Text style={styles.addButtonText}>
+                {product.isReady ? 'Add to Cart' : 'Stock Not Available'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -107,11 +122,44 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: 'contain',
   },
-  image: {
+  imageContainer: {
+    position: 'relative',
     width: '100%',
     height: 250,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
     backgroundColor: '#F5F5F5',
+  },
+  outOfStockOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  outOfStockBadge: {
+    backgroundColor: '#FF5252',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    transform: [{ rotate: '-15deg' }],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  outOfStockText: {
+    fontSize: fonts.sizes.medium,
+    fontFamily: fonts.bold,
+    color: colors.white,
+    letterSpacing: 1.5,
   },
   content: {
     padding: 24,
@@ -180,6 +228,10 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  addButtonDisabled: {
+    backgroundColor: colors.grayInactive,
+    opacity: 0.5,
   },
   addButtonText: {
     fontSize: fonts.sizes.medium,

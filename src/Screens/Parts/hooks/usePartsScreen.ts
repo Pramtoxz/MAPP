@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { partsService, cartService, campaignService, Part, Campaign } from '../../../services';
 
 export const usePartsScreen = () => {
@@ -9,22 +9,69 @@ export const usePartsScreen = () => {
   const [products, setProducts] = useState<Part[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
 
   useEffect(() => {
-    loadParts();
+    loadParts(true);
     loadCartCount();
     loadCampaigns();
   }, []);
 
-  const loadParts = async () => {
-    setLoading(true);
-    const result = await partsService.getPartsList({ limit: 20 });
+  const loadParts = async (reset: boolean = false) => {
+    if (reset) {
+      setLoading(true);
+      setCurrentPage(1);
+      setProducts([]);
+    } else {
+      setLoadingMore(true);
+    }
+
+    const page = reset ? 1 : currentPage;
+    const result = await partsService.getPartsList({
+      page,
+      limit: 20,
+      search: searchQuery || undefined,
+      category: selectedCategory,
+      sortBy: 'nm_part',
+      order: 'asc',
+    });
+
     setLoading(false);
+    setLoadingMore(false);
 
     if (result.success && result.data) {
-      setProducts(result.data.items);
+      if (reset) {
+        setProducts(result.data.items);
+      } else {
+        setProducts(prev => [...prev, ...result.data!.items]);
+      }
+      setHasMore(result.data.pagination.hasMore);
+      setCurrentPage(result.data.pagination.currentPage);
     }
   };
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      setCurrentPage(prev => prev + 1);
+      loadParts(false);
+    }
+  }, [loadingMore, hasMore, currentPage]);
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    setTimeout(() => {
+      loadParts(true);
+    }, 500);
+  }, []);
+
+  const handleCategoryFilter = useCallback((category?: string) => {
+    setSelectedCategory(category);
+    loadParts(true);
+  }, []);
 
   const loadCartCount = async () => {
     const result = await cartService.getCart();
@@ -40,9 +87,13 @@ export const usePartsScreen = () => {
     }
   };
 
-  const handleProductPress = (product: Part) => {
-    setSelectedProduct(product);
-    setDetailModalVisible(true);
+  const handleProductPress = async (product: Part) => {
+    // Load detail with stock info
+    const result = await partsService.getPartDetail(product.partNumber);
+    if (result.success && result.data) {
+      setSelectedProduct(result.data);
+      setDetailModalVisible(true);
+    }
   };
 
   const handleAddPress = (product: Part) => {
@@ -87,12 +138,18 @@ export const usePartsScreen = () => {
     products,
     campaigns,
     loading,
+    loadingMore,
+    hasMore,
+    searchQuery,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
     handleConfirmQuantity,
     handleCloseDetailModal,
     handleCloseQuantityModal,
+    handleSearch,
+    handleCategoryFilter,
+    loadMore,
     loadParts,
   };
 };

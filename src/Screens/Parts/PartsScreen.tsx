@@ -5,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
-  ScrollView,
   TextInput,
   FlatList,
   ActivityIndicator,
@@ -35,13 +34,34 @@ const PartsScreen: React.FC = () => {
     products,
     campaigns,
     loading,
+    loadingMore,
+    hasMore,
+    searchQuery,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
     handleConfirmQuantity,
     handleCloseDetailModal,
     handleCloseQuantityModal,
+    handleSearch,
+    loadMore,
   } = usePartsScreen();
+
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return (
+      <View style={{ padding: 20, alignItems: 'center' }}>
+        <ActivityIndicator size="small" color={colors.primary} />
+        <Text style={{ marginTop: 8, color: colors.grayText }}>Loading more...</Text>
+      </View>
+    );
+  };
+
+  const handleEndReached = () => {
+    if (hasMore && !loadingMore && !loading) {
+      loadMore();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -56,101 +76,111 @@ const PartsScreen: React.FC = () => {
         style={styles.backgroundImage}
       />
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Back</Text>
+          <View style={styles.headerRight}>
+            <TouchableOpacity 
+              style={styles.cartButton}
+              onPress={() => navigation.navigate('Cart')}
             >
-              <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
+              <Image source={getImage('ic_cart_response.png')} style={styles.cartIcon} />
+              {cartCount > 0 && (
+                <View style={styles.cartBadge}>
+                  <Text style={styles.cartBadgeText}>{cartCount}</Text>
+                </View>
+              )}
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Back</Text>
-            <View style={styles.headerRight}>
-              <TouchableOpacity 
-                style={styles.cartButton}
-                onPress={() => navigation.navigate('Cart')}
-              >
-                <Image source={getImage('ic_cart_response.png')} style={styles.cartIcon} />
-                {cartCount > 0 && (
-                  <View style={styles.cartBadge}>
-                    <Text style={styles.cartBadgeText}>{cartCount}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.notificationButton}>
-                <Image source={getImage('ic_notification.png')} style={styles.notificationIcon} />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.searchContainer}>
-            <Image source={getImage('ic_search.png')} style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Parts Number / Parts Name"
-              placeholderTextColor="#000"
-            />
-            <TouchableOpacity style={styles.filterButton}>
-              <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
+            <TouchableOpacity style={styles.notificationButton}>
+              <Image source={getImage('ic_notification.png')} style={styles.notificationIcon} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.content}>
-          <View style={styles.campaignSection}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Campaign</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
-                <Text style={styles.seeMoreText}>See More &gt;</Text>
-              </TouchableOpacity>
-            </View>
-            {campaigns.length > 0 ? (
-              <View style={styles.campaignWrapper}>
-                <CampaignSlider
-                  campaigns={campaigns}
-                  onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
-                  autoSlide={true}
-                  interval={3000}
-                />
-              </View>
-            ) : (
-              <View style={{ padding: 20, alignItems: 'center' }}>
-                <ActivityIndicator size="small" color={colors.primary} />
-              </View>
-            )}
-          </View>
+        <View style={styles.searchContainer}>
+          <Image source={getImage('ic_search.png')} style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Parts Number / Parts Name"
+            placeholderTextColor="#000"
+            value={searchQuery}
+            onChangeText={handleSearch}
+          />
+          <TouchableOpacity style={styles.filterButton}>
+            <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-          {loading ? (
+      <FlatList
+        data={products}
+        numColumns={2}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
+        showsVerticalScrollIndicator={false}
+        style={{ backgroundColor: colors.white }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 16, paddingBottom: 20 }}
+        ListHeaderComponent={
+          <View style={{ marginHorizontal: -8, marginTop: -16 }}>
+            <View style={styles.campaignSection}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Campaign</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
+                  <Text style={styles.seeMoreText}>See More &gt;</Text>
+                </TouchableOpacity>
+              </View>
+              {campaigns.length > 0 ? (
+                <View style={styles.campaignWrapper}>
+                  <CampaignSlider
+                    campaigns={campaigns}
+                    onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
+                    autoSlide={true}
+                    interval={3000}
+                  />
+                </View>
+              ) : (
+                <View style={{ padding: 20, alignItems: 'center' }}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                </View>
+              )}
+            </View>
+          </View>
+        }
+        columnWrapperStyle={styles.productRow}
+        renderItem={({ item }) => (
+          <View style={styles.productWrapper}>
+            <ProductCard
+              image={item.image}
+              partNumber={item.partNumber}
+              name={item.name}
+              price={item.price}
+              isReady={item.isReady}
+              onPress={() => handleProductPress(item)}
+              onAddPress={() => handleAddPress(item)}
+            />
+          </View>
+        )}
+        ListEmptyComponent={
+          loading ? (
             <View style={{ padding: 40, alignItems: 'center' }}>
               <ActivityIndicator size="large" color={colors.primary} />
               <Text style={{ marginTop: 16, color: colors.grayText }}>Loading parts...</Text>
             </View>
           ) : (
-            <View style={styles.productsContainer}>
-              <FlatList
-                data={products}
-                numColumns={2}
-                scrollEnabled={false}
-                keyExtractor={(item) => item.id}
-                columnWrapperStyle={styles.productRow}
-                renderItem={({ item }) => (
-                  <View style={styles.productWrapper}>
-                    <ProductCard
-                      image={item.image}
-                      partNumber={item.partNumber}
-                      name={item.name}
-                      price={item.price}
-                      onPress={() => handleProductPress(item)}
-                      onAddPress={() => handleAddPress(item)}
-                    />
-                  </View>
-                )}
-              />
+            <View style={{ padding: 40, alignItems: 'center' }}>
+              <Text style={{ color: colors.grayText }}>No parts found</Text>
             </View>
-          )}
-        </View>
-      </ScrollView>
+          )
+        }
+        ListFooterComponent={renderFooter}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+      />
 
       <ProductDetailModal
         visible={detailModalVisible}

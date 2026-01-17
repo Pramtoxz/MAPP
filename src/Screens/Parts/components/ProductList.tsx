@@ -29,6 +29,7 @@ const ProductList: React.FC<ProductListProps> = ({
               partNumber={item.partNumber}
               name={item.name}
               price={item.price}
+              isReady={item.isReady}
               onPress={() => onProductPress(item)}
               onAddPress={() => onAddPress(item)}
             />

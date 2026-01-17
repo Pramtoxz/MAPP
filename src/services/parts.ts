@@ -7,26 +7,26 @@ export interface Part {
   name: string;
   description: string;
   price: number;
-  isReady: boolean;
-  stock?: number;
-  category?: string;
+  category: string;
+  // Field only available in detail - for internal use only, not displayed to user
+  isReady?: boolean;
 }
 
 interface PartsListResponse {
   items: Part[];
   pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
+    currentPage: number;
+    perPage: number;
+    hasMore: boolean;
   };
 }
 
 interface PartsListParams {
-  search?: string;
   page?: number;
   limit?: number;
-  sortBy?: 'name' | 'price' | 'partNumber';
+  search?: string;
+  category?: string;
+  sortBy?: 'nm_part' | 'het' | 'kd_part';
   order?: 'asc' | 'desc';
 }
 
@@ -34,9 +34,10 @@ class PartsService {
   async getPartsList(params?: PartsListParams) {
     const queryParams = new URLSearchParams();
 
-    if (params?.search) queryParams.append('search', params.search);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.category) queryParams.append('category', params.category);
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.order) queryParams.append('order', params.order);
 
@@ -46,8 +47,8 @@ class PartsService {
     return apiService.get<PartsListResponse>(endpoint);
   }
 
-  async getPartDetail(id: string) {
-    return apiService.get<Part>(`/parts/${id}`);
+  async getPartDetail(partNumber: string) {
+    return apiService.get<Part>(`/parts/${partNumber}`);
   }
 }
 
