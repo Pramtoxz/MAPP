@@ -8,13 +8,12 @@ import {
   StatusBar,
   ScrollView,
   FlatList,
-  TextInput,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import LottieView from 'lottie-react-native';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -22,6 +21,7 @@ import { RootStackParamList } from '../../navigation/types';
 import CartItemSwipeable from '../../components/cart/CartItemSwipeable';
 import CustomAlert from '../../components/CustomAlert';
 import SuccessModal from '../../components/SuccessModal';
+import LoadingDialog from '../../components/LoadingDialog';
 import { useCartScreen } from './hooks/useCartScreen';
 
 type CartScreenNavigationProp = StackNavigationProp<RootStackParamList>;
@@ -94,6 +94,7 @@ const CartScreen: React.FC = () => {
   const handleCheckoutSuccessConfirm = () => {
     setShowCheckoutSuccess(false);
     setCheckoutData(null);
+    navigation.navigate('MainTabs', { screen: 'OrderTab' });
   };
 
   return (
@@ -129,8 +130,13 @@ const CartScreen: React.FC = () => {
         <View style={styles.content}>
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={styles.loadingText}>Loading cart...</Text>
+              <LottieView
+                source={require('../../assets/lottie/rocket.json')}
+                autoPlay
+                loop
+                style={styles.rocketLottie}
+              />
+              <Text style={styles.loadingText}>Memuat keranjang...</Text>
             </View>
           ) : cartItems.length === 0 ? (
             <View style={styles.emptyContainer}>
@@ -168,11 +174,7 @@ const CartScreen: React.FC = () => {
           onPress={handleCreatePO}
           disabled={checkoutLoading || cartItems.length === 0}
         >
-          {checkoutLoading ? (
-            <ActivityIndicator size="small" color={colors.white} />
-          ) : (
-            <Text style={styles.createButtonText}>Create PO</Text>
-          )}
+          <Text style={styles.createButtonText}>Create PO</Text>
         </TouchableOpacity>
       </View>
 
@@ -212,6 +214,8 @@ const CartScreen: React.FC = () => {
         onConfirm={() => setShowErrorAlert(false)}
         confirmText="OK"
       />
+
+      <LoadingDialog visible={checkoutLoading} message="Memproses pesanan..." />
     </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -485,11 +489,16 @@ const styles = StyleSheet.create({
     padding: 40,
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 400,
+  },
+  rocketLottie: {
+    width: 200,
+    height: 200,
   },
   loadingText: {
     marginTop: 16,
     fontSize: fonts.sizes.default,
-    fontFamily: fonts.regular,
+    fontFamily: fonts.semibold,
     color: colors.grayText,
   },
   emptyContainer: {

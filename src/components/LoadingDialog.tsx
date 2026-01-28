@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet, Modal } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import Modal from 'react-native-modal';
+import LottieView from 'lottie-react-native';
 import { colors } from '../config/colors';
 import { fonts } from '../config/fonts';
 
@@ -8,43 +10,53 @@ interface LoadingDialogProps {
   message?: string;
 }
 
-const LoadingDialog: React.FC<LoadingDialogProps> = ({ visible, message = 'Loading...' }) => {
+const LoadingDialog: React.FC<LoadingDialogProps> = ({
+  visible,
+  message = 'Loading...',
+}) => {
   return (
     <Modal
-      transparent
-      visible={visible}
-      animationType="fade"
-      statusBarTranslucent
+      isVisible={visible}
+      animationIn="fadeIn"
+      animationOut="fadeOut"
+      backdropOpacity={0.5}
+      style={styles.modal}
     >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.message}>{message}</Text>
-        </View>
+      <View style={styles.container}>
+        <LottieView
+          source={require('../assets/lottie/rocket.json')}
+          autoPlay
+          loop
+          style={styles.lottie}
+        />
+        <Text style={styles.message}>{message}</Text>
       </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  modal: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   container: {
     backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 24,
+    borderRadius: 16,
+    padding: 32,
     alignItems: 'center',
-    minWidth: 150,
+    minWidth: 250,
+  },
+  lottie: {
+    width: 150,
+    height: 150,
   },
   message: {
-    marginTop: 16,
-    fontSize: fonts.sizes.default,
+    fontSize: fonts.sizes.medium,
+    fontFamily: fonts.semibold,
     color: colors.black,
-    fontFamily: fonts.regular,
+    marginTop: 16,
+    textAlign: 'center',
   },
 });
 
