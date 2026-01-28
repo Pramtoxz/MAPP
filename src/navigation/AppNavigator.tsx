@@ -9,6 +9,7 @@ import PartsScreen from '../Screens/Parts/PartsScreen';
 import CartScreen from '../Screens/Cart/CartScreen';
 import CampaignListScreen from '../Screens/Campaign/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/Campaign/CampaignDetailScreen';
+import OrderDetailScreen from '../Screens/Order/OrderDetailScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -49,6 +50,13 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen 
           name="CampaignDetail" 
           component={CampaignDetailScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="OrderDetail" 
+          component={OrderDetailScreen}
           options={{
             presentation: 'card',
           }}

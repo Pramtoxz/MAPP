@@ -4,9 +4,11 @@ export { cartService } from './cart';
 export { campaignService } from './campaign';
 export { dashboardService } from './dashboard';
 export { notificationService } from './notification';
+export { orderService } from './order';
 export { apiService } from './api';
 
 export type { Part } from './parts';
 export type { CartItem } from './cart';
 export type { Campaign } from './campaign';
 export type { Notification } from './notification';
+export type { Order, OrderDetail, OrderItem } from './order';

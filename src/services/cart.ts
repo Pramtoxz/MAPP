@@ -22,11 +22,19 @@ interface CartResponse {
 
 interface AddToCartRequest {
   partId: string | number;
+  partNumber: string;
   quantity: number;
 }
 
 interface UpdateCartRequest {
   quantity: number;
+}
+
+interface CheckoutResponse {
+  no_so: string;
+  jenis_so: string;
+  grand_total: number;
+  status: string;
 }
 
 class CartService {
@@ -48,6 +56,10 @@ class CartService {
 
   async clearCart() {
     return apiService.delete('/cart/clear');
+  }
+
+  async checkout() {
+    return apiService.post<CheckoutResponse>('/cart/checkout');
   }
 }
 

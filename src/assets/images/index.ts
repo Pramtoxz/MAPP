@@ -16,6 +16,8 @@ const IMAGES: Record<string, any> = {
   'ic_menu_more_dis.png': require('./icon/ic_menu_more_dis.png'),
   'ic_order_white.png': require('./icon/ic_order_white.png'),
   'ic_order.png': require('./icon/ic_order.png'),
+  'ic_order_bg_red.png': require('./icon/ic_order_bg_red.png'),
+  'ic_order_bg_black.png': require('./icon/ic_order_bg_black.png'),
   'ic_dealer.png': require('./icon/ic_dealer.png'),
   'ic_dealer_active.png': require('./icon/ic_dealer_active.png'),
   'ic_spring.png': require('./icon/ic_spring.png'),

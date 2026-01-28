@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
 import { cartService, CartItem } from '../../../services';
 
+interface CheckoutResult {
+  success: boolean;
+  data?: {
+    no_so: string;
+    jenis_so: string;
+    grand_total: number;
+    status: string;
+  };
+  error?: string;
+}
+
 export const useCartScreen = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     loadCart();
@@ -81,6 +93,33 @@ export const useCartScreen = () => {
     }
   };
 
+  const handleCheckout = async (): Promise<CheckoutResult> => {
+    setCheckoutLoading(true);
+    try {
+      const result = await cartService.checkout();
+      setCheckoutLoading(false);
+      
+      if (result.success && result.data) {
+        setCartItems([]);
+        return {
+          success: true,
+          data: result.data,
+        };
+      } else {
+        return {
+          success: false,
+          error: result.error?.message || 'Checkout failed',
+        };
+      }
+    } catch (error) {
+      setCheckoutLoading(false);
+      return {
+        success: false,
+        error: 'An error occurred during checkout',
+      };
+    }
+  };
+
   const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => sum + item.subtotal, 0);
   };
@@ -96,10 +135,12 @@ export const useCartScreen = () => {
   return {
     cartItems,
     loading,
+    checkoutLoading,
     handleMinus,
     handlePlus,
     handleQuantityChange,
     handleDelete,
+    handleCheckout,
     calculateTotal,
     formatPrice,
   };

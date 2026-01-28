@@ -21,6 +21,7 @@ import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
 import CartItemSwipeable from '../../components/cart/CartItemSwipeable';
 import CustomAlert from '../../components/CustomAlert';
+import SuccessModal from '../../components/SuccessModal';
 import { useCartScreen } from './hooks/useCartScreen';
 
 type CartScreenNavigationProp = StackNavigationProp<RootStackParamList>;
@@ -30,10 +31,12 @@ const CartScreen: React.FC = () => {
   const {
     cartItems,
     loading,
+    checkoutLoading,
     handleMinus,
     handlePlus,
     handleQuantityChange,
     handleDelete: deleteItem,
+    handleCheckout,
     calculateTotal,
     formatPrice,
   } = useCartScreen();
@@ -41,6 +44,15 @@ const CartScreen: React.FC = () => {
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showCheckoutSuccess, setShowCheckoutSuccess] = useState(false);
+  const [checkoutData, setCheckoutData] = useState<{
+    no_so: string;
+    jenis_so: string;
+    grand_total: number;
+    status: string;
+  } | null>(null);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleDelete = (id: string) => {
     setItemToDelete(id);
@@ -59,6 +71,29 @@ const CartScreen: React.FC = () => {
   const cancelDelete = () => {
     setShowDeleteAlert(false);
     setItemToDelete(null);
+  };
+
+  const handleCreatePO = async () => {
+    if (cartItems.length === 0) {
+      setErrorMessage('Keranjang belanja kosong');
+      setShowErrorAlert(true);
+      return;
+    }
+
+    const result = await handleCheckout();
+    
+    if (result.success && result.data) {
+      setCheckoutData(result.data);
+      setShowCheckoutSuccess(true);
+    } else {
+      setErrorMessage(result.error || 'Checkout gagal');
+      setShowErrorAlert(true);
+    }
+  };
+
+  const handleCheckoutSuccessConfirm = () => {
+    setShowCheckoutSuccess(false);
+    setCheckoutData(null);
   };
 
   return (
@@ -128,8 +163,16 @@ const CartScreen: React.FC = () => {
           <Text style={styles.totalLabel}>Total</Text>
           <Text style={styles.totalAmount}>{formatPrice(calculateTotal())}</Text>
         </View>
-        <TouchableOpacity style={styles.createButton}>
-          <Text style={styles.createButtonText}>Create PO</Text>
+        <TouchableOpacity 
+          style={[styles.createButton, (checkoutLoading || cartItems.length === 0) && styles.createButtonDisabled]}
+          onPress={handleCreatePO}
+          disabled={checkoutLoading || cartItems.length === 0}
+        >
+          {checkoutLoading ? (
+            <ActivityIndicator size="small" color={colors.white} />
+          ) : (
+            <Text style={styles.createButtonText}>Create PO</Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -150,6 +193,23 @@ const CartScreen: React.FC = () => {
         message="Item berhasil dihapus dari keranjang"
         type="success"
         onConfirm={() => setShowSuccessAlert(false)}
+        confirmText="OK"
+      />
+
+      <SuccessModal
+        visible={showCheckoutSuccess}
+        title="Order Berhasil Dibuat!"
+        message={checkoutData ? `No. SO: ${checkoutData.no_so}\nJenis: ${checkoutData.jenis_so}\nTotal: ${formatPrice(checkoutData.grand_total)}\nStatus: ${checkoutData.status}` : ''}
+        onConfirm={handleCheckoutSuccessConfirm}
+        confirmText="OK"
+      />
+
+      <CustomAlert
+        visible={showErrorAlert}
+        title="Checkout Gagal"
+        message={errorMessage}
+        type="alert"
+        onConfirm={() => setShowErrorAlert(false)}
         confirmText="OK"
       />
     </SafeAreaView>
@@ -412,6 +472,9 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  createButtonDisabled: {
+    backgroundColor: colors.grayInactive,
   },
   createButtonText: {
     fontSize: fonts.sizes.medium,

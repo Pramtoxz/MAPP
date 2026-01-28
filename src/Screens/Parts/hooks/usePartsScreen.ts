@@ -111,6 +111,7 @@ export const usePartsScreen = () => {
 
     const result = await cartService.addToCart({
       partId: selectedProduct.id,
+      partNumber: selectedProduct.partNumber,
       quantity,
     });
 

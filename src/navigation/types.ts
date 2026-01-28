@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Cart: undefined;
   CampaignList: undefined;
   CampaignDetail: { campaignId: string };
+  OrderDetail: { orderNumber: string };
 };
 
 export type MainTabParamList = {
