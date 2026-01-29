@@ -12,12 +12,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import LottieView from 'lottie-react-native';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
 import ProductCard from '../../components/parts/ProductCard';
 import CampaignSlider from '../../components/home/CampaignSlider';
 import ProductDetailModal from '../../components/parts/ProductDetailModal';
 import QuantityModal from '../../components/parts/QuantityModal';
+import SearchSuggestions from '../../components/parts/SearchSuggestions';
 import { usePartsScreen } from './hooks/usePartsScreen';
 import { styles } from './styles/styles';
 import { colors } from '../../config/colors';
@@ -37,6 +39,9 @@ const PartsScreen: React.FC = () => {
     loadingMore,
     hasMore,
     searchQuery,
+    searchSuggestions,
+    showSuggestions,
+    searchingParts,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
@@ -44,6 +49,8 @@ const PartsScreen: React.FC = () => {
     handleCloseDetailModal,
     handleCloseQuantityModal,
     handleSearch,
+    handleSelectSuggestion,
+    handleClearSearch,
     loadMore,
   } = usePartsScreen();
 
@@ -112,75 +119,120 @@ const PartsScreen: React.FC = () => {
             value={searchQuery}
             onChangeText={handleSearch}
           />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity 
+              style={styles.clearButton}
+              onPress={handleClearSearch}
+            >
+              <Image source={getImage('ic_close_rounded.png')} style={styles.clearIcon} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={styles.filterButton}>
             <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <FlatList
-        data={products}
-        numColumns={2}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-        showsVerticalScrollIndicator={false}
-        style={{ backgroundColor: colors.white }}
-        contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 16, paddingBottom: 20 }}
-        ListHeaderComponent={
-          <View style={{ marginHorizontal: -8, marginTop: -16 }}>
-            <View style={styles.campaignSection}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Campaign</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
-                  <Text style={styles.seeMoreText}>See More &gt;</Text>
-                </TouchableOpacity>
+      {showSuggestions && (
+        <SearchSuggestions
+          suggestions={searchSuggestions}
+          loading={searchingParts}
+          onSelect={handleSelectSuggestion}
+        />
+      )}
+
+      {loading ? (
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: colors.white,
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <LottieView
+            source={require('../../assets/lottie/rocket.json')}
+            autoPlay
+            loop
+            style={{ width: 280, height: 280 }}
+          />
+          <Text style={{ 
+            marginTop: 32, 
+            fontSize: 20, 
+            fontWeight: 'bold', 
+            color: colors.primary 
+          }}>
+            Loading Parts
+          </Text>
+          <Text style={{ 
+            marginTop: 8, 
+            fontSize: 14, 
+            color: colors.grayText 
+          }}>
+            Please wait...
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={products}
+          numColumns={2}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          showsVerticalScrollIndicator={false}
+          style={{ backgroundColor: colors.white }}
+          contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 16, paddingBottom: 20 }}
+          ListHeaderComponent={
+            <View style={{ marginHorizontal: -8, marginTop: -16 }}>
+              <View style={styles.campaignSection}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Campaign</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
+                    <Text style={styles.seeMoreText}>See More &gt;</Text>
+                  </TouchableOpacity>
+                </View>
+                {campaigns.length > 0 ? (
+                  <View style={styles.campaignWrapper}>
+                    <CampaignSlider
+                      campaigns={campaigns}
+                      onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
+                      autoSlide={true}
+                      interval={3000}
+                    />
+                  </View>
+                ) : (
+                  <View style={{ padding: 20, alignItems: 'center' }}>
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  </View>
+                )}
               </View>
-              {campaigns.length > 0 ? (
-                <View style={styles.campaignWrapper}>
-                  <CampaignSlider
-                    campaigns={campaigns}
-                    onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
-                    autoSlide={true}
-                    interval={3000}
-                  />
-                </View>
-              ) : (
-                <View style={{ padding: 20, alignItems: 'center' }}>
-                  <ActivityIndicator size="small" color={colors.primary} />
-                </View>
-              )}
             </View>
-          </View>
-        }
-        columnWrapperStyle={styles.productRow}
-        renderItem={({ item }) => (
-          <View style={styles.productWrapper}>
-            <ProductCard
-              image={item.image}
-              partNumber={item.partNumber}
-              name={item.name}
-              price={item.price}
-              isReady={item.isReady}
-              onPress={() => handleProductPress(item)}
-              onAddPress={() => handleAddPress(item)}
-            />
-          </View>
-        )}
-        ListEmptyComponent={
-          loading ? (
-            <View style={{ padding: 40, alignItems: 'center' }}>
-              <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={{ marginTop: 16, color: colors.grayText }}>Loading parts...</Text>
+          }
+          columnWrapperStyle={styles.productRow}
+          renderItem={({ item }) => (
+            <View style={styles.productWrapper}>
+              <ProductCard
+                image={item.image}
+                partNumber={item.partNumber}
+                name={item.name}
+                price={item.price}
+                isReady={item.isReady}
+                onPress={() => handleProductPress(item)}
+                onAddPress={() => handleAddPress(item)}
+              />
             </View>
-          ) : (
+          )}
+          ListEmptyComponent={
             <View style={{ padding: 40, alignItems: 'center' }}>
               <Text style={{ color: colors.grayText }}>No parts found</Text>
             </View>
-          )
-        }
-        ListFooterComponent={renderFooter}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-      />
+          }
+          ListFooterComponent={renderFooter}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+        />
+      )}
 
       <ProductDetailModal
         visible={detailModalVisible}

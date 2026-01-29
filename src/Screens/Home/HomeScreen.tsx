@@ -37,7 +37,7 @@ const HomeScreen: React.FC = () => {
     { id: 1, icon: getImage('ic_spring.png'), label: 'PARTS', onPress: () => navigation.navigate('Parts') },
     { id: 2, icon: getImage('ic_dealer_active.png'), label: 'CATALOGUE', onPress: () => {} },
     { id: 3, icon: getImage('ic_promotion.png'), label: 'PROMO', onPress: () => {} },
-    { id: 4, icon: getImage('ic_cart_response.png'), label: 'CART', badge: cartCount, onPress: () => navigation.navigate('Cart') },
+    { id: 4, icon: getImage('ic_cart_baru.png'), label: 'CART', badge: cartCount, onPress: () => navigation.navigate('Cart') },
     { id: 5, icon: getImage('ic_menu_wallboard_en.png'), label: 'STATISTIK', onPress: () => navigation.navigate('Parts') },
     { id: 6, icon: getImage('ic_spk.png'), label: 'CP', onPress: () => {} },
     { id: 7, icon: getImage('ic_piala.png'), label: 'FAVORITE', onPress: () => {} },
@@ -68,7 +68,7 @@ const HomeScreen: React.FC = () => {
               <View style={styles.headerLeft}>
                 <View style={styles.avatarContainer}>
                   <Image
-                    source={getImage('lg_honda.jpg')}
+                    source={getImage('lg_honda_kecil.jpg')}
                     style={styles.avatar}
                   />
                 </View>

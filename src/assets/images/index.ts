@@ -62,6 +62,7 @@ const IMAGES: Record<string, any> = {
   'ic_ribbon_discount.png': require('./icon/ic_ribbon_discount.png'),
   'ic_piala.png': require('./icon/ic_piala.png'),
   'ic_spk.png': require('./icon/ic_spk.png'),
+  'ic_cart_baru.png': require('./icon/ic_cart_baru.png'),
 
 
   //Folder Background
@@ -72,7 +73,7 @@ const IMAGES: Record<string, any> = {
   //Folder LogoF
   'logomd.png': require('./logo/logomd.png'),
   'malogo.png': require('./logo/malogo.png'),
-  'lg_honda.jpg': require('./logo/lg_honda.jpg'),
+  'lg_honda_kecil.jpg': require('./logo/lg_honda_kecil.jpg'),
   'lg_honda.webp': require('./logo/lg_honda.webp'),
 };
 

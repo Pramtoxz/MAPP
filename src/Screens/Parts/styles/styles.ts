@@ -113,6 +113,16 @@ export const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     color: colors.black,
   },
+  clearButton: {
+    padding: 4,
+    marginRight: 8,
+  },
+  clearIcon: {
+    width: 20,
+    height: 20,
+    tintColor: colors.grayText,
+    resizeMode: 'contain',
+  },
   filterButton: {
     padding: 4,
   },

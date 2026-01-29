@@ -22,7 +22,7 @@ Dokumentasi lengkap penggunaan images/icons untuk setiap screen dalam aplikasi.
 | Image Name | Usage | Required |
 |------------|-------|----------|
 | `bg_honda.webp` | Background image | ✅ Yes |
-| `lg_honda.jpg` | Logo Honda | ✅ Yes |
+| `lg_honda_kecil.jpg` | Logo Honda | ✅ Yes |
 | `ic_username.png` | Username input icon | ✅ Yes |
 | `ic_password.png` | Password input icon | ✅ Yes |
 | `ic_visible.png` | Show/hide password icon | ✅ Yes |
@@ -34,7 +34,7 @@ Dokumentasi lengkap penggunaan images/icons untuk setiap screen dalam aplikasi.
 | Image Name | Usage | Required |
 |------------|-------|----------|
 | `bg_honda.webp` | Background header | ✅ Yes |
-| `lg_honda.jpg` | Avatar/Logo | ✅ Yes |
+| `lg_honda_kecil.jpg` | Avatar/Logo | ✅ Yes |
 | `ic_notification.png` | Notification button | ✅ Yes |
 | `ic_spring.png` | Search icon & Parts menu | ✅ Yes |
 | `ic_catologue.png` | Catalogue menu button | ✅ Yes |
@@ -99,7 +99,7 @@ COMING SOON
 
 ### **Critical (Must Have):**
 1. `bg_honda.webp` - Background
-2. `lg_honda.jpg` - Logo
+2. `lg_honda_kecil.jpg` - Logo
 3. `ic_arrow_back.png` - Navigation
 4. `ic_username.png` - Login
 5. `ic_password.png` - Login
@@ -130,4 +130,4 @@ COMING SOON
 ## **Notes:**
 - Semua images di-load melalui `getImage()` function dari `src/assets/images/index.ts`
 - External images (part images, campaign banners) di-load dari URL
-- Jika image tidak ditemukan, akan fallback ke `lg_honda.jpg`
+- Jika image tidak ditemukan, akan fallback ke `lg_honda_kecil.jpg`

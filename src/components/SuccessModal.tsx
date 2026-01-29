@@ -1,6 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Modal from 'react-native-modal';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { colors } from '../config/colors';
 import { fonts } from '../config/fonts';
@@ -9,25 +8,32 @@ interface SuccessModalProps {
   visible: boolean;
   title: string;
   message: string;
-  onConfirm: () => void;
-  confirmText?: string;
+  onComplete: () => void;
+  duration?: number; // Duration in ms before auto redirect
 }
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
   visible,
   title,
   message,
-  onConfirm,
-  confirmText = 'OK',
+  onComplete,
+  duration = 2500, // Default 2.5 seconds
 }) => {
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => {
+        onComplete();
+      }, duration);
+
+      return () => clearTimeout(timer);
+    }
+  }, [visible, onComplete, duration]);
+
+  if (!visible) return null;
+
   return (
-    <Modal
-      isVisible={visible}
-      animationIn="fadeIn"
-      animationOut="fadeOut"
-      backdropOpacity={0.5}
-    >
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <LottieView
           source={require('../assets/lottie/success.json')}
           autoPlay
@@ -37,56 +43,46 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
         
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.message}>{message}</Text>
-
-        <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={onConfirm}
-        >
-          <Text style={styles.confirmButtonText}>{confirmText}</Text>
-        </TouchableOpacity>
       </View>
-    </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 24,
+    justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 9999,
+  },
+  content: {
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    width: '100%',
   },
   lottie: {
-    width: 200,
-    height: 200,
-    marginBottom: 16,
+    width: 280,
+    height: 280,
+    marginBottom: 32,
   },
   title: {
-    fontSize: fonts.sizes.large,
+    fontSize: fonts.sizes.huge,
     fontFamily: fonts.bold,
-    color: colors.black,
-    marginBottom: 8,
+    color: colors.primary,
+    marginBottom: 12,
     textAlign: 'center',
   },
   message: {
-    fontSize: fonts.sizes.default,
+    fontSize: fonts.sizes.medium,
     fontFamily: fonts.regular,
     color: colors.grayText,
-    marginBottom: 24,
     textAlign: 'center',
-  },
-  confirmButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    width: '100%',
-    alignItems: 'center',
-  },
-  confirmButtonText: {
-    fontSize: fonts.sizes.medium,
-    fontFamily: fonts.semibold,
-    color: colors.white,
+    lineHeight: 24,
   },
 });
 

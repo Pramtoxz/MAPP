@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { authService, campaignService, dashboardService, Campaign } from '../../../services';
 
 export const useHomeScreen = () => {
@@ -15,6 +16,12 @@ export const useHomeScreen = () => {
     loadCampaigns();
     loadDashboardStats();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadDashboardStats();
+    }, [])
+  );
 
   const loadUserData = async () => {
     try {

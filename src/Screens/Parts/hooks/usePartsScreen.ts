@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { partsService, cartService, campaignService, Part, Campaign } from '../../../services';
 
 export const usePartsScreen = () => {
@@ -14,12 +15,23 @@ export const usePartsScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+  const [searchSuggestions, setSearchSuggestions] = useState<Part[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchingParts, setSearchingParts] = useState(false);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     loadParts(true);
     loadCartCount();
     loadCampaigns();
   }, []);
+
+  // Reload cart count setiap kali screen di-focus
+  useFocusEffect(
+    useCallback(() => {
+      loadCartCount();
+    }, [])
+  );
 
   const loadParts = async (reset: boolean = false) => {
     if (reset) {
@@ -63,9 +75,48 @@ export const usePartsScreen = () => {
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
-    setTimeout(() => {
+    
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // If query is empty, hide suggestions and load all parts
+    if (!query.trim()) {
+      setShowSuggestions(false);
+      setSearchSuggestions([]);
       loadParts(true);
-    }, 500);
+      return;
+    }
+
+    // Show suggestions after 300ms
+    searchTimeoutRef.current = setTimeout(async () => {
+      setSearchingParts(true);
+      const result = await partsService.getPartsList({
+        page: 1,
+        limit: 10,
+        search: query,
+      });
+      
+      setSearchingParts(false);
+      if (result.success && result.data) {
+        setSearchSuggestions(result.data.items);
+        setShowSuggestions(result.data.items.length > 0);
+      }
+    }, 300);
+  }, []);
+
+  const handleSelectSuggestion = useCallback((part: Part) => {
+    setSearchQuery(part.partNumber);
+    setShowSuggestions(false);
+    handleProductPress(part);
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('');
+    setShowSuggestions(false);
+    setSearchSuggestions([]);
+    loadParts(true);
   }, []);
 
   const handleCategoryFilter = useCallback((category?: string) => {
@@ -142,6 +193,9 @@ export const usePartsScreen = () => {
     loadingMore,
     hasMore,
     searchQuery,
+    searchSuggestions,
+    showSuggestions,
+    searchingParts,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
@@ -149,6 +203,8 @@ export const usePartsScreen = () => {
     handleCloseDetailModal,
     handleCloseQuantityModal,
     handleSearch,
+    handleSelectSuggestion,
+    handleClearSearch,
     handleCategoryFilter,
     loadMore,
     loadParts,
