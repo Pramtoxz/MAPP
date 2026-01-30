@@ -10,6 +10,7 @@ export type MainTabParamList = {
 export type RootStackParamList = {
   Splash: { showWelcome?: boolean };
   Login: undefined;
+  OtpVerify: { phone: string };
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Parts: undefined;
   Cart: undefined;

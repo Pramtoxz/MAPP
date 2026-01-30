@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import SplashScreen from '../components/SplashScreen';
 import LoginScreen from '../Screens/Auth/LoginScreen';
+import OtpVerifyScreen from '../Screens/Auth/OtpVerifyScreen';
 import MainTabNavigator from './MainTabNavigator';
 import PartsScreen from '../Screens/Parts/PartsScreen';
 import CartScreen from '../Screens/Cart/CartScreen';
@@ -25,6 +26,13 @@ const AppNavigator: React.FC = () => {
       >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen 
+          name="OtpVerify" 
+          component={OtpVerifyScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
         <Stack.Screen 
           name="Parts" 

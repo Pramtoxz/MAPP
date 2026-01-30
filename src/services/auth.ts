@@ -9,6 +9,15 @@ interface LoginCredentials {
   password: string;
 }
 
+export interface RequestOtpRequest {
+  phone: string;
+}
+
+export interface VerifyOtpRequest {
+  phone: string;
+  otp_code: string;
+}
+
 interface UserData {
   id: string;
   name: string;
@@ -151,6 +160,78 @@ class AuthService {
     } catch (error) {
       console.error('Refresh profile error:', error);
       return null;
+    }
+  }
+
+  async requestOtp(
+    phone: string,
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/request-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        return {
+          success: true,
+          message: result.data?.message || 'Kode OTP telah dikirim ke WhatsApp Anda',
+        };
+      } else {
+        return {
+          success: false,
+          message: result.message || 'Gagal mengirim OTP',
+        };
+      }
+    } catch (error) {
+      console.error('Request OTP error:', error);
+      return {
+        success: false,
+        message: 'Koneksi ke server gagal',
+      };
+    }
+  }
+
+  async verifyOtp(
+    phone: string,
+    otpCode: string,
+  ): Promise<{ success: boolean; message?: string; data?: UserData }> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, otp_code: otpCode }),
+      });
+
+      const result: LoginResponse = await response.json();
+
+      if (result.success && result.data) {
+        await AsyncStorage.setItem(TOKEN_KEY, result.data.token);
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data.user));
+
+        return {
+          success: true,
+          data: result.data.user,
+        };
+      } else {
+        return {
+          success: false,
+          message: result.error?.message || 'Kode OTP tidak valid atau sudah kadaluarsa',
+        };
+      }
+    } catch (error) {
+      console.error('Verify OTP error:', error);
+      return {
+        success: false,
+        message: 'Koneksi ke server gagal',
+      };
     }
   }
 }

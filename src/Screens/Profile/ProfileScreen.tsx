@@ -27,8 +27,9 @@ type ProfileScreenNavigationProp = CompositeNavigationProp<
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
-  const [userName, setUserName] = useState('Demo User');
-  const [userEmail, setUserEmail] = useState('demo@example.com');
+  const [dealerName, setDealerName] = useState('Loading...');
+  const [dealerCode, setDealerCode] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false);
 
@@ -40,8 +41,9 @@ const ProfileScreen: React.FC = () => {
     try {
       const userData = await authService.getUserData();
       if (userData) {
-        setUserName(userData.name);
-        setUserEmail(userData.email);
+        setDealerName(userData.dealerName || userData.name);
+        setDealerCode(userData.dealerCode);
+        setUserEmail(userData.email || 'Login via WhatsApp');
       }
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -106,7 +108,8 @@ const ProfileScreen: React.FC = () => {
             <View style={styles.logoContainer}>
               <Image source={getImage('malogo.png')} style={styles.logo} />
             </View>
-            <Text style={styles.userName}>{userName}</Text>
+            <Text style={styles.userName}>{dealerName}</Text>
+            <Text style={styles.dealerCode}>{dealerCode}</Text>
             <Text style={styles.userEmail}>{userEmail}</Text>
             <View style={styles.memberBadge}>
               <Text style={styles.memberText}>Premium Member</Text>
@@ -226,19 +229,30 @@ logoContainer: {
     resizeMode: 'contain', 
   },
   userName: {
-    fontSize: fonts.sizes.huge + 4,
+    fontSize: fonts.sizes.large,
     fontFamily: fonts.bold,
     color: colors.white,
     marginBottom: 4,
+    textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    paddingHorizontal: 16,
+  },
+  dealerCode: {
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.semibold,
+    color: 'rgba(255, 255, 255, 0.95)',
+    marginBottom: 4,
+    letterSpacing: 1,
+    textAlign: 'center',
   },
   userEmail: {
-    fontSize: fonts.sizes.default,
+    fontSize: fonts.sizes.small,
     fontFamily: fonts.regular,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: 'rgba(255, 255, 255, 0.85)',
     marginBottom: 12,
+    textAlign: 'center',
   },
   memberBadge: {
     backgroundColor: 'rgba(255, 215, 0, 0.9)',

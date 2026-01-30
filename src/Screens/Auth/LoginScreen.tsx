@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   Image,
   StyleSheet,
   StatusBar,
@@ -16,6 +14,9 @@ import { colors } from '../../config/colors';
 import { getImage } from '../../assets/images';
 import CustomAlert from '../../components/CustomAlert';
 import LoadingDialog from '../../components/LoadingDialog';
+import TabSwitcher from './components/TabSwitcher';
+import EmailLoginForm from './components/EmailLoginForm';
+import OtpLoginForm from './components/OtpLoginForm';
 
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -24,17 +25,22 @@ type LoginScreenNavigationProp = StackNavigationProp<
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
 
-  const handleLogin = async () => {
+  const showAlert = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertVisible(true);
+  };
+
+  const handleEmailLogin = async (email: string, password: string) => {
     if (!email || !password) {
-      setAlertMessage('Email dan password harus diisi');
-      setAlertVisible(true);
+      showAlert('Form Tidak Lengkap', 'Email dan password harus diisi');
       return;
     }
 
@@ -45,10 +51,30 @@ const LoginScreen: React.FC = () => {
     if (result.success) {
       navigation.replace('MainTabs');
     } else {
-      setAlertMessage(
-        result.message || 'Coba ingat-ingat lagi, jangan pake perasaan ya!',
+      showAlert(
+        'Email atau Password Salah',
+        result.message || 'Coba ingat-ingat lagi, jangan pake perasaan ya!'
       );
-      setAlertVisible(true);
+    }
+  };
+
+  const handleRequestOtp = async (phone: string) => {
+    if (!phone) {
+      showAlert('Form Tidak Lengkap', 'Nomor HP harus diisi');
+      return;
+    }
+
+    setLoading(true);
+    const result = await authService.requestOtp(phone);
+    setLoading(false);
+
+    if (result.success) {
+      navigation.navigate('OtpVerify', { phone });
+    } else {
+      showAlert(
+        'Gagal Mengirim OTP',
+        result.message || 'Nomor HP tidak terdaftar'
+      );
     }
   };
 
@@ -68,66 +94,21 @@ const LoginScreen: React.FC = () => {
       </View>
 
       <View style={styles.formCard}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Email</Text>
-          <View style={styles.inputContainer}>
-            <Image
-              source={getImage('ic_username.png')}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter email"
-              placeholderTextColor={colors.grayHint}
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-          </View>
+        <TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
+
+        <View style={styles.formContent}>
+          {activeTab === 'email' ? (
+            <EmailLoginForm onLogin={handleEmailLogin} />
+          ) : (
+            <OtpLoginForm onRequestOtp={handleRequestOtp} />
+          )}
         </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Password</Text>
-          <View style={styles.inputContainer}>
-            <Image
-              source={getImage('ic_password.png')}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Type password"
-              placeholderTextColor={colors.grayHint}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.visibilityButton}
-            >
-              <Image
-                source={getImage('ic_visible.png')}
-                style={styles.visibilityIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>LOGIN</Text>
-        </TouchableOpacity>
       </View>
 
-      <LoadingDialog visible={loading} message="Memproses login..." />
+      <LoadingDialog visible={loading} message="Memproses..." />
       <CustomAlert
         visible={alertVisible}
-        title="Email atau Password Salah"
+        title={alertTitle}
         message={alertMessage}
         onConfirm={() => setAlertVisible(false)}
       />
@@ -168,75 +149,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    paddingHorizontal: 32,
-    paddingTop: 40,
+    paddingTop: 24,
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 14,
-    color: colors.grayText,
-    marginBottom: 8,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  inputIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 12,
-    tintColor: colors.grayInactive,
-  },
-  input: {
+  formContent: {
     flex: 1,
-    fontSize: 15,
-    color: colors.black,
-  },
-  visibilityButton: {
-    padding: 4,
-  },
-  visibilityIcon: {
-    width: 20,
-    height: 20,
-    tintColor: colors.grayInactive,
-    resizeMode: 'contain',
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: colors.grayText,
-  },
-  loginButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 28,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  loginButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.white,
-    letterSpacing: 1,
+    paddingHorizontal: 32,
   },
 });
 
