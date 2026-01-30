@@ -277,6 +277,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    backgroundColor: colors.white,
   },
   header: {
     paddingBottom: 16,
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: 16,
-    minHeight: 600,
+    paddingBottom: 16,
   },
   cartItem: {
     flexDirection: 'row',
@@ -411,7 +412,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingTop: 20,
-    paddingBottom: 40,
+    paddingBottom: 70,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
