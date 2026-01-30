@@ -8,6 +8,7 @@ import {
   StatusBar,
   ScrollView,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -31,12 +32,14 @@ const CartScreen: React.FC = () => {
   const {
     cartItems,
     loading,
+    refreshing,
     checkoutLoading,
     handleMinus,
     handlePlus,
     handleQuantityChange,
     handleDelete: deleteItem,
     handleCheckout,
+    handleRefresh,
     calculateTotal,
     formatPrice,
   } = useCartScreen();
@@ -44,6 +47,7 @@ const CartScreen: React.FC = () => {
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false);
   const [showCheckoutSuccess, setShowCheckoutSuccess] = useState(false);
   const [checkoutData, setCheckoutData] = useState<{
     no_so: string;
@@ -73,13 +77,20 @@ const CartScreen: React.FC = () => {
     setItemToDelete(null);
   };
 
-  const handleCreatePO = async () => {
+  const handleCreatePO = () => {
     if (cartItems.length === 0) {
       setErrorMessage('Keranjang belanja kosong');
       setShowErrorAlert(true);
       return;
     }
 
+    // Show confirmation dialog
+    setShowCheckoutConfirm(true);
+  };
+
+  const confirmCreatePO = async () => {
+    setShowCheckoutConfirm(false);
+    
     const result = await handleCheckout();
     
     if (result.success && result.data) {
@@ -113,7 +124,18 @@ const CartScreen: React.FC = () => {
 
       {/* <Image source={getImage('ic_info_badge.png')} style={styles.badgeIcon} /> */}
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <TouchableOpacity
@@ -143,26 +165,27 @@ const CartScreen: React.FC = () => {
               <Text style={styles.emptyText}>Your cart is empty</Text>
             </View>
           ) : (
-            <FlatList
-              data={cartItems}
-              scrollEnabled={false}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <CartItemSwipeable
-                  item={item}
-                  onMinus={handleMinus}
-                  onPlus={handlePlus}
-                  onQuantityChange={handleQuantityChange}
-                  onDelete={handleDelete}
-                  formatPrice={formatPrice}
-                />
-              )}
-            />
+            <>
+              <FlatList
+                data={cartItems}
+                scrollEnabled={false}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <CartItemSwipeable
+                    item={item}
+                    onMinus={handleMinus}
+                    onPlus={handlePlus}
+                    onQuantityChange={handleQuantityChange}
+                    onDelete={handleDelete}
+                    formatPrice={formatPrice}
+                  />
+                )}
+              />
+              <View style={styles.bottomSpacer} />
+            </>
           )}
         </View>
       </ScrollView>
-
-      <View style={styles.bottomFiller} />
 
       <View style={styles.footer}>
         <View style={styles.totalContainer}>
@@ -186,6 +209,17 @@ const CartScreen: React.FC = () => {
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         confirmText="Hapus"
+        cancelText="Batal"
+      />
+
+      <CustomAlert
+        visible={showCheckoutConfirm}
+        title="Konfirmasi Pesanan"
+        message={`Apakah Anda yakin ingin membuat Purchase Order dengan total ${formatPrice(calculateTotal())}?`}
+        type="confirm"
+        onConfirm={confirmCreatePO}
+        onCancel={() => setShowCheckoutConfirm(false)}
+        confirmText="Ya, Buat PO"
         cancelText="Batal"
       />
 
@@ -373,30 +407,16 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.primary,
     paddingVertical: 4,
   },
-  bottomFiller: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 350,
-    backgroundColor: colors.white,
-  },
   footer: {
     backgroundColor: colors.white,
     paddingHorizontal: 16,
-    paddingTop: 32,
-    paddingBottom: 48,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderTopWidth: 2,
-    borderLeftWidth: 2,
-    borderRightWidth: 2,
-    borderColor: '#E0E0E0',
+    paddingTop: 20,
+    paddingBottom: 40,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowRadius: 12,
+    elevation: 16,
   },
   voucherContainer: {
     flexDirection: 'row',
@@ -458,17 +478,22 @@ const styles = StyleSheet.create({
   },
   totalContainer: {
     marginBottom: 16,
+    backgroundColor: '#F8F9FA',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
   totalLabel: {
-    fontSize: fonts.sizes.default,
+    fontSize: fonts.sizes.small,
     fontFamily: fonts.regular,
     color: colors.grayText,
     marginBottom: 4,
   },
   totalAmount: {
-    fontSize: fonts.sizes.huge,
+    fontSize: fonts.sizes.huge + 2,
     fontFamily: fonts.bold,
-    color: colors.black,
+    color: colors.primary,
   },
   createButton: {
     backgroundColor: colors.primary,
@@ -510,6 +535,9 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.medium,
     fontFamily: fonts.semibold,
     color: colors.grayText,
+  },
+  bottomSpacer: {
+    height: 200,
   },
 });
 

@@ -8,6 +8,7 @@ import {
   FlatList,
   ActivityIndicator,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -26,7 +27,9 @@ const OrderScreen: React.FC = () => {
   const {
     orders,
     loading,
+    refreshing,
     handleOrderPress,
+    handleRefresh,
     formatPrice,
     formatDate,
     getStatusColor,
@@ -139,6 +142,14 @@ const OrderScreen: React.FC = () => {
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[colors.primary]}
+                tintColor={colors.primary}
+              />
+            }
             ListEmptyComponent={renderEmptyState}
           />
         )}

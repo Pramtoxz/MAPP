@@ -91,7 +91,11 @@ const OrderDetailScreen: React.FC = () => {
           <Text style={styles.loadingText}>Memuat detail order...</Text>
         </View>
       ) : order ? (
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.content} 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <View style={styles.infoSection}>
             <View style={styles.infoCard}>
               <Text style={styles.infoLabel}>No. Order</Text>
@@ -204,6 +208,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: 16,
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   infoSection: {
     paddingHorizontal: 16,

@@ -15,6 +15,7 @@ interface CheckoutResult {
 export const useCartScreen = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,12 @@ export const useCartScreen = () => {
       setCartItems([]);
     }
     setLoading(false);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadCart();
+    setRefreshing(false);
   };
 
   const handleMinus = async (id: string) => {
@@ -135,12 +142,14 @@ export const useCartScreen = () => {
   return {
     cartItems,
     loading,
+    refreshing,
     checkoutLoading,
     handleMinus,
     handlePlus,
     handleQuantityChange,
     handleDelete,
     handleCheckout,
+    handleRefresh,
     calculateTotal,
     formatPrice,
   };

@@ -10,6 +10,7 @@ export const useOrderScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadOrders();
@@ -30,6 +31,12 @@ export const useOrderScreen = () => {
       setOrders([]);
     }
     setLoading(false);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadOrders();
+    setRefreshing(false);
   };
 
   const handleOrderPress = (order: Order) => {
@@ -64,7 +71,9 @@ export const useOrderScreen = () => {
   return {
     orders,
     loading,
+    refreshing,
     handleOrderPress,
+    handleRefresh,
     loadOrders,
     formatPrice,
     formatDate,
