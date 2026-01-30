@@ -69,7 +69,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 120,
+    top: 140,
     left: 16,
     right: 16,
     backgroundColor: colors.white,

@@ -45,7 +45,7 @@ const SplashScreen: React.FC = () => {
       <View style={styles.logoContainer}>
           <Image source={getImage('logomd.png')} style={styles.logomd} />
         <Text style={styles.logoText}>PT. MENARA AGUNG</Text>
-        <Text style={styles.subText}>Parts Mobile Management</Text>
+        <Text style={styles.subText}>Parts Mobile Solution</Text>
       </View>
     </View>
   );

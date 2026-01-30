@@ -18,6 +18,7 @@ export const usePartsScreen = () => {
   const [searchSuggestions, setSearchSuggestions] = useState<Part[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchingParts, setSearchingParts] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -147,9 +148,13 @@ export const usePartsScreen = () => {
     }
   };
 
-  const handleAddPress = (product: Part) => {
-    setSelectedProduct(product);
-    setQuantityModalVisible(true);
+  const handleAddPress = async (product: Part) => {
+    // Load detail with stock info
+    const result = await partsService.getPartDetail(product.partNumber);
+    if (result.success && result.data) {
+      setSelectedProduct(result.data);
+      setQuantityModalVisible(true);
+    }
   };
 
   const handleAddToCart = () => {
@@ -182,6 +187,16 @@ export const usePartsScreen = () => {
     setQuantityModalVisible(false);
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      loadParts(true),
+      loadCartCount(),
+      loadCampaigns(),
+    ]);
+    setRefreshing(false);
+  };
+
   return {
     cartCount,
     detailModalVisible,
@@ -196,6 +211,7 @@ export const usePartsScreen = () => {
     searchSuggestions,
     showSuggestions,
     searchingParts,
+    refreshing,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
@@ -206,6 +222,7 @@ export const usePartsScreen = () => {
     handleSelectSuggestion,
     handleClearSearch,
     handleCategoryFilter,
+    handleRefresh,
     loadMore,
     loadParts,
   };

@@ -42,6 +42,7 @@ const PartsScreen: React.FC = () => {
     searchSuggestions,
     showSuggestions,
     searchingParts,
+    refreshing,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
@@ -51,6 +52,7 @@ const PartsScreen: React.FC = () => {
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,
+    handleRefresh,
     loadMore,
   } = usePartsScreen();
 
@@ -165,14 +167,14 @@ const PartsScreen: React.FC = () => {
             fontWeight: 'bold', 
             color: colors.primary 
           }}>
-            Loading Parts
+            Sedang Menyiapkan
           </Text>
           <Text style={{ 
             marginTop: 8, 
             fontSize: 14, 
             color: colors.grayText 
           }}>
-            Please wait...
+            Mohon Tunggu Sebentar, Ga Bakal Lama Kok...
           </Text>
         </View>
       ) : (
@@ -181,6 +183,8 @@ const PartsScreen: React.FC = () => {
           numColumns={2}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
           style={{ backgroundColor: colors.white }}
           contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 16, paddingBottom: 20 }}
           ListHeaderComponent={

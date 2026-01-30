@@ -201,7 +201,7 @@ const CartScreen: React.FC = () => {
       <SuccessModal
         visible={showCheckoutSuccess}
         title="Order Berhasil Dibuat!"
-        message={checkoutData ? `No. SO: ${checkoutData.no_so}\nJenis: ${checkoutData.jenis_so}\nTotal: ${formatPrice(checkoutData.grand_total)}\nStatus: ${checkoutData.status}` : ''}
+        message={checkoutData ? `No. SO: ${checkoutData.no_so}` : ''}
         onComplete={handleCheckoutSuccessConfirm}
         duration={2500}
       />
