@@ -7,7 +7,7 @@ export { notificationService } from './notification';
 export { orderService } from './order';
 export { apiService } from './api';
 
-export type { Part } from './parts';
+export type { Part, VehicleType, Category } from './parts';
 export type { CartItem } from './cart';
 export type { Campaign } from './campaign';
 export type { Notification } from './notification';

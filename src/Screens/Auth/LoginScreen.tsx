@@ -105,7 +105,7 @@ const LoginScreen: React.FC = () => {
         </View>
       </View>
 
-      <LoadingDialog visible={loading} message="Memproses..." />
+      <LoadingDialog visible={loading} message="Gass Keeeuun..." />
       <CustomAlert
         visible={alertVisible}
         title={alertTitle}

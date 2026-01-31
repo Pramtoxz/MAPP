@@ -20,6 +20,7 @@ import CampaignSlider from '../../components/home/CampaignSlider';
 import ProductDetailModal from '../../components/parts/ProductDetailModal';
 import QuantityModal from '../../components/parts/QuantityModal';
 import SearchSuggestions from '../../components/parts/SearchSuggestions';
+import FilterModal from '../../components/parts/FilterModal';
 import { usePartsScreen } from './hooks/usePartsScreen';
 import { styles } from './styles/styles';
 import { colors } from '../../config/colors';
@@ -32,6 +33,7 @@ const PartsScreen: React.FC = () => {
     cartCount,
     detailModalVisible,
     quantityModalVisible,
+    filterModalVisible,
     selectedProduct,
     products,
     campaigns,
@@ -39,16 +41,22 @@ const PartsScreen: React.FC = () => {
     loadingMore,
     hasMore,
     searchQuery,
+    selectedVehicleType,
+    selectedCategory,
     searchSuggestions,
     showSuggestions,
     searchingParts,
     refreshing,
+    hasActiveFilters,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
     handleConfirmQuantity,
     handleCloseDetailModal,
     handleCloseQuantityModal,
+    handleOpenFilter,
+    handleCloseFilter,
+    handleApplyFilter,
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,
@@ -85,63 +93,69 @@ const PartsScreen: React.FC = () => {
         style={styles.backgroundImage}
       />
 
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Back</Text>
-          <View style={styles.headerRight}>
-            <TouchableOpacity 
-              style={styles.cartButton}
-              onPress={() => navigation.navigate('Cart')}
+      <View style={styles.headerWrapper}>
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
             >
-              <Image source={getImage('ic_cart_response.png')} style={styles.cartIcon} />
-              {cartCount > 0 && (
-                <View style={styles.cartBadge}>
-                  <Text style={styles.cartBadgeText}>{cartCount}</Text>
-                </View>
-              )}
+              <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.notificationButton}>
-              <Image source={getImage('ic_notification.png')} style={styles.notificationIcon} />
+            <Text style={styles.headerTitle}>Back</Text>
+            <View style={styles.headerRight}>
+              <TouchableOpacity 
+                style={styles.cartButton}
+                onPress={() => navigation.navigate('Cart')}
+              >
+                <Image source={getImage('ic_cart_response.png')} style={styles.cartIcon} />
+                {cartCount > 0 && (
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>{cartCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.notificationButton}>
+                <Image source={getImage('ic_notification.png')} style={styles.notificationIcon} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.searchContainer}>
+            <Image source={getImage('ic_search.png')} style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Parts Number / Parts Name"
+              placeholderTextColor="#000"
+              value={searchQuery}
+              onChangeText={handleSearch}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity 
+                style={styles.clearButton}
+                onPress={handleClearSearch}
+              >
+                <Image source={getImage('ic_close_rounded.png')} style={styles.clearIcon} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity 
+              style={styles.filterButton}
+              onPress={handleOpenFilter}
+            >
+              <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
+              {hasActiveFilters && <View style={styles.filterBadge} />}
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.searchContainer}>
-          <Image source={getImage('ic_search.png')} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Parts Number / Parts Name"
-            placeholderTextColor="#000"
-            value={searchQuery}
-            onChangeText={handleSearch}
+        {showSuggestions && (
+          <SearchSuggestions
+            suggestions={searchSuggestions}
+            loading={searchingParts}
+            onSelect={handleSelectSuggestion}
           />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity 
-              style={styles.clearButton}
-              onPress={handleClearSearch}
-            >
-              <Image source={getImage('ic_close_rounded.png')} style={styles.clearIcon} />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.filterButton}>
-            <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
-          </TouchableOpacity>
-        </View>
+        )}
       </View>
-
-      {showSuggestions && (
-        <SearchSuggestions
-          suggestions={searchSuggestions}
-          loading={searchingParts}
-          onSelect={handleSelectSuggestion}
-        />
-      )}
 
       {loading ? (
         <View style={{
@@ -250,6 +264,14 @@ const PartsScreen: React.FC = () => {
         onClose={handleCloseQuantityModal}
         product={selectedProduct}
         onConfirm={handleConfirmQuantity}
+      />
+
+      <FilterModal
+        visible={filterModalVisible}
+        onClose={handleCloseFilter}
+        selectedVehicleType={selectedVehicleType}
+        selectedCategory={selectedCategory}
+        onApply={handleApplyFilter}
       />
     </SafeAreaView>
   );

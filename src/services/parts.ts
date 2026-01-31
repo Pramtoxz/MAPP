@@ -12,6 +12,16 @@ export interface Part {
   isReady?: boolean;
 }
 
+export interface VehicleType {
+  code: string;
+  name: string;
+}
+
+export interface Category {
+  code: string;
+  name: string;
+}
+
 interface PartsListResponse {
   items: Part[];
   pagination: {
@@ -26,6 +36,7 @@ interface PartsListParams {
   limit?: number;
   search?: string;
   category?: string;
+  vehicle_type?: string;
   sortBy?: 'nm_part' | 'het' | 'kd_part';
   order?: 'asc' | 'desc';
 }
@@ -38,6 +49,7 @@ class PartsService {
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.search) queryParams.append('search', params.search);
     if (params?.category) queryParams.append('category', params.category);
+    if (params?.vehicle_type) queryParams.append('vehicle_type', params.vehicle_type);
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.order) queryParams.append('order', params.order);
 
@@ -49,6 +61,16 @@ class PartsService {
 
   async getPartDetail(partNumber: string) {
     return apiService.get<Part>(`/parts/${partNumber}`);
+  }
+
+  async getVehicleTypes(search?: string) {
+    const queryParams = search ? `?search=${encodeURIComponent(search)}` : '';
+    return apiService.get<VehicleType[]>(`/filters/vehicle-types${queryParams}`);
+  }
+
+  async getCategories(search?: string) {
+    const queryParams = search ? `?search=${encodeURIComponent(search)}` : '';
+    return apiService.get<Category[]>(`/filters/categories${queryParams}`);
   }
 }
 

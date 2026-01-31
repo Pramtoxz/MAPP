@@ -4,12 +4,13 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  FlatList,
+  ScrollView,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import { Part } from '../../services';
 import { colors } from '../../config/colors';
+import { fonts } from '../../config/fonts';
 
 interface SearchSuggestionsProps {
   suggestions: Part[];
@@ -27,7 +28,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="small" color={colors.primary} />
-          <Text style={styles.loadingText}>Searching...</Text>
+          <Text style={styles.loadingText}>Mencari...</Text>
         </View>
       </View>
     );
@@ -39,87 +40,153 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={suggestions}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Hasil Pencarian</Text>
+        <Text style={styles.countText}>{suggestions.length} item</Text>
+      </View>
+      <ScrollView 
+        style={styles.list}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+      >
+        {suggestions.map((item) => (
           <TouchableOpacity
+            key={item.id}
             style={styles.suggestionItem}
             onPress={() => onSelect(item)}
+            activeOpacity={0.7}
           >
-            <Image
-              source={{ uri: item.image }}
-              style={styles.suggestionImage}
-              resizeMode="contain"
-            />
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: item.image }}
+                style={styles.suggestionImage}
+                resizeMode="contain"
+              />
+              {item.isReady === false && (
+                <View style={styles.outOfStockBadge}>
+                  <Text style={styles.outOfStockText}>OUT OF STOCK</Text>
+                </View>
+              )}
+            </View>
             <View style={styles.suggestionInfo}>
               <Text style={styles.partNumber}>{item.partNumber}</Text>
-              <Text style={styles.partName} numberOfLines={1}>
+              <Text style={styles.partName} numberOfLines={2}>
                 {item.name}
               </Text>
             </View>
+            <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-        )}
-        style={styles.list}
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 140,
-    left: 16,
-    right: 16,
+    marginHorizontal: 16,
+    marginTop: 8,
     backgroundColor: colors.white,
-    borderRadius: 8,
-    maxHeight: 300,
+    borderRadius: 12,
+    maxHeight: 400,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    zIndex: 1000,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    overflow: 'hidden',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFF5F6',
+    borderBottomWidth: 1,
+    borderBottomColor: '#FFE5E8',
+  },
+  headerText: {
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.semibold,
+    color: colors.black,
+  },
+  countText: {
+    fontSize: fonts.sizes.small,
+    fontFamily: fonts.regular,
+    color: colors.primary,
   },
   loadingContainer: {
-    padding: 20,
+    padding: 24,
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: 12,
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.regular,
     color: colors.grayText,
   },
   list: {
-    maxHeight: 300,
+    maxHeight: 350,
   },
   suggestionItem: {
     flexDirection: 'row',
-    padding: 12,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#F5F5F5',
     alignItems: 'center',
+    backgroundColor: colors.white,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginRight: 12,
   },
   suggestionImage: {
-    width: 50,
-    height: 50,
-    marginRight: 12,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 4,
+    width: 60,
+    height: 60,
+    backgroundColor: '#FAFAFA',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+  },
+  outOfStockBadge: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(230, 27, 51, 0.9)',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ rotate: '-15deg' }],
+  },
+  outOfStockText: {
+    fontSize: 9,
+    fontFamily: fonts.bold,
+    color: colors.white,
+    textAlign: 'center',
+    letterSpacing: 0.5,
   },
   suggestionInfo: {
     flex: 1,
   },
   partNumber: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.semibold,
     color: colors.black,
     marginBottom: 4,
   },
   partName: {
-    fontSize: 12,
+    fontSize: fonts.sizes.small,
+    fontFamily: fonts.regular,
     color: colors.grayText,
+    lineHeight: 18,
+  },
+  arrow: {
+    fontSize: 28,
+    color: colors.grayHint,
+    marginLeft: 8,
   },
 });
 

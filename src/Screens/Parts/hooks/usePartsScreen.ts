@@ -6,6 +6,7 @@ export const usePartsScreen = () => {
   const [cartCount, setCartCount] = useState(0);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [quantityModalVisible, setQuantityModalVisible] = useState(false);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Part | null>(null);
   const [products, setProducts] = useState<Part[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -14,6 +15,7 @@ export const usePartsScreen = () => {
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedVehicleType, setSelectedVehicleType] = useState<string | undefined>();
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
   const [searchSuggestions, setSearchSuggestions] = useState<Part[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -49,6 +51,7 @@ export const usePartsScreen = () => {
       limit: 20,
       search: searchQuery || undefined,
       category: selectedCategory,
+      vehicle_type: selectedVehicleType,
       sortBy: 'nm_part',
       order: 'asc',
     });
@@ -120,10 +123,45 @@ export const usePartsScreen = () => {
     loadParts(true);
   }, []);
 
-  const handleCategoryFilter = useCallback((category?: string) => {
-    setSelectedCategory(category);
-    loadParts(true);
+  const handleOpenFilter = useCallback(() => {
+    setFilterModalVisible(true);
   }, []);
+
+  const handleCloseFilter = useCallback(() => {
+    setFilterModalVisible(false);
+  }, []);
+
+  const handleApplyFilter = useCallback((vehicleType?: string, category?: string) => {
+    setSelectedVehicleType(vehicleType);
+    setSelectedCategory(category);
+    // Auto refresh parts list dengan filter baru
+    setCurrentPage(1);
+    setProducts([]);
+    setLoading(true);
+    
+    // Load parts dengan filter baru
+    const loadFilteredParts = async () => {
+      const result = await partsService.getPartsList({
+        page: 1,
+        limit: 20,
+        search: searchQuery || undefined,
+        category: category,
+        vehicle_type: vehicleType,
+        sortBy: 'nm_part',
+        order: 'asc',
+      });
+
+      setLoading(false);
+
+      if (result.success && result.data) {
+        setProducts(result.data.items);
+        setHasMore(result.data.pagination.hasMore);
+        setCurrentPage(result.data.pagination.currentPage);
+      }
+    };
+
+    loadFilteredParts();
+  }, [searchQuery]);
 
   const loadCartCount = async () => {
     const result = await cartService.getCart();
@@ -197,10 +235,13 @@ export const usePartsScreen = () => {
     setRefreshing(false);
   };
 
+  const hasActiveFilters = selectedVehicleType || selectedCategory;
+
   return {
     cartCount,
     detailModalVisible,
     quantityModalVisible,
+    filterModalVisible,
     selectedProduct,
     products,
     campaigns,
@@ -208,20 +249,25 @@ export const usePartsScreen = () => {
     loadingMore,
     hasMore,
     searchQuery,
+    selectedVehicleType,
+    selectedCategory,
     searchSuggestions,
     showSuggestions,
     searchingParts,
     refreshing,
+    hasActiveFilters,
     handleProductPress,
     handleAddPress,
     handleAddToCart,
     handleConfirmQuantity,
     handleCloseDetailModal,
     handleCloseQuantityModal,
+    handleOpenFilter,
+    handleCloseFilter,
+    handleApplyFilter,
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,
-    handleCategoryFilter,
     handleRefresh,
     loadMore,
     loadParts,

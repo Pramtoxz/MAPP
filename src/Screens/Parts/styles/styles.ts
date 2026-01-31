@@ -16,6 +16,10 @@ export const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  headerWrapper: {
+    position: 'relative',
+    zIndex: 10,
+  },
   header: {
     paddingBottom: 16,
   },
@@ -125,12 +129,22 @@ export const styles = StyleSheet.create({
   },
   filterButton: {
     padding: 4,
+    position: 'relative',
   },
   filterIcon: {
     width: 24,
     height: 24,
     tintColor: colors.primary,
     resizeMode: 'contain',
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
   },
   content: {
     backgroundColor: colors.white,
