@@ -7,7 +7,6 @@ export const usePartsScreen = () => {
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [quantityModalVisible, setQuantityModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
-  const [confirmationVisible, setConfirmationVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Part | null>(null);
   const [products, setProducts] = useState<Part[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -192,35 +191,13 @@ export const usePartsScreen = () => {
     const result = await partsService.getPartDetail(product.partNumber);
     if (result.success && result.data) {
       setSelectedProduct(result.data);
-      
-      // Jika stock tidak ready, tampilkan konfirmasi dulu
-      if (!result.data.isReady) {
-        setConfirmationVisible(true);
-      } else {
-        setQuantityModalVisible(true);
-      }
+      setQuantityModalVisible(true);
     }
   };
 
   const handleAddToCart = () => {
     setDetailModalVisible(false);
-    
-    // Jika stock tidak ready, tampilkan konfirmasi dulu
-    if (selectedProduct && !selectedProduct.isReady) {
-      setConfirmationVisible(true);
-    } else {
-      setQuantityModalVisible(true);
-    }
-  };
-
-  const handleConfirmOutOfStock = () => {
-    setConfirmationVisible(false);
     setQuantityModalVisible(true);
-  };
-
-  const handleCancelOutOfStock = () => {
-    setConfirmationVisible(false);
-    setSelectedProduct(null);
   };
 
   const handleConfirmQuantity = async (quantity: number) => {
@@ -265,7 +242,6 @@ export const usePartsScreen = () => {
     detailModalVisible,
     quantityModalVisible,
     filterModalVisible,
-    confirmationVisible,
     selectedProduct,
     products,
     campaigns,
@@ -289,8 +265,6 @@ export const usePartsScreen = () => {
     handleOpenFilter,
     handleCloseFilter,
     handleApplyFilter,
-    handleConfirmOutOfStock,
-    handleCancelOutOfStock,
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,

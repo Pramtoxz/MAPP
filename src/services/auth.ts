@@ -177,15 +177,17 @@ class AuthService {
 
       const result = await response.json();
 
-      if (result.success) {
+      // Handle backend error response structure
+      if (result.success === true) {
         return {
           success: true,
           message: result.data?.message || 'Kode OTP telah dikirim ke WhatsApp Anda',
         };
       } else {
+        // Backend returns: {"success": false, "error": {"code": 404, "message": "..."}}
         return {
           success: false,
-          message: result.message || 'Gagal mengirim OTP',
+          message: result.error?.message || result.message || 'Nomor HP tidak terdaftar',
         };
       }
     } catch (error) {

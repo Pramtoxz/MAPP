@@ -109,10 +109,9 @@ const ProfileScreen: React.FC = () => {
               <Image source={getImage('malogo.png')} style={styles.logo} />
             </View>
             <Text style={styles.userName}>{dealerName}</Text>
-            <Text style={styles.dealerCode}>{dealerCode}</Text>
             <Text style={styles.userEmail}>{userEmail}</Text>
             <View style={styles.memberBadge}>
-              <Text style={styles.memberText}>Premium Member</Text>
+              <Text style={styles.memberText}>{dealerCode}</Text>
             </View>
           </View>
         </View>
@@ -238,14 +237,6 @@ logoContainer: {
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     paddingHorizontal: 16,
-  },
-  dealerCode: {
-    fontSize: fonts.sizes.default,
-    fontFamily: fonts.semibold,
-    color: 'rgba(255, 255, 255, 0.95)',
-    marginBottom: 4,
-    letterSpacing: 1,
-    textAlign: 'center',
   },
   userEmail: {
     fontSize: fonts.sizes.small,
