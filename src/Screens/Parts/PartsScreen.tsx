@@ -21,6 +21,7 @@ import ProductDetailModal from '../../components/parts/ProductDetailModal';
 import QuantityModal from '../../components/parts/QuantityModal';
 import SearchSuggestions from '../../components/parts/SearchSuggestions';
 import FilterModal from '../../components/parts/FilterModal';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 import { usePartsScreen } from './hooks/usePartsScreen';
 import { styles } from './styles/styles';
 import { colors } from '../../config/colors';
@@ -34,6 +35,7 @@ const PartsScreen: React.FC = () => {
     detailModalVisible,
     quantityModalVisible,
     filterModalVisible,
+    confirmationVisible,
     selectedProduct,
     products,
     campaigns,
@@ -57,6 +59,8 @@ const PartsScreen: React.FC = () => {
     handleOpenFilter,
     handleCloseFilter,
     handleApplyFilter,
+    handleConfirmOutOfStock,
+    handleCancelOutOfStock,
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,
@@ -272,6 +276,17 @@ const PartsScreen: React.FC = () => {
         selectedVehicleType={selectedVehicleType}
         selectedCategory={selectedCategory}
         onApply={handleApplyFilter}
+      />
+
+      <ConfirmationDialog
+        visible={confirmationVisible}
+        title="Stock Tidak Ready"
+        message="Stock tidak tau kapan akan ready. Silahkan hubungi sales untuk informasi lebih lanjut. Apakah Anda tetap ingin order?"
+        confirmText="Ya, Order Saja"
+        cancelText="Batal"
+        onConfirm={handleConfirmOutOfStock}
+        onCancel={handleCancelOutOfStock}
+        type="warning"
       />
     </SafeAreaView>
   );

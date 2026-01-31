@@ -45,9 +45,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <View style={styles.footer}>
           <Text style={styles.price}>{formatPrice(price)}</Text>
           <TouchableOpacity 
-            style={[styles.addButton, !isReady && styles.addButtonDisabled]} 
-            onPress={isReady ? onAddPress : undefined}
-            disabled={!isReady}
+            style={styles.addButton} 
+            onPress={onAddPress}
           >
             <Image source={getImage('ic_plus_en.png')} style={styles.buttonIcon} />
           </TouchableOpacity>
@@ -137,10 +136,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  addButtonDisabled: {
-    backgroundColor: colors.grayInactive,
-    opacity: 0.5,
   },
   buttonIcon: {
     width: 16,

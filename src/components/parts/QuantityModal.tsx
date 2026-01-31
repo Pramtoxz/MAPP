@@ -3,7 +3,6 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, TextInput } fro
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
-import CustomAlert from '../CustomAlert';
 
 interface QuantityModalProps {
   visible: boolean;
@@ -24,7 +23,6 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
   onConfirm,
 }) => {
   const [quantity, setQuantity] = useState('1');
-  const [showAlert, setShowAlert] = useState(false);
 
   if (!product) return null;
 
@@ -46,10 +44,6 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
   };
 
   const handleConfirm = () => {
-    if (!product.isReady) {
-      setShowAlert(true);
-      return;
-    }
     const finalQty = parseInt(quantity) || 1;
     onConfirm(finalQty);
     setQuantity('1');
@@ -98,23 +92,16 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
             </View>
 
             <TouchableOpacity 
-              style={[styles.confirmButton, !product.isReady && styles.confirmButtonDisabled]} 
+              style={styles.confirmButton} 
               onPress={handleConfirm}
             >
-              <Text style={styles.confirmButtonText}>Confirm</Text>
+              <Text style={styles.confirmButtonText}>
+                {product.isReady ? 'Masuk Keranjang' : 'Pre-Order'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-
-      <CustomAlert
-        visible={showAlert}
-        title="Stock Tidak Tersedia"
-        message="Maaf, stock sedang tidak tersedia untuk produk ini."
-        type="alert"
-        onConfirm={() => setShowAlert(false)}
-        confirmText="OK"
-      />
     </Modal>
   );
 };
@@ -217,10 +204,6 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  confirmButtonDisabled: {
-    backgroundColor: colors.grayInactive,
-    opacity: 0.5,
   },
   confirmButtonText: {
     fontSize: fonts.sizes.medium,

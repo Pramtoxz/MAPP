@@ -117,25 +117,11 @@ const CartScreen: React.FC = () => {
           barStyle="light-content"
         />
 
-      <Image
-        source={getImage('bg_honda.webp')}
-        style={styles.backgroundImage}
-      />
+        <Image
+          source={getImage('bg_honda.webp')}
+          style={styles.backgroundImage}
+        />
 
-      {/* <Image source={getImage('ic_info_badge.png')} style={styles.badgeIcon} /> */}
-
-      <ScrollView 
-        style={styles.scrollView} 
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={[colors.primary]}
-            tintColor={colors.primary}
-          />
-        }
-      >
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <TouchableOpacity
@@ -149,43 +135,55 @@ const CartScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.content}>
-          {loading ? (
-            <View style={styles.loadingContainer}>
-              <LottieView
-                source={require('../../assets/lottie/rocket.json')}
-                autoPlay
-                loop
-                style={styles.rocketLottie}
-              />
-              <Text style={styles.loadingText}>Memuat keranjang...</Text>
-            </View>
-          ) : cartItems.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>Your cart is empty</Text>
-            </View>
-          ) : (
-            <>
-              <FlatList
-                data={cartItems}
-                scrollEnabled={false}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <CartItemSwipeable
-                    item={item}
-                    onMinus={handleMinus}
-                    onPlus={handlePlus}
-                    onQuantityChange={handleQuantityChange}
-                    onDelete={handleDelete}
-                    formatPrice={formatPrice}
-                  />
-                )}
-              />
-              <View style={styles.bottomSpacer} />
-            </>
-          )}
-        </View>
-      </ScrollView>
+        <ScrollView 
+          style={styles.scrollView} 
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={[colors.primary]}
+              tintColor={colors.primary}
+            />
+          }
+        >
+          <View style={styles.content}>
+            {loading ? (
+              <View style={styles.loadingContainer}>
+                <LottieView
+                  source={require('../../assets/lottie/rocket.json')}
+                  autoPlay
+                  loop
+                  style={styles.rocketLottie}
+                />
+                <Text style={styles.loadingText}>Memuat keranjang...</Text>
+              </View>
+            ) : cartItems.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>Your cart is empty</Text>
+              </View>
+            ) : (
+              <>
+                <FlatList
+                  data={cartItems}
+                  scrollEnabled={false}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <CartItemSwipeable
+                      item={item}
+                      onMinus={handleMinus}
+                      onPlus={handlePlus}
+                      onQuantityChange={handleQuantityChange}
+                      onDelete={handleDelete}
+                      formatPrice={formatPrice}
+                    />
+                  )}
+                />
+                <View style={styles.bottomSpacer} />
+              </>
+            )}
+          </View>
+        </ScrollView>
 
       <View style={styles.footer}>
         <View style={styles.totalContainer}>
@@ -280,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   header: {
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   headerTop: {
     flexDirection: 'row',
@@ -315,7 +313,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 16,
+    paddingTop: 20,
     paddingBottom: 16,
   },
   cartItem: {

@@ -73,12 +73,11 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </View>
 
             <TouchableOpacity 
-              style={[styles.addButton, !product.isReady && styles.addButtonDisabled]} 
-              onPress={product.isReady ? onAddToCart : undefined}
-              disabled={!product.isReady}
+              style={styles.addButton} 
+              onPress={onAddToCart}
             >
               <Text style={styles.addButtonText}>
-                {product.isReady ? 'Add to Cart' : 'Stock Not Available'}
+                {product.isReady ? 'Add to Cart' : 'Order (Stock Tidak Ready)'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -228,10 +227,6 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  addButtonDisabled: {
-    backgroundColor: colors.grayInactive,
-    opacity: 0.5,
   },
   addButtonText: {
     fontSize: fonts.sizes.medium,
