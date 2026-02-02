@@ -162,6 +162,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
     setCategorySearchQuery('');
     setVehicleResults([]);
     setCategoryResults([]);
+    // Apply reset filter (undefined, undefined) to reload default /parts
+    onApply(undefined, undefined);
+    handleClose();
   };
 
   const translateY = slideAnim.interpolate({

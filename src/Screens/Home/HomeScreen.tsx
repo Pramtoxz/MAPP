@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -31,17 +32,21 @@ type HomeScreenNavigationProp = CompositeNavigationProp<
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const { userName, cartCount, campaigns, stats } = useHomeScreen();
+  const { userName, salesWhatsapp, cartCount, campaigns, stats } = useHomeScreen();
+
+  const handleChatMe = () => {
+    if (salesWhatsapp) {
+      Linking.openURL(salesWhatsapp).catch(err => {
+        console.error('Failed to open WhatsApp:', err);
+      });
+    }
+  };
 
   const menuItems = [
     { id: 1, icon: getImage('ic_spring.png'), label: 'PARTS', onPress: () => navigation.navigate('Parts') },
     { id: 2, icon: getImage('ic_dealer_active.png'), label: 'CATALOGUE', onPress: () => {} },
-    { id: 3, icon: getImage('ic_promotion.png'), label: 'PROMO', onPress: () => {} },
     { id: 4, icon: getImage('ic_cart_baru.png'), label: 'CART', badge: cartCount, onPress: () => navigation.navigate('Cart') },
-    { id: 5, icon: getImage('ic_menu_wallboard_en.png'), label: 'STATISTIK', onPress: () => navigation.navigate('Parts') },
-    { id: 6, icon: getImage('ic_spk.png'), label: 'CP', onPress: () => {} },
-    { id: 7, icon: getImage('ic_piala.png'), label: 'FAVORITE', onPress: () => {} },
-    { id: 8, icon: getImage('ic_contact_wa.png'), label: 'CHAT ME', onPress: () => {} },
+    { id: 8, icon: getImage('ic_contact_wa.png'), label: 'CHAT ME', onPress: handleChatMe },
   ];
 
   return (

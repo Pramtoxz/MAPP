@@ -17,4 +17,6 @@ export type RootStackParamList = {
   CampaignList: undefined;
   CampaignDetail: { campaignId: string };
   OrderDetail: { orderNumber: string };
+  EditProfile: undefined;
+  PrivacyPolicy: undefined;
 };

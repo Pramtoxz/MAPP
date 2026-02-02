@@ -123,6 +123,15 @@ export const usePartsScreen = () => {
     loadParts(true);
   }, []);
 
+  const handleSearchSubmit = useCallback(() => {
+    // Hide suggestions
+    setShowSuggestions(false);
+    setSearchSuggestions([]);
+    
+    // Load parts with current search query
+    loadParts(true);
+  }, [searchQuery, selectedCategory, selectedVehicleType]);
+
   const handleOpenFilter = useCallback(() => {
     setFilterModalVisible(true);
   }, []);
@@ -268,6 +277,7 @@ export const usePartsScreen = () => {
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,
+    handleSearchSubmit,
     handleRefresh,
     loadMore,
     loadParts,

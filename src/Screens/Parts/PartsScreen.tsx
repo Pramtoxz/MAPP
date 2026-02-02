@@ -60,6 +60,7 @@ const PartsScreen: React.FC = () => {
     handleSearch,
     handleSelectSuggestion,
     handleClearSearch,
+    handleSearchSubmit,
     handleRefresh,
     loadMore,
   } = usePartsScreen();
@@ -129,6 +130,8 @@ const PartsScreen: React.FC = () => {
               placeholderTextColor="#000"
               value={searchQuery}
               onChangeText={handleSearch}
+              onSubmitEditing={handleSearchSubmit}
+              returnKeyType="search"
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity 
@@ -170,10 +173,10 @@ const PartsScreen: React.FC = () => {
           zIndex: 9999,
         }}>
           <LottieView
-            source={require('../../assets/lottie/rocket.json')}
+            source={require('../../assets/lottie/rocket2.json')}
             autoPlay
             loop
-            style={{ width: 280, height: 280 }}
+            style={{ width: 500, height: 300 }}
           />
           <Text style={{ 
             marginTop: 32, 

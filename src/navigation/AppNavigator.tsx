@@ -11,6 +11,8 @@ import CartScreen from '../Screens/Cart/CartScreen';
 import CampaignListScreen from '../Screens/Campaign/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/Campaign/CampaignDetailScreen';
 import OrderDetailScreen from '../Screens/Order/OrderDetailScreen';
+import EditProfileScreen from '../Screens/Profile/EditProfileScreen';
+import PrivacyPolicyScreen from '../Screens/Profile/PrivacyPolicyScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -65,6 +67,20 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen 
           name="OrderDetail" 
           component={OrderDetailScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="EditProfile" 
+          component={EditProfileScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="PrivacyPolicy" 
+          component={PrivacyPolicyScreen}
           options={{
             presentation: 'card',
           }}

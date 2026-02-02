@@ -22,12 +22,36 @@ interface UserData {
   id: string;
   name: string;
   email: string | null;
-  role: string;
   dealerCode: string;
   dealerName: string;
+  salesName?: string;
+  salesWhatsapp?: string | null;
+  phone?: string;
+  address?: string;
+  npwp?: string;
+  city?: string | null;
+  province?: string | null;
 }
 
 export type { UserData };
+
+interface ProfileData {
+  email?: string;
+  phone?: string;
+  address?: string;
+  npwp?: string;
+  password?: string;
+  password_confirmation?: string;
+}
+
+interface UpdateProfileResponse {
+  success: boolean;
+  data?: UserData;
+  message?: string;
+  errors?: {
+    [key: string]: string[];
+  };
+}
 
 interface LoginResponse {
   success: boolean;
@@ -160,6 +184,54 @@ class AuthService {
     } catch (error) {
       console.error('Refresh profile error:', error);
       return null;
+    }
+  }
+
+  async updateProfile(
+    data: ProfileData,
+  ): Promise<{ success: boolean; message?: string; errors?: { [key: string]: string[] }; data?: UserData }> {
+    try {
+      const token = await this.getToken();
+
+      if (!token) {
+        return {
+          success: false,
+          message: 'Token tidak ditemukan',
+        };
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result: UpdateProfileResponse = await response.json();
+
+      if (result.success && result.data) {
+        // Update local storage with new data
+        await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data));
+        return {
+          success: true,
+          message: result.message || 'Profil berhasil diupdate',
+          data: result.data,
+        };
+      } else {
+        return {
+          success: false,
+          message: result.message || 'Gagal mengupdate profil',
+          errors: result.errors,
+        };
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+      return {
+        success: false,
+        message: 'Koneksi ke server gagal',
+      };
     }
   }
 

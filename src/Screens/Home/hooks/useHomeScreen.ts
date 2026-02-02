@@ -4,6 +4,7 @@ import { authService, campaignService, dashboardService, Campaign } from '../../
 
 export const useHomeScreen = () => {
   const [userName, setUserName] = useState('Loading...');
+  const [salesWhatsapp, setSalesWhatsapp] = useState<string | null>(null);
   const [cartCount, setCartCount] = useState(0);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [stats, setStats] = useState({
@@ -28,6 +29,7 @@ export const useHomeScreen = () => {
       const userData = await authService.getUserData();
       if (userData) {
         setUserName(userData.name);
+        setSalesWhatsapp(userData.salesWhatsapp || null);
       }
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -54,6 +56,7 @@ export const useHomeScreen = () => {
 
   return {
     userName,
+    salesWhatsapp,
     cartCount,
     campaigns,
     stats,

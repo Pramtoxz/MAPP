@@ -7,6 +7,8 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +21,7 @@ import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList, MainTabParamList } from '../../navigation/types';
 import CustomAlert from '../../components/CustomAlert';
+import LoadingDialog from '../../components/LoadingDialog';
 
 type ProfileScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'ProfileTab'>,
@@ -27,9 +30,14 @@ type ProfileScreenNavigationProp = CompositeNavigationProp<
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
-  const [dealerName, setDealerName] = useState('Loading...');
+  
+  // User data
+  const [dealerName, setDealerName] = useState('');
   const [dealerCode, setDealerCode] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+  const [email, setEmail] = useState('');
+  
+  // UI state
+  const [loading, setLoading] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false);
 
@@ -38,16 +46,14 @@ const ProfileScreen: React.FC = () => {
   }, []);
 
   const loadUserData = async () => {
-    try {
-      const userData = await authService.getUserData();
-      if (userData) {
-        setDealerName(userData.dealerName || userData.name);
-        setDealerCode(userData.dealerCode);
-        setUserEmail(userData.email || 'Login via WhatsApp');
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
+    setLoading(true);
+    const profile = await authService.refreshProfile();
+    if (profile) {
+      setEmail(profile.email || '');
+      setDealerName(profile.dealerName || profile.name);
+      setDealerCode(profile.dealerCode);
     }
+    setLoading(false);
   };
 
   const handleLogoutPress = () => {
@@ -81,26 +87,12 @@ const ProfileScreen: React.FC = () => {
     </TouchableOpacity>
   );
 
-  const StatBox = ({ value, label, icon }: any) => (
-    <View style={styles.statBox}>
-      <Image source={icon} style={styles.statIcon} />
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <Image source={getImage('bg_honda.webp')} style={styles.backgroundImage} />
 
-      <Image
-        source={getImage('bg_honda.webp')}
-        style={styles.backgroundImage}
-      />
+      <LoadingDialog visible={loading} message="Loading profile..." />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.headerSection}>
@@ -109,7 +101,7 @@ const ProfileScreen: React.FC = () => {
               <Image source={getImage('malogo.png')} style={styles.logo} />
             </View>
             <Text style={styles.userName}>{dealerName}</Text>
-            <Text style={styles.userEmail}>{userEmail}</Text>
+            <Text style={styles.userEmail}>{email || 'Login via WhatsApp'}</Text>
             <View style={styles.memberBadge}>
               <Text style={styles.memberText}>{dealerCode}</Text>
             </View>
@@ -117,43 +109,40 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.content}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Account Settings</Text>
-            <MenuItem
-              icon={getImage('ic_order.png')}
-              title="Order History"
-              subtitle="View all your past orders"
-              onPress={() => {}}
-            />
-            <MenuItem
-              icon={getImage('ic_notification.png')}
-              title="Notifications"
-              subtitle="Manage notification preferences"
-              onPress={() => {}}
-            />
-          </View>
+          {/* Menu Items */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Account Settings</Text>
+                <MenuItem
+                  icon={getImage('ic_profile.png')}
+                  title="My Profile"
+                  subtitle="Update your personal information"
+                  onPress={() => navigation.navigate('EditProfile')}
+                />
+                <MenuItem
+                  icon={getImage('ic_notification.png')}
+                  title="Notifications"
+                  subtitle="Manage notification preferences"
+                  onPress={() => {}}
+                />
+                <MenuItem
+                  icon={getImage('ic_order.png')}
+                  title="Order History"
+                  subtitle="View all your past orders"
+                  onPress={() => navigation.navigate('MainTabs', { screen: 'OrderTab' })}
+                />
+                <MenuItem
+                  icon={getImage('ic_book_knowledge.png')}
+                  title="Privacy & Policy"
+                  subtitle="Read our terms and policies"
+                  onPress={() => navigation.navigate('PrivacyPolicy')}
+                />
+              </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Support</Text>
-            <MenuItem
-              icon={getImage('ic_info_b.png')}
-              title="Help Center"
-              subtitle="Get help and support"
-              onPress={() => {}}
-            />
-            <MenuItem
-              icon={getImage('ic_book_knowledge.png')}
-              title="Terms & Conditions"
-              subtitle="Read our terms and policies"
-              onPress={() => {}}
-            />
-          </View>
+              <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
+                <Text style={styles.logoutButtonText}>Logout</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.versionText}>Version 1.0.0</Text>
+              <Text style={styles.versionText}>Version 1.0.0</Text>
         </View>
       </ScrollView>
 
@@ -194,11 +183,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    zIndex: -1, 
+    zIndex: -1,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
   },
   headerSection: {
     paddingTop: 40,
@@ -208,14 +197,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
   },
-logoContainer: {
+  logoContainer: {
     width: 80,
-    height: 80, 
+    height: 80,
     backgroundColor: colors.white,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16, 
+    marginBottom: 16,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -223,9 +212,9 @@ logoContainer: {
     elevation: 12,
   },
   logo: {
-    width: 50, 
+    width: 50,
     height: 50,
-    resizeMode: 'contain', 
+    resizeMode: 'contain',
   },
   userName: {
     fontSize: fonts.sizes.large,
@@ -264,37 +253,7 @@ logoContainer: {
     paddingHorizontal: 24,
     marginTop: -60,
     minHeight: 600,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 32,
-  },
-  statBox: {
-    flex: 1,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    marginHorizontal: 4,
-  },
-  statIcon: {
-    width: 32,
-    height: 32,
-    resizeMode: 'contain',
-    tintColor: colors.primary,
-    marginBottom: 8,
-  },
-  statValue: {
-    fontSize: fonts.sizes.large,
-    fontFamily: fonts.bold,
-    color: colors.black,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: fonts.sizes.tiny,
-    fontFamily: fonts.regular,
-    color: colors.grayText,
+    paddingBottom: 40,
   },
   section: {
     marginBottom: 24,
@@ -359,7 +318,6 @@ logoContainer: {
     transform: [{ rotate: '180deg' }],
   },
   logoutButton: {
-    flexDirection: 'row',
     backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
@@ -373,13 +331,6 @@ logoContainer: {
     shadowRadius: 8,
     elevation: 6,
   },
-  logoutIcon: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain',
-    tintColor: colors.white,
-    marginRight: 8,
-  },
   logoutButtonText: {
     fontSize: fonts.sizes.medium,
     fontFamily: fonts.bold,
@@ -390,7 +341,7 @@ logoContainer: {
     fontFamily: fonts.regular,
     color: colors.grayText,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 16,
   },
 });
 
