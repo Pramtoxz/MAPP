@@ -2,7 +2,6 @@ export { authService } from './auth';
 export { partsService } from './parts';
 export { cartService } from './cart';
 export { campaignService } from './campaign';
-export { dashboardService } from './dashboard';
 export { notificationService } from './notification';
 export { orderService } from './order';
 export { apiService } from './api';

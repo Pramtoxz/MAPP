@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, Dimensions, StyleSheet } from 'react-native';
-import CampaignCard from './CampaignCard';
 import { Campaign } from '../../services';
+import CampaignCard from './CampaignCard';
 
 interface CampaignSliderProps {
   campaigns: Campaign[];

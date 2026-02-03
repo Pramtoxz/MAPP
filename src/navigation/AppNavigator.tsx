@@ -6,7 +6,6 @@ import SplashScreen from '../components/SplashScreen';
 import LoginScreen from '../Screens/Auth/LoginScreen';
 import OtpVerifyScreen from '../Screens/Auth/OtpVerifyScreen';
 import MainTabNavigator from './MainTabNavigator';
-import PartsScreen from '../Screens/Parts/PartsScreen';
 import CartScreen from '../Screens/Cart/CartScreen';
 import CampaignListScreen from '../Screens/Campaign/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/Campaign/CampaignDetailScreen';
@@ -36,13 +35,6 @@ const AppNavigator: React.FC = () => {
           }}
         />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
-        <Stack.Screen 
-          name="Parts" 
-          component={PartsScreen}
-          options={{
-            presentation: 'card',
-          }}
-        />
         <Stack.Screen 
           name="Cart" 
           component={CartScreen}

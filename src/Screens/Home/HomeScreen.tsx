@@ -4,26 +4,29 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  StyleSheet,
   StatusBar,
-  ScrollView,
   TextInput,
+  FlatList,
   ActivityIndicator,
-  Linking,
+  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { colors } from '../../config/colors';
-import { fonts } from '../../config/fonts';
+import LottieView from 'lottie-react-native';
 import { getImage } from '../../assets/images';
 import { RootStackParamList, MainTabParamList } from '../../navigation/types';
-import QuickMenuButton from '../../components/home/QuickMenuButton';
+import ProductCard from '../../components/parts/ProductCard';
 import CampaignSlider from '../../components/home/CampaignSlider';
-import StatCard from '../../components/home/StatCard';
+import ProductDetailModal from '../../components/parts/ProductDetailModal';
+import QuantityModal from '../../components/parts/QuantityModal';
+import SearchSuggestions from '../../components/parts/SearchSuggestions';
+import FilterModal from '../../components/parts/FilterModal';
 import { useHomeScreen } from './hooks/useHomeScreen';
+import { colors } from '../../config/colors';
+import { fonts } from '../../config/fonts';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'HomeTab'>,
@@ -32,22 +35,57 @@ type HomeScreenNavigationProp = CompositeNavigationProp<
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const { userName, salesWhatsapp, cartCount, campaigns, stats } = useHomeScreen();
+  const {
+    cartCount,
+    detailModalVisible,
+    quantityModalVisible,
+    filterModalVisible,
+    selectedProduct,
+    products,
+    campaigns,
+    loading,
+    loadingMore,
+    hasMore,
+    searchQuery,
+    selectedVehicleType,
+    selectedCategory,
+    searchSuggestions,
+    showSuggestions,
+    searchingParts,
+    refreshing,
+    hasActiveFilters,
+    handleProductPress,
+    handleAddPress,
+    handleAddToCart,
+    handleConfirmQuantity,
+    handleCloseDetailModal,
+    handleCloseQuantityModal,
+    handleOpenFilter,
+    handleCloseFilter,
+    handleApplyFilter,
+    handleSearch,
+    handleSelectSuggestion,
+    handleClearSearch,
+    handleSearchSubmit,
+    handleRefresh,
+    loadMore,
+  } = useHomeScreen();
 
-  const handleChatMe = () => {
-    if (salesWhatsapp) {
-      Linking.openURL(salesWhatsapp).catch(err => {
-        console.error('Failed to open WhatsApp:', err);
-      });
-    }
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return (
+      <View style={{ padding: 20, alignItems: 'center' }}>
+        <ActivityIndicator size="small" color={colors.primary} />
+        <Text style={{ marginTop: 8, color: colors.grayText }}>Loading more...</Text>
+      </View>
+    );
   };
 
-  const menuItems = [
-    { id: 1, icon: getImage('ic_spring.png'), label: 'PARTS', onPress: () => navigation.navigate('Parts') },
-    { id: 2, icon: getImage('ic_dealer_active.png'), label: 'CATALOGUE', onPress: () => {} },
-    { id: 4, icon: getImage('ic_cart_baru.png'), label: 'CART', badge: cartCount, onPress: () => navigation.navigate('Cart') },
-    { id: 8, icon: getImage('ic_contact_wa.png'), label: 'CHAT ME', onPress: handleChatMe },
-  ];
+  const handleEndReached = () => {
+    if (hasMore && !loadingMore && !loading) {
+      loadMore();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -56,133 +94,190 @@ const HomeScreen: React.FC = () => {
         backgroundColor="transparent"
         barStyle="light-content"
       />
-      
+
       <Image
         source={getImage('bg_honda.webp')}
         style={styles.backgroundImage}
       />
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.headerContainer}>
-          <View style={styles.header}>
-            <View style={styles.headerTop}>
-              <View style={styles.headerLeft}>
-                <View style={styles.avatarContainer}>
-                  <Image
-                    source={getImage('lg_honda_kecil.jpg')}
-                    style={styles.avatar}
-                  />
-                </View>
-                <View>
-                  <Text style={styles.welcomeText}>SALAM SATU HATI,</Text>
-                  <Text style={styles.nameText}>{userName}</Text>
-                </View>
-              </View>
+      <View style={styles.headerWrapper}>
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <View style={styles.headerLeft}>
+              <Image source={getImage('lg_honda.webp')} style={styles.logo} />
+            </View>
+            <View style={styles.headerRight}>
+              <TouchableOpacity 
+                style={styles.cartButton}
+                onPress={() => navigation.navigate('Cart')}
+              >
+                <Image source={getImage('ic_cart_response.png')} style={styles.cartIcon} />
+                {cartCount > 0 && (
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>{cartCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
               <TouchableOpacity style={styles.notificationButton}>
-                <Image
-                  source={getImage('ic_notification.png')}
-                  style={styles.notificationIcon}
-                />
+                <Image source={getImage('ic_notification.png')} style={styles.notificationIcon} />
               </TouchableOpacity>
-            </View>
-
-            <View style={styles.searchContainer}>
-              <Image
-                source={getImage('ic_spring.png')}
-                style={styles.searchIcon}
-              />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search parts by number or name..."
-                placeholderTextColor="rgba(255, 255, 255, 0.4)"
-              />
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.whiteContainer}>
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>QUICK MENU</Text>
-            </View>
-            <View style={styles.sectionMenu}>
-              <View style={styles.quickMenuRow}>
-                {menuItems.slice(0, 4).map((item) => (
-                  <QuickMenuButton
-                    key={item.id}
-                    icon={item.icon}
-                    label={item.label}
-                    badge={item.badge}
-                    onPress={item.onPress}
-                  />
-                ))}
-              </View>
-              <View style={styles.quickMenuRow}>
-                {menuItems.slice(4, 8).map((item) => (
-                  <QuickMenuButton
-                    key={item.id}
-                    icon={item.icon}
-                    label={item.label}
-                    badge={item.badge}
-                    onPress={item.onPress}
-                  />
-                ))}
-              </View>
             </View>
           </View>
 
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>CURRENT CAMPAIGN</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
-                <Text style={styles.viewAllText}>View All</Text>
+          <View style={styles.searchContainer}>
+            <Image source={getImage('ic_search.png')} style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Parts Number / Parts Name"
+              placeholderTextColor="#000"
+              value={searchQuery}
+              onChangeText={handleSearch}
+              onSubmitEditing={handleSearchSubmit}
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity 
+                style={styles.clearButton}
+                onPress={handleClearSearch}
+              >
+                <Image source={getImage('ic_close_rounded.png')} style={styles.clearIcon} />
               </TouchableOpacity>
-            </View>
-            {campaigns.length > 0 ? (
-              <CampaignSlider
-                campaigns={campaigns}
-                onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
-                autoSlide={true}
-                interval={3000}
-              />
-            ) : (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color={colors.primary} />
-              </View>
             )}
+            <TouchableOpacity 
+              style={styles.filterButton}
+              onPress={handleOpenFilter}
+            >
+              <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
+              {hasActiveFilters && <View style={styles.filterBadge} />}
+            </TouchableOpacity>
           </View>
+        </View>
 
-          <View style={styles.section}>
-            <View style={styles.statsContainer}>
-              <StatCard
-                value={stats.deliveryProgress}
-                icon={
-                  <Image
-                    source={getImage('ic_pin_map.png')}
-                    style={styles.statIcon}
-                  />
-                }
-              />
-              <View style={styles.statSpacer} />
-              <StatCard
-                value={stats.monthlyBuyIn}
-                icon={
-                  <Image
-                    source={getImage('ic_checklist_enable.png')}
-                    style={styles.statIcon}
-                  />
-                }
+        {showSuggestions && (
+          <SearchSuggestions
+            suggestions={searchSuggestions}
+            loading={searchingParts}
+            onSelect={handleSelectSuggestion}
+          />
+        )}
+      </View>
+
+      {loading ? (
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: colors.white,
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <LottieView
+            source={require('../../assets/lottie/rocket2.json')}
+            autoPlay
+            loop
+            style={{ width: 500, height: 300 }}
+          />
+          <Text style={{ 
+            marginTop: 32, 
+            fontSize: 20, 
+            fontWeight: 'bold', 
+            color: colors.primary 
+          }}>
+            Sedang Menyiapkan
+          </Text>
+          <Text style={{ 
+            marginTop: 8, 
+            fontSize: 14, 
+            color: colors.grayText 
+          }}>
+            Mohon Tunggu Sebentar, Ga Bakal Lama Kok...
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={products}
+          numColumns={2}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          style={{ backgroundColor: colors.white }}
+          contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 16, paddingBottom: 20 }}
+          ListHeaderComponent={
+            <View style={{ marginHorizontal: -8, marginTop: -16 }}>
+              <View style={styles.campaignSection}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Campaign</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('CampaignList')}>
+                    <Text style={styles.seeMoreText}>See More &gt;</Text>
+                  </TouchableOpacity>
+                </View>
+                {campaigns.length > 0 ? (
+                  <View style={styles.campaignWrapper}>
+                    <CampaignSlider
+                      campaigns={campaigns}
+                      onPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
+                      autoSlide={true}
+                      interval={3000}
+                    />
+                  </View>
+                ) : (
+                  <View style={{ padding: 20, alignItems: 'center' }}>
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  </View>
+                )}
+              </View>
+            </View>
+          }
+          columnWrapperStyle={styles.productRow}
+          renderItem={({ item }) => (
+            <View style={styles.productWrapper}>
+              <ProductCard
+                image={item.image}
+                partNumber={item.partNumber}
+                name={item.name}
+                price={item.price}
+                isReady={item.isReady}
+                onPress={() => handleProductPress(item)}
+                onAddPress={() => handleAddPress(item)}
               />
             </View>
-          </View>
+          )}
+          ListEmptyComponent={
+            <View style={{ padding: 40, alignItems: 'center' }}>
+              <Text style={{ color: colors.grayText }}>No parts found</Text>
+            </View>
+          }
+          ListFooterComponent={renderFooter}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+        />
+      )}
 
-          <View style={styles.bottomSpacer} />
-        </View>
-      </ScrollView>
+      <ProductDetailModal
+        visible={detailModalVisible}
+        onClose={handleCloseDetailModal}
+        product={selectedProduct}
+        onAddToCart={handleAddToCart}
+      />
+
+      <QuantityModal
+        visible={quantityModalVisible}
+        onClose={handleCloseQuantityModal}
+        product={selectedProduct}
+        onConfirm={handleConfirmQuantity}
+      />
+
+      <FilterModal
+        visible={filterModalVisible}
+        onClose={handleCloseFilter}
+        selectedVehicleType={selectedVehicleType}
+        selectedCategory={selectedCategory}
+        onApply={handleApplyFilter}
+      />
     </SafeAreaView>
   );
 };
@@ -198,9 +293,10 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  headerContainer: {
+  headerWrapper: {
     backgroundColor: 'transparent',
-    paddingBottom: 40,
+    paddingBottom: 16,
+    zIndex: 10,
   },
   header: {
     paddingHorizontal: 24,
@@ -210,45 +306,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
     flex: 1,
   },
-  avatarContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.white,
-    overflow: 'hidden',
-    marginRight: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
-    padding: 8,
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
+  logo: {
+    width: 120,
+    height: 40,
     resizeMode: 'contain',
   },
-  welcomeText: {
-    fontSize: fonts.sizes.small,
-    fontFamily: fonts.regular,
-    color: colors.white,
-    letterSpacing: 1.5,
-    marginBottom: 2,
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  nameText: {
-    fontSize: fonts.sizes.medium,
-    fontFamily: fonts.bold,
+  cartButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    tintColor: colors.white,
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+  },
+  cartBadgeText: {
     color: colors.white,
+    fontSize: 10,
+    fontFamily: fonts.bold,
   },
   notificationButton: {
     width: 40,
@@ -267,9 +369,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: colors.white,
     borderRadius: 16,
     paddingHorizontal: 16,
     height: 48,
@@ -278,81 +378,74 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     resizeMode: 'contain',
-    tintColor: 'rgba(255, 255, 255, 0.5)',
+    tintColor: colors.grayText,
     marginRight: 12,
   },
   searchInput: {
     flex: 1,
     fontSize: fonts.sizes.default,
     fontFamily: fonts.regular,
-    color: colors.white,
+    color: colors.black,
   },
-  scrollView: {
-    flex: 1,
+  clearButton: {
+    padding: 4,
+    marginRight: 8,
   },
-  scrollContent: {
-    flexGrow: 1,
+  clearIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    tintColor: colors.grayText,
   },
-  whiteContainer: {
+  filterButton: {
+    padding: 4,
+  },
+  filterIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    tintColor: colors.grayText,
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
+  },
+  campaignSection: {
     backgroundColor: colors.white,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
     paddingTop: 24,
     paddingHorizontal: 24,
-    marginTop: -20,
-  },
-  sectionMenu: {
-    backgroundColor: colors.primary,
-    borderRadius: 22,
-    padding: 16,
-  },
-  quickMenuRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16,
-  },
-  section: {
-    marginBottom: 24,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: fonts.sizes.small,
+    fontSize: fonts.sizes.medium,
     fontFamily: fonts.bold,
-    color: colors.grayText,
-    letterSpacing: 1.2,
+    color: colors.black,
   },
-  viewAllText: {
+  seeMoreText: {
     fontSize: fonts.sizes.small,
-    fontFamily: fonts.bold,
+    fontFamily: fonts.semibold,
     color: colors.primary,
   },
-  statsContainer: {
-    flexDirection: 'row',
+  campaignWrapper: {
+    marginBottom: 24,
   },
-  statSpacer: {
-    width: 16,
+  productRow: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
   },
-  statIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain',
-  },
-  loadingContainer: {
-    padding: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.grayBorder,
-  },
-  bottomSpacer: {
-    height: 100,
+  productWrapper: {
+    width: '48%',
+    marginBottom: 16,
   },
 });
 

@@ -12,7 +12,6 @@ export type RootStackParamList = {
   Login: undefined;
   OtpVerify: { phone: string };
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
-  Parts: undefined;
   Cart: undefined;
   CampaignList: undefined;
   CampaignDetail: { campaignId: string };

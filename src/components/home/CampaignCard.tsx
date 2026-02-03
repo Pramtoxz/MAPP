@@ -1,83 +1,89 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 
 interface CampaignCardProps {
+  badge?: string;
   title: string;
   description: string;
-  badge: string;
-  image?: string;
+  image: string;
   onPress: () => void;
 }
 
-const CampaignCard: React.FC<CampaignCardProps> = ({ title, description, badge, image, onPress }) => {
+const CampaignCard: React.FC<CampaignCardProps> = ({
+  badge,
+  title,
+  description,
+  image,
+  onPress,
+}) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
-      <Image 
-        source={{ uri: image || 'https://hondampspandeglang.com/wp-content/uploads/2021/09/banner-program-sales-genio-1-02082021-094721.png' }}
-        style={styles.backgroundImage}
-      />
-      <View style={styles.overlay} />
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
+      <Image source={{ uri: image }} style={styles.image} />
       <View style={styles.content}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{badge}</Text>
-        </View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        {badge && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{badge}</Text>
+          </View>
+        )}
+        <Text style={styles.title} numberOfLines={2}>
+          {title}
+        </Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {description}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    height: 180,
+  card: {
+    backgroundColor: colors.white,
     borderRadius: 16,
     overflow: 'hidden',
-    backgroundColor: '#8B7355',
+    borderWidth: 1,
+    borderColor: colors.grayBorder,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  backgroundImage: {
-    position: 'absolute',
+  image: {
     width: '100%',
-    height: '100%',
+    height: 160,
     resizeMode: 'cover',
   },
-  overlay: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
   content: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'flex-end',
+    padding: 16,
   },
   badge: {
+    alignSelf: 'flex-start',
     backgroundColor: colors.primary,
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-    marginBottom: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 8,
   },
   badgeText: {
     fontSize: fonts.sizes.tiny,
     fontFamily: fonts.bold,
     color: colors.white,
+    letterSpacing: 0.5,
   },
   title: {
-    fontSize: fonts.sizes.large,
+    fontSize: fonts.sizes.medium,
     fontFamily: fonts.bold,
-    color: colors.white,
-    marginBottom: 8,
+    color: colors.black,
+    marginBottom: 4,
   },
   description: {
     fontSize: fonts.sizes.small,
     fontFamily: fonts.regular,
-    color: colors.white,
-    opacity: 0.9,
+    color: colors.grayText,
+    lineHeight: 18,
   },
 });
 
