@@ -22,13 +22,31 @@ Accept: application/json
 
 **Endpoint:** `GET /orders`
 
-**Description:** Mendapatkan list order history user
+**Description:** Mendapatkan list order history user dengan filter
 
 **Query Parameters:**
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | dari | string | No | Tanggal awal (format: YYYY-MM-DD) |
 | sampai | string | No | Tanggal akhir (format: YYYY-MM-DD) |
+| filter | string | No | Filter status: `pending`, `completed`, `back_order` |
+| limit | integer | No | Jumlah data (default: 20) |
+
+**Filter Values:**
+- `pending` - Order yang belum di-approve (status: Waiting For Approval)
+- `completed` - Order yang sudah approve DAN sudah selesai semua (back order = 0)
+- `back_order` - Order yang sudah approve TAPI masih ada back order (back order > 0)
+- Kosongkan untuk tampilkan semua
+
+**Example Requests:**
+```
+GET /orders                           # Semua order
+GET /orders?filter=pending            # Belum di-approve
+GET /orders?filter=completed          # Sudah selesai semua
+GET /orders?filter=back_order         # Masih ada back order
+GET /orders?dari=2026-01-01&sampai=2026-02-05
+GET /orders?filter=completed&limit=50
+```
 
 **Response Success (200):**
 ```json
@@ -43,7 +61,27 @@ Accept: application/json
         "orderType": "Other",
         "orderDate": "2026-02-03 12:41:56",
         "grandTotal": 8780000,
-        "status": "Approve"
+        "status": "Approve",
+        "fulfillment": {
+          "totalQtyOrder": 40,
+          "totalQtyDelivered": 0,
+          "totalQtyBackOrder": 40,
+          "isCompleted": false
+        }
+      },
+      {
+        "id": "2025/023311/POD-PD",
+        "orderNumber": "2025/023311/POD-PD",
+        "orderType": "Other",
+        "orderDate": "2025-09-03 09:01:50",
+        "grandTotal": 145776000,
+        "status": "Approve",
+        "fulfillment": {
+          "totalQtyOrder": 2225,
+          "totalQtyDelivered": 2225,
+          "totalQtyBackOrder": 0,
+          "isCompleted": true
+        }
       }
     ]
   }
@@ -54,6 +92,12 @@ Accept: application/json
 - `Waiting For Approval` - Order baru, menunggu approve admin
 - `Approve` - Order sudah diapprove
 - `Reject` - Order ditolak
+
+**Fulfillment Object:**
+- `totalQtyOrder` - Total quantity yang di-order
+- `totalQtyDelivered` - Total quantity yang sudah dikirim
+- `totalQtyBackOrder` - Total quantity yang masih pending
+- `isCompleted` - `true` jika semua sudah dikirim, `false` jika masih ada back order
 
 ---
 
@@ -284,11 +328,14 @@ GET /orders/2026/003395/POD-PD/back-order
 
 ## 📊 Use Cases
 
-### Use Case 1: Tampilkan Order History
+### Use Case 1: Tampilkan Order History dengan Filter
 ```
-1. Call GET /orders
-2. Tampilkan list order dengan status
-3. User tap order → navigate ke detail
+1. Default: Call GET /orders (tampilkan semua)
+2. User tap tab "Pending": Call GET /orders?filter=pending
+3. User tap tab "Back Order": Call GET /orders?filter=back_order
+4. User tap tab "Selesai": Call GET /orders?filter=completed
+5. Tampilkan list order dengan badge status dan fulfillment
+6. User tap order → navigate ke detail
 ```
 
 ### Use Case 2: Tampilkan Order Detail dengan Fulfillment Info
@@ -316,10 +363,33 @@ GET /orders/2026/003395/POD-PD/back-order
 
 ## 🎨 UI Recommendations
 
+### Order List Tabs/Filter:
+```
+[Semua] [Pending] [Back Order] [Selesai]
+```
+
 ### Order Status Badge:
 - `Waiting For Approval` → Badge kuning/orange
 - `Approve` → Badge hijau
 - `Reject` → Badge merah
+
+### Fulfillment Badge (untuk order yang Approve):
+- `isCompleted: true` → Badge hijau "Selesai"
+- `isCompleted: false` → Badge kuning "Back Order"
+
+### Order Card Example:
+```
+┌─────────────────────────────────────┐
+│ 2026/003395/POD-PD                  │
+│ 03 Feb 2026, 12:41                  │
+│                                     │
+│ Rp 8.780.000                        │
+│ [Approve] [Back Order]              │
+│                                     │
+│ Order: 40 | Kirim: 0 | Sisa: 40    │
+│ ▓▓▓░░░░░░░ 0%                       │
+└─────────────────────────────────────┘
+```
 
 ### Fulfillment Progress:
 ```

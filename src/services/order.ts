@@ -42,6 +42,12 @@ export interface Order {
   orderDate: string;
   grandTotal: number;
   status: string;
+  fulfillment?: {
+    totalQtyOrder: number;
+    totalQtyDelivered: number;
+    totalQtyBackOrder: number;
+    isCompleted: boolean;
+  };
 }
 
 export interface OrderDetail extends Order {
@@ -74,6 +80,8 @@ interface OrderListResponse {
 interface OrderListParams {
   dari?: string;
   sampai?: string;
+  filter?: 'pending' | 'completed' | 'back_order';
+  limit?: number;
 }
 
 class OrderService {
@@ -82,6 +90,8 @@ class OrderService {
 
     if (params?.dari) queryParams.append('dari', params.dari);
     if (params?.sampai) queryParams.append('sampai', params.sampai);
+    if (params?.filter) queryParams.append('filter', params.filter);
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
 
     const query = queryParams.toString();
     const endpoint = query ? `/orders?${query}` : '/orders';

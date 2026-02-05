@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  ActivityIndicator,
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +15,9 @@ import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
-import { orderService, BackOrderResponse, BackOrderItem } from '../../services';
+import { orderService, BackOrderResponse } from '../../services';
+import { OrderItemCard, OrderInfoSection, BackOrderNotice } from './components';
+import { LoadingOverlay } from '../Home/components/LoadingOverlay';
 
 type BackOrderScreenRouteProp = RouteProp<RootStackParamList, 'BackOrder'>;
 type BackOrderScreenNavigationProp = StackNavigationProp<RootStackParamList>;
@@ -58,6 +59,13 @@ const BackOrderScreen: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
+  const renderEmptyState = () => (
+    <View style={styles.emptyContainer}>
+      <Image source={getImage('es_done.webp')} style={styles.emptyImage} />
+      <Text style={styles.emptyText}>Semua item sudah dikirim</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
@@ -72,100 +80,55 @@ const BackOrderScreen: React.FC = () => {
         <View style={styles.headerRight} />
       </View>
 
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.white} />
-          <Text style={styles.loadingText}>Memuat back order...</Text>
-        </View>
-      ) : backOrder ? (
+      {backOrder ? (
         <ScrollView 
           style={styles.content} 
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <View style={styles.infoSection}>
-            <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>No. Order</Text>
-              <Text style={styles.infoValue}>{backOrder.orderNumber}</Text>
-            </View>
-            <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>Tanggal Order</Text>
-              <Text style={styles.infoValue}>{formatDate(backOrder.orderDate)}</Text>
-            </View>
-            <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>Total Back Order</Text>
-              <Text style={[styles.infoValue, { color: '#FF9800' }]}>
-                {backOrder.totalBackOrderQty} pcs
-              </Text>
-            </View>
-          </View>
+          <OrderInfoSection
+            items={[
+              { label: 'No. Order', value: backOrder.orderNumber },
+              { label: 'Tanggal Order', value: formatDate(backOrder.orderDate) },
+              { 
+                label: 'Total Back Order', 
+                value: (
+                  <Text style={[styles.infoValue, { color: '#FF9800' }]}>
+                    {backOrder.totalBackOrderQty} pcs
+                  </Text>
+                )
+              },
+            ]}
+          />
 
-          <View style={styles.noticeSection}>
-            <Image source={getImage('ic_info_badge.png')} style={styles.noticeIcon} />
-            <Text style={styles.noticeText}>
-              Barang sedang dalam proses pengiriman. Silahkan hubungi sales untuk informasi lebih lanjut.
-            </Text>
-          </View>
+          <BackOrderNotice />
 
           <View style={styles.itemsSection}>
             <Text style={styles.sectionTitle}>Item Back Order</Text>
             
             {backOrder.backOrderItems.length > 0 ? (
-              backOrder.backOrderItems.map((item: BackOrderItem, index: number) => (
-                <View key={index} style={styles.itemCard}>
-                  <View style={styles.itemRow}>
-                    {item.image && (
-                      <Image 
-                        source={{ uri: item.image }} 
-                        style={styles.itemImage}
-                        defaultSource={getImage('es_no_data.webp')}
-                      />
-                    )}
-                    <View style={styles.itemInfo}>
-                      <Text style={styles.partNumber}>{item.partNumber}</Text>
-                      <Text style={styles.partName} numberOfLines={2}>{item.partName}</Text>
-                      <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.qtySection}>
-                    <View style={styles.qtyRow}>
-                      <Text style={styles.qtyLabel}>Order Qty:</Text>
-                      <Text style={styles.qtyValue}>{item.orderQty} pcs</Text>
-                    </View>
-                    <View style={styles.qtyRow}>
-                      <Text style={[styles.qtyLabel, { color: '#4CAF50' }]}>Delivered:</Text>
-                      <Text style={[styles.qtyValue, { color: '#4CAF50' }]}>
-                        {item.deliveryQty} pcs
-                      </Text>
-                    </View>
-                    <View style={styles.qtyRow}>
-                      <Text style={[styles.qtyLabel, { color: '#FF9800' }]}>Back Order:</Text>
-                      <Text style={[styles.qtyValue, { color: '#FF9800' }]}>
-                        {item.backOrderQty} pcs
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.statusBadge}>
-                    <Image source={getImage('ic_waiting_list.png')} style={styles.statusIcon} />
-                    <Text style={styles.statusText}>Menunggu Pengiriman</Text>
-                  </View>
-                </View>
+              backOrder.backOrderItems.map((item, index) => (
+                <OrderItemCard
+                  key={index}
+                  partNumber={item.partNumber}
+                  partName={item.partName}
+                  image={item.image}
+                  price={item.price}
+                  orderQty={item.orderQty}
+                  deliveryQty={item.deliveryQty}
+                  backOrderQty={item.backOrderQty}
+                  showProgress={false}
+                  formatPrice={formatPrice}
+                />
               ))
             ) : (
-              <View style={styles.emptyContainer}>
-                <Image source={getImage('es_done.webp')} style={styles.emptyImage} />
-                <Text style={styles.emptyText}>Semua item sudah dikirim</Text>
-              </View>
+              renderEmptyState()
             )}
           </View>
         </ScrollView>
-      ) : (
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Tidak ada data</Text>
-        </View>
-      )}
+      ) : null}
+
+      {loading && <LoadingOverlay />}
     </SafeAreaView>
   );
 };
@@ -209,17 +172,6 @@ const styles = StyleSheet.create({
   headerRight: {
     width: 40,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: fonts.sizes.default,
-    fontFamily: fonts.regular,
-    color: colors.white,
-  },
   content: {
     flex: 1,
     backgroundColor: colors.white,
@@ -230,48 +182,10 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,
   },
-  infoSection: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  infoLabel: {
-    fontSize: fonts.sizes.default,
-    fontFamily: fonts.regular,
-    color: colors.grayText,
-  },
   infoValue: {
     fontSize: fonts.sizes.default,
     fontFamily: fonts.semibold,
     color: colors.black,
-  },
-  noticeSection: {
-    flexDirection: 'row',
-    backgroundColor: '#FFF3E0',
-    marginHorizontal: 16,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  noticeIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-    marginRight: 8,
-  },
-  noticeText: {
-    flex: 1,
-    fontSize: fonts.sizes.tiny,
-    fontFamily: fonts.regular,
-    color: '#E65100',
   },
   itemsSection: {
     paddingHorizontal: 16,
@@ -281,83 +195,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     color: colors.black,
     marginBottom: 12,
-  },
-  itemCard: {
-    backgroundColor: '#F8F8F8',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    marginBottom: 12,
-  },
-  itemImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: colors.white,
-    marginRight: 12,
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  partNumber: {
-    fontSize: fonts.sizes.default,
-    fontFamily: fonts.bold,
-    color: colors.black,
-    marginBottom: 4,
-  },
-  partName: {
-    fontSize: fonts.sizes.tiny,
-    fontFamily: fonts.regular,
-    color: colors.grayText,
-    marginBottom: 4,
-  },
-  itemPrice: {
-    fontSize: fonts.sizes.default,
-    fontFamily: fonts.semibold,
-    color: colors.black,
-  },
-  qtySection: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  qtyRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  qtyLabel: {
-    fontSize: fonts.sizes.tiny,
-    fontFamily: fonts.regular,
-    color: colors.grayText,
-  },
-  qtyValue: {
-    fontSize: fonts.sizes.tiny,
-    fontFamily: fonts.bold,
-    color: colors.black,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF3E0',
-    borderRadius: 8,
-    padding: 8,
-  },
-  statusIcon: {
-    width: 16,
-    height: 16,
-    resizeMode: 'contain',
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: fonts.sizes.tiny,
-    fontFamily: fonts.semibold,
-    color: '#FF9800',
   },
   emptyContainer: {
     alignItems: 'center',

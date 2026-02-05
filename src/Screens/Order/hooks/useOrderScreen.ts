@@ -13,42 +13,38 @@ export interface OrderWithDetails extends Order {
   totalQty?: number;
 }
 
+type FilterType = 'all' | 'pending' | 'completed' | 'back_order';
+
 export const useOrderScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [allOrders, setAllOrders] = useState<OrderWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState<FilterType>('all');
 
   useEffect(() => {
     loadOrders();
   }, []);
 
-  const loadOrders = async (dari?: string, sampai?: string) => {
+  const loadOrders = async (dari?: string, sampai?: string, filter?: FilterType) => {
     setLoading(true);
     try {
-      const result = await orderService.getOrderList({ dari, sampai });
+      const apiFilter = filter && filter !== 'all' ? filter : undefined;
+      const result = await orderService.getOrderList({ 
+        dari, 
+        sampai,
+        filter: apiFilter as 'pending' | 'completed' | 'back_order' | undefined
+      });
+      
       if (result.success && result.data) {
-        const ordersWithDetails = await Promise.all(
-          (result.data.items || []).map(async (order) => {
-            try {
-              const detailResult = await orderService.getOrderDetail(order.orderNumber);
-              if (detailResult.success && detailResult.data) {
-                const detail = detailResult.data;
-                return {
-                  ...order,
-                  hasBackOrder: detail.summary?.totalQtyBackOrder > 0,
-                  backOrderQty: detail.summary?.totalQtyBackOrder || 0,
-                  deliveredQty: detail.summary?.totalQtyDelivered || 0,
-                  totalQty: detail.summary?.totalQtyOrder || 0,
-                };
-              }
-            } catch (error) {
-              console.error(`Error loading detail for ${order.orderNumber}:`, error);
-            }
-            return order;
-          })
-        );
-        setAllOrders(ordersWithDetails);
+        const orders = (result.data.items || []).map(order => ({
+          ...order,
+          hasBackOrder: order.fulfillment ? order.fulfillment.totalQtyBackOrder > 0 : false,
+          backOrderQty: order.fulfillment?.totalQtyBackOrder || 0,
+          deliveredQty: order.fulfillment?.totalQtyDelivered || 0,
+          totalQty: order.fulfillment?.totalQtyOrder || 0,
+        }));
+        setAllOrders(orders);
       } else {
         console.error('Failed to load orders:', result.error);
         setAllOrders([]);
@@ -62,8 +58,13 @@ export const useOrderScreen = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadOrders();
+    await loadOrders(undefined, undefined, currentFilter);
     setRefreshing(false);
+  };
+
+  const handleFilterChange = (filter: FilterType, dari?: string, sampai?: string) => {
+    setCurrentFilter(filter);
+    loadOrders(dari, sampai, filter);
   };
 
   const handleOrderPress = (order: Order) => {
@@ -113,8 +114,10 @@ export const useOrderScreen = () => {
     allOrders,
     loading,
     refreshing,
+    currentFilter,
     handleOrderPress,
     handleRefresh,
+    handleFilterChange,
     loadOrders,
     getHistoryOrders,
     getBackOrders,
