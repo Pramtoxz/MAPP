@@ -2,13 +2,20 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/types';
-import { orderService, Order } from '../../../services';
+import { orderService, Order, OrderDetail } from '../../../services';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
+export interface OrderWithDetails extends Order {
+  hasBackOrder?: boolean;
+  backOrderQty?: number;
+  deliveredQty?: number;
+  totalQty?: number;
+}
+
 export const useOrderScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [allOrders, setAllOrders] = useState<OrderWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -21,14 +28,34 @@ export const useOrderScreen = () => {
     try {
       const result = await orderService.getOrderList({ dari, sampai });
       if (result.success && result.data) {
-        setOrders(result.data.items || []);
+        const ordersWithDetails = await Promise.all(
+          (result.data.items || []).map(async (order) => {
+            try {
+              const detailResult = await orderService.getOrderDetail(order.orderNumber);
+              if (detailResult.success && detailResult.data) {
+                const detail = detailResult.data;
+                return {
+                  ...order,
+                  hasBackOrder: detail.summary?.totalQtyBackOrder > 0,
+                  backOrderQty: detail.summary?.totalQtyBackOrder || 0,
+                  deliveredQty: detail.summary?.totalQtyDelivered || 0,
+                  totalQty: detail.summary?.totalQtyOrder || 0,
+                };
+              }
+            } catch (error) {
+              console.error(`Error loading detail for ${order.orderNumber}:`, error);
+            }
+            return order;
+          })
+        );
+        setAllOrders(ordersWithDetails);
       } else {
         console.error('Failed to load orders:', result.error);
-        setOrders([]);
+        setAllOrders([]);
       }
     } catch (error) {
       console.error('Error loading orders:', error);
-      setOrders([]);
+      setAllOrders([]);
     }
     setLoading(false);
   };
@@ -41,6 +68,20 @@ export const useOrderScreen = () => {
 
   const handleOrderPress = (order: Order) => {
     navigation.navigate('OrderDetail', { orderNumber: order.orderNumber });
+  };
+
+  const getHistoryOrders = () => {
+    return allOrders;
+  };
+
+  const getBackOrders = () => {
+    return allOrders.filter(order => order.hasBackOrder);
+  };
+
+  const getFulfillmentOrders = () => {
+    return allOrders.filter(order => 
+      order.deliveredQty !== undefined && order.deliveredQty > 0
+    );
   };
 
   const formatPrice = (price: number) => {
@@ -59,9 +100,9 @@ export const useOrderScreen = () => {
     switch (status) {
       case 'Waiting For Approval':
         return '#FF9800';
-      case 'Approved':
+      case 'Approve':
         return '#4CAF50';
-      case 'Rejected':
+      case 'Reject':
         return '#F44336';
       default:
         return '#757575';
@@ -69,12 +110,15 @@ export const useOrderScreen = () => {
   };
 
   return {
-    orders,
+    allOrders,
     loading,
     refreshing,
     handleOrderPress,
     handleRefresh,
     loadOrders,
+    getHistoryOrders,
+    getBackOrders,
+    getFulfillmentOrders,
     formatPrice,
     formatDate,
     getStatusColor,

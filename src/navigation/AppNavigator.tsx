@@ -10,6 +10,7 @@ import CartScreen from '../Screens/Cart/CartScreen';
 import CampaignListScreen from '../Screens/Campaign/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/Campaign/CampaignDetailScreen';
 import OrderDetailScreen from '../Screens/Order/OrderDetailScreen';
+import BackOrderScreen from '../Screens/Order/BackOrderScreen';
 import EditProfileScreen from '../Screens/Profile/EditProfileScreen';
 import PrivacyPolicyScreen from '../Screens/Profile/PrivacyPolicyScreen';
 
@@ -59,6 +60,13 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen 
           name="OrderDetail" 
           component={OrderDetailScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="BackOrder" 
+          component={BackOrderScreen}
           options={{
             presentation: 'card',
           }}

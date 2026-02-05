@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   StatusBar,
   RefreshControl,
+  Modal,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -17,27 +19,62 @@ import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
-import { useOrderScreen } from './hooks/useOrderScreen';
-import { Order } from '../../services';
+import { useOrderScreen, OrderWithDetails } from './hooks/useOrderScreen';
 
 type OrderScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const OrderScreen: React.FC = () => {
   const navigation = useNavigation<OrderScreenNavigationProp>();
   const {
-    orders,
+    allOrders,
     loading,
     refreshing,
     handleOrderPress,
     handleRefresh,
+    loadOrders,
+    getHistoryOrders,
+    getBackOrders,
+    getFulfillmentOrders,
     formatPrice,
     formatDate,
     getStatusColor,
   } = useOrderScreen();
 
   const [activeTab, setActiveTab] = useState<'history' | 'backorder' | 'fulfillment'>('history');
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
-  const renderOrderItem = ({ item }: { item: Order }) => (
+  const displayedOrders = useMemo(() => {
+    switch (activeTab) {
+      case 'history':
+        return getHistoryOrders();
+      case 'backorder':
+        return getBackOrders();
+      case 'fulfillment':
+        return getFulfillmentOrders();
+      default:
+        return [];
+    }
+  }, [activeTab, allOrders]);
+
+  const handleApplyFilter = () => {
+    loadOrders(startDate, endDate);
+    setShowDateFilter(false);
+  };
+
+  const handleClearFilter = () => {
+    setStartDate('');
+    setEndDate('');
+    loadOrders();
+    setShowDateFilter(false);
+  };
+
+  const handleBackOrderPress = (order: OrderWithDetails) => {
+    navigation.navigate('BackOrder', { orderNumber: order.orderNumber });
+  };
+
+  const renderOrderItem = ({ item }: { item: OrderWithDetails }) => (
     <TouchableOpacity style={styles.orderCard} onPress={() => handleOrderPress(item)}>
       <View style={styles.orderHeader}>
         <Text style={styles.orderNumber}>{item.orderNumber}</Text>
@@ -46,6 +83,50 @@ const OrderScreen: React.FC = () => {
         </View>
       </View>
       <Text style={styles.orderType}>{item.orderType}</Text>
+      
+      {activeTab === 'backorder' && item.backOrderQty !== undefined && (
+        <View style={styles.backOrderInfo}>
+          <Image source={getImage('ic_waiting_list.png')} style={styles.infoIcon} />
+          <Text style={styles.backOrderInfoText}>
+            Back Order: {item.backOrderQty} pcs dari {item.totalQty} pcs
+          </Text>
+        </View>
+      )}
+
+      {activeTab === 'fulfillment' && item.deliveredQty !== undefined && (
+        <View style={styles.fulfillmentInfo}>
+          <View style={styles.fulfillmentRow}>
+            <Text style={styles.fulfillmentLabel}>Total Order:</Text>
+            <Text style={styles.fulfillmentValue}>{item.totalQty} pcs</Text>
+          </View>
+          <View style={styles.fulfillmentRow}>
+            <Text style={[styles.fulfillmentLabel, { color: '#4CAF50' }]}>Delivered:</Text>
+            <Text style={[styles.fulfillmentValue, { color: '#4CAF50' }]}>
+              {item.deliveredQty} pcs
+            </Text>
+          </View>
+          {item.backOrderQty !== undefined && item.backOrderQty > 0 && (
+            <View style={styles.fulfillmentRow}>
+              <Text style={[styles.fulfillmentLabel, { color: '#FF9800' }]}>Pending:</Text>
+              <Text style={[styles.fulfillmentValue, { color: '#FF9800' }]}>
+                {item.backOrderQty} pcs
+              </Text>
+            </View>
+          )}
+          <View style={styles.progressBar}>
+            <View 
+              style={[
+                styles.progressFill, 
+                { 
+                  width: `${((item.deliveredQty || 0) / (item.totalQty || 1)) * 100}%`,
+                  backgroundColor: item.backOrderQty === 0 ? '#4CAF50' : '#FF9800'
+                }
+              ]} 
+            />
+          </View>
+        </View>
+      )}
+
       <View style={styles.orderFooter}>
         <View style={styles.dateContainer}>
           <Image source={getImage('ic_calendar_form.png')} style={styles.calendarIcon} />
@@ -53,15 +134,41 @@ const OrderScreen: React.FC = () => {
         </View>
         <Text style={styles.orderTotal}>{formatPrice(item.grandTotal)}</Text>
       </View>
+      
+      {activeTab === 'history' && item.hasBackOrder && (
+        <TouchableOpacity 
+          style={styles.backOrderButton}
+          onPress={(e) => {
+            e.stopPropagation();
+            handleBackOrderPress(item);
+          }}
+        >
+          <Image source={getImage('ic_waiting_list.png')} style={styles.backOrderIcon} />
+          <Text style={styles.backOrderText}>Lihat Back Order</Text>
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Image source={getImage('es_no_data.webp')} style={styles.emptyImage} />
-      <Text style={styles.emptyText}>Belum ada order</Text>
-    </View>
-  );
+  const renderEmptyState = () => {
+    let emptyMessage = 'Belum ada order';
+    
+    switch (activeTab) {
+      case 'backorder':
+        emptyMessage = 'Tidak ada back order';
+        break;
+      case 'fulfillment':
+        emptyMessage = 'Tidak ada order yang sudah dikirim';
+        break;
+    }
+
+    return (
+      <View style={styles.emptyContainer}>
+        <Image source={getImage('es_no_data.webp')} style={styles.emptyImage} />
+        <Text style={styles.emptyText}>{emptyMessage}</Text>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -71,8 +178,12 @@ const OrderScreen: React.FC = () => {
 
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Order</Text>
-        <TouchableOpacity style={styles.loadMoreButton}>
-          <Text style={styles.loadMoreText}>Load More</Text>
+        <TouchableOpacity 
+          style={styles.filterButton}
+          onPress={() => setShowDateFilter(true)}
+        >
+          <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
+          <Text style={styles.filterText}>Filter</Text>
         </TouchableOpacity>
       </View>
 
@@ -82,23 +193,25 @@ const OrderScreen: React.FC = () => {
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <Image source={getImage('ic_order_bg_red.png')} style={styles.statIcon} />
-              <Text style={styles.statLabel}>PO Created</Text>
-              <Text style={styles.statValue}>{orders.length}</Text>
+              <Text style={styles.statLabel}>Total Order</Text>
+              <Text style={styles.statValue}>{allOrders.length}</Text>
             </View>
             <View style={styles.statItem}>
               <Image source={getImage('ic_order_bg_black.png')} style={styles.statIcon} />
-              <Text style={styles.statLabel}>SO</Text>
-              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Back Order</Text>
+              <Text style={styles.statValue}>{getBackOrders().length}</Text>
             </View>
             <View style={styles.statItem}>
               <Image source={getImage('ic_order_bg_red.png')} style={styles.statIcon} />
-              <Text style={styles.statLabel}>Packing</Text>
-              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Delivered</Text>
+              <Text style={styles.statValue}>{getFulfillmentOrders().length}</Text>
             </View>
             <View style={styles.statItem}>
               <Image source={getImage('ic_order_bg_black.png')} style={styles.statIcon} />
-              <Text style={styles.statLabel}>Delivery</Text>
-              <Text style={styles.statValue}>0</Text>
+              <Text style={styles.statLabel}>Approve</Text>
+              <Text style={styles.statValue}>
+                {allOrders.filter(o => o.status === 'Approve').length}
+              </Text>
             </View>
           </View>
         </View>
@@ -137,7 +250,7 @@ const OrderScreen: React.FC = () => {
           </View>
         ) : (
           <FlatList
-            data={orders}
+            data={displayedOrders}
             renderItem={renderOrderItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
@@ -154,6 +267,61 @@ const OrderScreen: React.FC = () => {
           />
         )}
       </View>
+
+      <Modal
+        visible={showDateFilter}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDateFilter(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filter Tanggal</Text>
+              <TouchableOpacity onPress={() => setShowDateFilter(false)}>
+                <Image source={getImage('ic_close_popup.png')} style={styles.closeIcon} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.dateInputContainer}>
+              <Text style={styles.dateLabel}>Dari (YYYY-MM-DD)</Text>
+              <TextInput
+                style={styles.dateInput}
+                value={startDate}
+                onChangeText={setStartDate}
+                placeholder="2026-01-01"
+                placeholderTextColor={colors.grayText}
+              />
+            </View>
+
+            <View style={styles.dateInputContainer}>
+              <Text style={styles.dateLabel}>Sampai (YYYY-MM-DD)</Text>
+              <TextInput
+                style={styles.dateInput}
+                value={endDate}
+                onChangeText={setEndDate}
+                placeholder="2026-12-31"
+                placeholderTextColor={colors.grayText}
+              />
+            </View>
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity 
+                style={styles.clearButton}
+                onPress={handleClearFilter}
+              >
+                <Text style={styles.clearButtonText}>Clear</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.applyButton}
+                onPress={handleApplyFilter}
+              >
+                <Text style={styles.applyButtonText}>Apply</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -181,14 +349,23 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     color: colors.white,
   },
-  loadMoreButton: {
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.white,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
   },
-  loadMoreText: {
+  filterIcon: {
+    width: 16,
+    height: 16,
+    tintColor: colors.white,
+    resizeMode: 'contain',
+    marginRight: 6,
+  },
+  filterText: {
     fontSize: fonts.sizes.tiny,
     fontFamily: fonts.semibold,
     color: colors.white,
@@ -323,6 +500,159 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.medium,
     fontFamily: fonts.bold,
     color: colors.black,
+  },
+  backOrderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFF3E0',
+    borderRadius: 8,
+    paddingVertical: 8,
+    marginTop: 12,
+  },
+  backOrderIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    marginRight: 6,
+  },
+  backOrderText: {
+    fontSize: fonts.sizes.tiny,
+    fontFamily: fonts.semibold,
+    color: '#FF9800',
+  },
+  backOrderInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF3E0',
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
+  },
+  infoIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    marginRight: 6,
+  },
+  backOrderInfoText: {
+    flex: 1,
+    fontSize: fonts.sizes.tiny,
+    fontFamily: fonts.semibold,
+    color: '#FF9800',
+  },
+  fulfillmentInfo: {
+    backgroundColor: '#F8F8F8',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+  },
+  fulfillmentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  fulfillmentLabel: {
+    fontSize: fonts.sizes.tiny,
+    fontFamily: fonts.regular,
+    color: colors.grayText,
+  },
+  fulfillmentValue: {
+    fontSize: fonts.sizes.tiny,
+    fontFamily: fonts.bold,
+    color: colors.black,
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginTop: 8,
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
+    width: '85%',
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: fonts.sizes.medium,
+    fontFamily: fonts.bold,
+    color: colors.black,
+  },
+  closeIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  dateInputContainer: {
+    marginBottom: 16,
+  },
+  dateLabel: {
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.semibold,
+    color: colors.black,
+    marginBottom: 8,
+  },
+  dateInput: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.regular,
+    color: colors.black,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  clearButton: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  clearButtonText: {
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.semibold,
+    color: colors.primary,
+  },
+  applyButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  applyButtonText: {
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.semibold,
+    color: colors.white,
   },
   loadingContainer: {
     flex: 1,

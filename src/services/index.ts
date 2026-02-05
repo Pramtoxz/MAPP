@@ -10,4 +10,13 @@ export type { Part, VehicleType, Category } from './parts';
 export type { CartItem } from './cart';
 export type { Campaign } from './campaign';
 export type { Notification } from './notification';
-export type { Order, OrderDetail, OrderItem } from './order';
+export type { 
+  Order, 
+  OrderDetail, 
+  OrderItem, 
+  OrderSummary, 
+  DeliveryOrder, 
+  DeliveryOrderItem,
+  BackOrderItem,
+  BackOrderResponse 
+} from './order';
