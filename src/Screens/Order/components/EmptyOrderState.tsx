@@ -26,7 +26,7 @@ export const EmptyOrderState: React.FC<EmptyOrderStateProps> = ({ activeTab }) =
 
   return (
     <View style={styles.emptyContainer}>
-      <Image source={getImage('es_no_data.webp')} style={styles.emptyImage} />
+      <Image source={getImage('ic_marker_dealer.png')} style={styles.emptyImage} />
       <Text style={styles.emptyText}>{getMessage()}</Text>
     </View>
   );

@@ -20,22 +20,22 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders }) => {
       <Text style={styles.statsTitle}>Total Receipt of Process</Text>
       <View style={styles.statsRow}>
         <View style={styles.statItem}>
-          <Image source={getImage('ic_order_bg_red.png')} style={styles.statIcon} />
+          <Image source={getImage('ic_spring_fill.png')} style={styles.statIcon} />
           <Text style={styles.statLabel}>Total Order</Text>
           <Text style={styles.statValue}>{totalOrders}</Text>
         </View>
         <View style={styles.statItem}>
-          <Image source={getImage('ic_order_bg_black.png')} style={styles.statIcon} />
+          <Image source={getImage('ic_list.png')} style={styles.statIcon} />
           <Text style={styles.statLabel}>Pending</Text>
           <Text style={styles.statValue}>{pendingOrders}</Text>
         </View>
         <View style={styles.statItem}>
-          <Image source={getImage('ic_order_bg_red.png')} style={styles.statIcon} />
+          <Image source={getImage('ic_order.png')} style={styles.statIcon} />
           <Text style={styles.statLabel}>Back Order</Text>
           <Text style={styles.statValue}>{backOrders}</Text>
         </View>
         <View style={styles.statItem}>
-          <Image source={getImage('ic_order_bg_black.png')} style={styles.statIcon} />
+          <Image source={getImage('ic_profits.png')} style={styles.statIcon} />
           <Text style={styles.statLabel}>Completed</Text>
           <Text style={styles.statValue}>{completedOrders}</Text>
         </View>
