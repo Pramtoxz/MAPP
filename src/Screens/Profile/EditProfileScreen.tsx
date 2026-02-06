@@ -205,7 +205,7 @@ const EditProfileScreen: React.FC = () => {
           <TextInput
             style={[styles.input, errors.email && styles.inputError]}
             placeholder="email@example.com"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.grayHint}
             value={email}
             onChangeText={(text) => {
               setEmail(text);
@@ -224,7 +224,7 @@ const EditProfileScreen: React.FC = () => {
             <TextInput
               style={[styles.phoneInput, errors.phone && styles.inputError]}
               placeholder="8123456789"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.grayHint}
               value={phone.startsWith('0') ? phone.substring(1) : phone}
               onChangeText={(text) => handlePhoneChange('0' + text)}
               keyboardType="phone-pad"
@@ -237,7 +237,7 @@ const EditProfileScreen: React.FC = () => {
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Masukkan alamat lengkap"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.grayHint}
             value={address}
             onChangeText={setAddress}
             multiline
@@ -248,7 +248,7 @@ const EditProfileScreen: React.FC = () => {
           <TextInput
             style={styles.input}
             placeholder="12.345.678.9-012.000"
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.grayHint}
             value={npwp}
             onChangeText={setNpwp}
             maxLength={20}
@@ -259,7 +259,7 @@ const EditProfileScreen: React.FC = () => {
             <TextInput
               style={[styles.passwordInput, errors.password && styles.inputError]}
               placeholder="Minimal 6 karakter"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.grayHint}
               value={password}
               onChangeText={(text) => {
                 setPassword(text);
@@ -280,7 +280,7 @@ const EditProfileScreen: React.FC = () => {
                 <TextInput
                   style={[styles.passwordInput, errors.password_confirmation && styles.inputError]}
                   placeholder="Ulangi password baru"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={colors.grayHint}
                   value={passwordConfirmation}
                   onChangeText={(text) => {
                     setPasswordConfirmation(text);
@@ -302,7 +302,7 @@ const EditProfileScreen: React.FC = () => {
             disabled={saving}
           >
             {saving ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <ActivityIndicator size="small" color={colors.white} />
             ) : (
               <Text style={styles.saveButtonText}>Simpan Perubahan</Text>
             )}
@@ -325,7 +325,7 @@ const EditProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',
@@ -334,25 +334,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: colors.borderLight,
   },
   backBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.backgroundGray,
     justifyContent: 'center',
     alignItems: 'center',
   },
   backIco: {
     width: 20,
     height: 20,
-    tintColor: '#000',
+    tintColor: colors.black,
   },
   headerTitle: {
     fontSize: 18,
     fontFamily: fonts.bold,
-    color: '#000',
+    color: colors.black,
   },
   scrollView: {
     flex: 1,
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   infoBox: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.backgroundGray,
     borderRadius: 12,
     padding: 14,
     marginBottom: 20,
@@ -373,33 +373,33 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 13,
-    color: '#666',
+    color: colors.grayText,
   },
   infoValue: {
     fontSize: 13,
     fontFamily: fonts.semibold,
-    color: '#000',
+    color: colors.black,
   },
   label: {
     fontSize: 13,
     fontFamily: fonts.semibold,
-    color: '#000',
+    color: colors.black,
     marginBottom: 6,
     marginTop: 10,
   },
   optional: {
     fontSize: 11,
-    color: '#999',
+    color: colors.grayHint,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.borderInput,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 13,
-    color: '#000',
+    color: colors.black,
   },
   inputError: {
     borderColor: colors.primary,
@@ -412,9 +412,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   phonePrefix: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.backgroundGray,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.borderInput,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -423,25 +423,25 @@ const styles = StyleSheet.create({
   phonePrefixText: {
     fontSize: 13,
     fontFamily: fonts.semibold,
-    color: '#000',
+    color: colors.black,
   },
   phoneInput: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.borderInput,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 13,
-    color: '#000',
+    color: colors.black,
   },
   passwordBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.borderInput,
     borderRadius: 10,
   },
   passwordInput: {
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 13,
-    color: '#000',
+    color: colors.black,
   },
   eyeButton: {
     padding: 10,
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 15,
     fontFamily: fonts.bold,
-    color: '#fff',
+    color: colors.white,
   },
 });
 

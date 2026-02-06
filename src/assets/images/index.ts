@@ -69,6 +69,7 @@ const IMAGES: Record<string, any> = {
   'ic_filed_date.png': require('./icon/ic_filed_date.png'),
   'ic_profits.png': require('./icon/ic_profits.png'),
   'ic_marker_dealer.png': require('./icon/ic_marker_dealer.png'),
+  'nodata.png': require('./icon/nodata.png'),
 
 
   //Folder Background

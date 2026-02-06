@@ -267,7 +267,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
                   {vehicleSearchQuery.length >= 2 && !searchingVehicles && vehicleResults.length === 0 && (
                     <View style={styles.emptyState}>
-                      <Image source={getImage('es_no_data.webp')} style={styles.emptyStateImage} />
+                      <Image source={getImage('nodata.webp')} style={styles.emptyStateImage} />
                       <Text style={styles.emptyStateTitle}>Tidak ditemukan</Text>
                       <Text style={styles.emptyStateDesc}>Coba kata kunci lain</Text>
                     </View>
@@ -337,7 +337,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
                   {categorySearchQuery.length >= 2 && !searchingCategories && categoryResults.length === 0 && (
                     <View style={styles.emptyState}>
-                      <Image source={getImage('es_no_data.webp')} style={styles.emptyStateImage} />
+                      <Image source={getImage('nodata.webp')} style={styles.emptyStateImage} />
                       <Text style={styles.emptyStateTitle}>Tidak ditemukan</Text>
                       <Text style={styles.emptyStateDesc}>Coba kata kunci lain</Text>
                     </View>
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     height: '85%',
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: colors.borderLight,
   },
   headerContent: {
     flexDirection: 'row',
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundGray,
     justifyContent: 'center',
     alignItems: 'center',
   },

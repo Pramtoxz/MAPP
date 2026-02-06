@@ -35,8 +35,8 @@ export const OrderItemCard: React.FC<OrderItemCardProps> = ({
   };
 
   const getProgressColor = () => {
-    if (backOrderQty === 0) return '#4CAF50';
-    return '#FF9800';
+    if (backOrderQty === 0) return colors.success;
+    return colors.warning;
   };
 
   return (
@@ -46,7 +46,7 @@ export const OrderItemCard: React.FC<OrderItemCardProps> = ({
           <Image 
             source={{ uri: image }} 
             style={styles.itemImage}
-            defaultSource={getImage('es_no_data.webp')}
+            defaultSource={getImage('nodata.webp')}
           />
         )}
         <View style={styles.itemInfo}>
@@ -62,15 +62,15 @@ export const OrderItemCard: React.FC<OrderItemCardProps> = ({
           <Text style={styles.qtyValue}>{orderQty} pcs</Text>
         </View>
         <View style={styles.qtyRow}>
-          <Text style={[styles.qtyLabel, { color: '#4CAF50' }]}>Delivered:</Text>
-          <Text style={[styles.qtyValue, { color: '#4CAF50' }]}>
+          <Text style={[styles.qtyLabel, { color: colors.success }]}>Delivered:</Text>
+          <Text style={[styles.qtyValue, { color: colors.success }]}>
             {deliveryQty} pcs
           </Text>
         </View>
         {backOrderQty > 0 && (
           <View style={styles.qtyRow}>
-            <Text style={[styles.qtyLabel, { color: '#FF9800' }]}>Back Order:</Text>
-            <Text style={[styles.qtyValue, { color: '#FF9800' }]}>
+            <Text style={[styles.qtyLabel, { color: colors.warning }]}>Back Order:</Text>
+            <Text style={[styles.qtyValue, { color: colors.warning }]}>
               {backOrderQty} pcs
             </Text>
           </View>
@@ -108,7 +108,7 @@ export const OrderItemCard: React.FC<OrderItemCardProps> = ({
 
 const styles = StyleSheet.create({
   itemCard: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: colors.backgroundCard,
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 8,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.borderGray,
     borderRadius: 4,
     overflow: 'hidden',
     marginRight: 8,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: colors.borderGray,
   },
   subtotalLabel: {
     fontSize: fonts.sizes.default,

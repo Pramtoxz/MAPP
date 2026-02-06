@@ -69,19 +69,19 @@ const OrderDetailScreen: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Waiting For Approval':
-        return '#FF9800';
+        return colors.warning;
       case 'Approve':
-        return '#4CAF50';
+        return colors.success;
       case 'Reject':
-        return '#F44336';
+        return colors.error;
       default:
-        return '#757575';
+        return colors.info;
     }
   };
 
   const renderEmptyDelivery = () => (
     <View style={styles.emptyDelivery}>
-      <Image source={getImage('es_no_data.webp')} style={styles.emptyImage} />
+      <Image source={getImage('nodata.webp')} style={styles.emptyImage} />
       <Text style={styles.emptyText}>Belum ada pengiriman</Text>
     </View>
   );

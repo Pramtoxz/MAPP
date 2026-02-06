@@ -46,7 +46,7 @@ const PrivacyPolicyScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',
@@ -54,27 +54,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: colors.borderLight,
   },
   backBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.backgroundGray,
     justifyContent: 'center',
     alignItems: 'center',
   },
   backIcon: {
     width: 20,
     height: 20,
-    tintColor: '#000',
+    tintColor: colors.black,
   },
   headerTitle: {
     fontSize: 18,
     fontFamily: fonts.bold,
-    color: '#000',
+    color: colors.black,
   },
   webview: {
     flex: 1,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   loadingText: {
     marginTop: 12,

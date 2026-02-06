@@ -57,7 +57,7 @@ export const DeliveryOrderCard: React.FC<DeliveryOrderCardProps> = ({
 
 const styles = StyleSheet.create({
   deliveryCard: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: colors.backgroundCard,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: colors.borderGray,
   },
   deliveryNo: {
     fontSize: fonts.sizes.default,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: colors.borderGray,
   },
   deliveryTotalLabel: {
     fontSize: fonts.sizes.default,

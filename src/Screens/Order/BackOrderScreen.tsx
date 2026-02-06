@@ -61,7 +61,7 @@ const BackOrderScreen: React.FC = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Image source={getImage('es_done.webp')} style={styles.emptyImage} />
+      <Image source={getImage('nodata.webp')} style={styles.emptyImage} />
       <Text style={styles.emptyText}>Semua item sudah dikirim</Text>
     </View>
   );
@@ -93,7 +93,7 @@ const BackOrderScreen: React.FC = () => {
               { 
                 label: 'Total Back Order', 
                 value: (
-                  <Text style={[styles.infoValue, { color: '#FF9800' }]}>
+                  <Text style={[styles.infoValue, { color: colors.warning }]}>
                     {backOrder.totalBackOrderQty} pcs
                   </Text>
                 )

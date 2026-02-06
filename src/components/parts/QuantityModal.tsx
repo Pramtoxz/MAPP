@@ -140,10 +140,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   statusReady: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
   },
   statusNotReady: {
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.warning,
   },
   statusText: {
     fontSize: fonts.sizes.small,

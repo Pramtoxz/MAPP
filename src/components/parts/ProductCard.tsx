@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundGray,
   },
   outOfStockOverlay: {
     position: 'absolute',
@@ -86,12 +86,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   outOfStockBadge: {
-    backgroundColor: '#FF5252',
+    backgroundColor: colors.errorBadge,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
     transform: [{ rotate: '-15deg' }],
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,

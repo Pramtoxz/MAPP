@@ -22,14 +22,14 @@ export const FulfillmentSummary: React.FC<FulfillmentSummaryProps> = ({ summary 
           <Text style={styles.summaryValue}>{summary.totalQtyOrder} pcs</Text>
         </View>
         <View style={styles.summaryRow}>
-          <Text style={[styles.summaryLabel, { color: '#4CAF50' }]}>Sudah Dikirim</Text>
-          <Text style={[styles.summaryValue, { color: '#4CAF50' }]}>
+          <Text style={[styles.summaryLabel, { color: colors.success }]}>Sudah Dikirim</Text>
+          <Text style={[styles.summaryValue, { color: colors.success }]}>
             {summary.totalQtyDelivered} pcs
           </Text>
         </View>
         <View style={styles.summaryRow}>
-          <Text style={[styles.summaryLabel, { color: '#FF9800' }]}>Back Order</Text>
-          <Text style={[styles.summaryValue, { color: '#FF9800' }]}>
+          <Text style={[styles.summaryLabel, { color: colors.warning }]}>Back Order</Text>
+          <Text style={[styles.summaryValue, { color: colors.warning }]}>
             {summary.totalQtyBackOrder} pcs
           </Text>
         </View>
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   summaryCard: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: colors.backgroundCard,
     borderRadius: 12,
     padding: 16,
   },

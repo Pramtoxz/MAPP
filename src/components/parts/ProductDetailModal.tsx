@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundGray,
   },
   outOfStockOverlay: {
     position: 'absolute',
@@ -143,12 +143,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   outOfStockBadge: {
-    backgroundColor: '#FF5252',
+    backgroundColor: colors.errorBadge,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
     transform: [{ rotate: '-15deg' }],
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundGray,
     borderRadius: 12,
     padding: 16,
   },
@@ -211,10 +211,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   statusReady: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
   },
   statusNotReady: {
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.warning,
   },
   statusText: {
     fontSize: fonts.sizes.small,

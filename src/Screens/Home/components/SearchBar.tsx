@@ -27,7 +27,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <TextInput
         style={styles.searchInput}
         placeholder="Parts Number / Parts Name"
-        placeholderTextColor="#000"
+        placeholderTextColor={colors.black}
         value={searchQuery}
         onChangeText={onSearchChange}
         onSubmitEditing={onSearchSubmit}

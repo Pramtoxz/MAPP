@@ -22,7 +22,7 @@ export const BackOrderNotice: React.FC<BackOrderNoticeProps> = ({
 const styles = StyleSheet.create({
   noticeSection: {
     flexDirection: 'row',
-    backgroundColor: '#FFF3E0',
+    backgroundColor: colors.backgroundWarning,
     marginHorizontal: 16,
     borderRadius: 12,
     padding: 12,
@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: fonts.sizes.tiny,
     fontFamily: fonts.regular,
-    color: '#E65100',
+    color: colors.textWarning,
   },
 });

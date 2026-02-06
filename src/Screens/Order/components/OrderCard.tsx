@@ -39,15 +39,15 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             <Text style={styles.fulfillmentValue}>{order.fulfillment.totalQtyOrder} pcs</Text>
           </View>
           <View style={styles.fulfillmentRow}>
-            <Text style={[styles.fulfillmentLabel, { color: '#4CAF50' }]}>Delivered:</Text>
-            <Text style={[styles.fulfillmentValue, { color: '#4CAF50' }]}>
+            <Text style={[styles.fulfillmentLabel, { color: colors.success }]}>Delivered:</Text>
+            <Text style={[styles.fulfillmentValue, { color: colors.success }]}>
               {order.fulfillment.totalQtyDelivered} pcs
             </Text>
           </View>
           {order.fulfillment.totalQtyBackOrder > 0 && (
             <View style={styles.fulfillmentRow}>
-              <Text style={[styles.fulfillmentLabel, { color: '#FF9800' }]}>Back Order:</Text>
-              <Text style={[styles.fulfillmentValue, { color: '#FF9800' }]}>
+              <Text style={[styles.fulfillmentLabel, { color: colors.warning }]}>Back Order:</Text>
+              <Text style={[styles.fulfillmentValue, { color: colors.warning }]}>
                 {order.fulfillment.totalQtyBackOrder} pcs
               </Text>
             </View>
@@ -58,7 +58,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
                 styles.progressFill, 
                 { 
                   width: `${((order.fulfillment.totalQtyDelivered || 0) / (order.fulfillment.totalQtyOrder || 1)) * 100}%`,
-                  backgroundColor: order.fulfillment.isCompleted ? '#4CAF50' : '#FF9800'
+                  backgroundColor: order.fulfillment.isCompleted ? colors.success : colors.warning
                 }
               ]} 
             />
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.borderGray,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   fulfillmentInfo: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: colors.backgroundCard,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.borderGray,
     borderRadius: 3,
     overflow: 'hidden',
     marginTop: 8,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF3E0',
+    backgroundColor: colors.backgroundWarning,
     borderRadius: 8,
     paddingVertical: 8,
     marginTop: 12,
@@ -202,6 +202,6 @@ const styles = StyleSheet.create({
   backOrderText: {
     fontSize: fonts.sizes.tiny,
     fontFamily: fonts.semibold,
-    color: '#FF9800',
+    color: colors.warning,
   },
 });

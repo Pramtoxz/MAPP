@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   dateRangeDisplay: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.backgroundGray,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   dateRangeSeparator: {
     width: 1,
     height: 40,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.borderGray,
     marginHorizontal: 12,
   },
   dateRangeLabel: {
