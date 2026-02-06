@@ -1,5 +1,15 @@
 export const colors = {
+  // Primary colors (Red theme)
   primary: '#E61B33',
+  primaryLight: '#FF2D47',
+  primaryDark: '#8B0000',
+  
+  // Secondary colors (Green theme - old primary)
+  secondary: '#23524b',
+  secondaryLight: '#2d6860',
+  secondaryDark: '#1a3e39',
+  
+  // Base colors
   white: '#FFFFFF',
   black: '#000000',
   grayText: '#666666',

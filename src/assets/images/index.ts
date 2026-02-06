@@ -73,7 +73,8 @@ const IMAGES: Record<string, any> = {
 
 
   //Folder Background
-  'bg_honda.webp': require('./background/bg_honda.webp'),
+  'bg_honda3.png': require('./background/bg_honda3.png'),
+  'bg_honda.png': require('./background/bg_honda.png'),
   'bg_ss.webp': require('./background/bg_ss.webp'),
   'bg_ribbon_red_gagal.webp': require('./background/bg_ribbon_red_gagal.webp'),
 

@@ -21,7 +21,7 @@ Dokumentasi lengkap penggunaan images/icons untuk setiap screen dalam aplikasi.
 
 | Image Name | Usage | Required |
 |------------|-------|----------|
-| `bg_honda.webp` | Background image | ✅ Yes |
+| `bg_honda3.png` | Background image | ✅ Yes |
 | `lg_honda_kecil.jpg` | Logo Honda | ✅ Yes |
 | `ic_username.png` | Username input icon | ✅ Yes |
 | `ic_password.png` | Password input icon | ✅ Yes |
@@ -33,7 +33,7 @@ Dokumentasi lengkap penggunaan images/icons untuk setiap screen dalam aplikasi.
 
 | Image Name | Usage | Required |
 |------------|-------|----------|
-| `bg_honda.webp` | Background header | ✅ Yes |
+| `bg_honda3.png` | Background header | ✅ Yes |
 | `lg_honda_kecil.jpg` | Avatar/Logo | ✅ Yes |
 | `ic_notification.png` | Notification button | ✅ Yes |
 | `ic_spring.png` | Search icon & Parts menu | ✅ Yes |
@@ -63,7 +63,7 @@ COMING SOON
 
 | Image Name | Usage | Required |
 |------------|-------|----------|
-| `bg_honda.webp` | Background image | ✅ Yes |
+| `bg_honda3.png` | Background image | ✅ Yes |
 | `ic_arrow_back.png` | Back button | ✅ Yes |
 | `ic_cart_response.png` | Cart button with badge | ✅ Yes |
 | `ic_notification.png` | Notification button | ✅ Yes |
@@ -98,7 +98,7 @@ COMING SOON
 ## **Summary - Required Images**
 
 ### **Critical (Must Have):**
-1. `bg_honda.webp` - Background
+1. `bg_honda3.png` - Background
 2. `lg_honda_kecil.jpg` - Logo
 3. `ic_arrow_back.png` - Navigation
 4. `ic_username.png` - Login

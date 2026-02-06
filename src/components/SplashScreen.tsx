@@ -39,13 +39,13 @@ const SplashScreen: React.FC = () => {
     <View style={styles.container}>
       <StatusBar hidden />
       <Image
-        source={getImage('bg_honda.webp')}
+        source={getImage('bg_honda.png')}
         style={styles.backgroundImage}
       />
       <View style={styles.logoContainer}>
           <Image source={getImage('logomd.png')} style={styles.logomd} />
         <Text style={styles.logoText}>PT. MENARA AGUNG</Text>
-        <Text style={styles.subText}>Parts Mobile Solution</Text>
+        <Text style={styles.subText}>Parts Mobile Order for Parts Shop</Text>
       </View>
     </View>
   );

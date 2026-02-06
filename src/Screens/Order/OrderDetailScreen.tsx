@@ -90,7 +90,7 @@ const OrderDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
-      <Image source={getImage('bg_honda.webp')} style={styles.backgroundImage} />
+      <Image source={getImage('bg_honda3.png')} style={styles.backgroundImage} />
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>

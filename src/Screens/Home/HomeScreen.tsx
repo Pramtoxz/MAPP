@@ -79,7 +79,7 @@ const HomeScreen: React.FC = () => {
       />
 
       <Image
-        source={getImage('bg_honda.webp')}
+        source={getImage('bg_honda3.png')}
         style={styles.backgroundImage}
       />
 

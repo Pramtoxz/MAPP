@@ -168,7 +168,7 @@ const OtpVerifyScreen: React.FC = () => {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
       <Image
-        source={getImage('bg_honda.webp')}
+        source={getImage('bg_honda3.png')}
         style={styles.backgroundImage}
       />
 

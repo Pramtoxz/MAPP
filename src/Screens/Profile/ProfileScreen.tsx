@@ -90,7 +90,7 @@ const ProfileScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-      <Image source={getImage('bg_honda.webp')} style={styles.backgroundImage} />
+      <Image source={getImage('bg_honda3.png')} style={styles.backgroundImage} />
 
       <LoadingDialog visible={loading} message="Loading profile..." />
 
