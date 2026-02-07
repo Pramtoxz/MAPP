@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Modal from 'react-native-modal';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../config/colors';
 import { fonts } from '../config/fonts';
 import { getImage } from '../assets/images';
@@ -60,10 +61,17 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
           )}
           
           <TouchableOpacity
-            style={[styles.button, styles.confirmButton]}
+            style={styles.button}
             onPress={onConfirm}
           >
-            <Text style={styles.confirmButtonText}>{confirmText}</Text>
+            <LinearGradient
+              colors={[colors.primary, colors.primaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.confirmButton}
+            >
+              <Text style={styles.confirmButtonText}>{confirmText}</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </View>
@@ -117,11 +125,12 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   confirmButton: {
-    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 48,
+    borderRadius: 8,
   },
   cancelButton: {
     backgroundColor: colors.white,

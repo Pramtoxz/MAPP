@@ -68,8 +68,22 @@ const IMAGES: Record<string, any> = {
   'ic_list.png': require('./icon/ic_list.png'),
   'ic_filed_date.png': require('./icon/ic_filed_date.png'),
   'ic_profits.png': require('./icon/ic_profits.png'),
+  'ic_close_popup.png': require('./icon/ic_close_popup.png'),
   'ic_marker_dealer.png': require('./icon/ic_marker_dealer.png'),
   'nodata.png': require('./icon/nodata.png'),
+  'notif_on.png': require('./icon/notif_on.png'),
+  'ic_step_done.png': require('./icon/ic_step_done.png'),
+
+  'collection.png': require('./menu/collection.png'),
+  'ic_date.png': require('./menu/ic_date.png'),
+  'ic_delivery.png': require('./menu/ic_delivery.png'),
+  'ic_dus.png': require('./menu/ic_dus.png'),
+  'ic_faktur.png': require('./menu/ic_faktur.png'),
+  'ic_fullfiment.png': require('./menu/ic_fullfiment.png'),
+  'list.png': require('./menu/list.png'),
+  'order.png': require('./menu/order.png'),
+  'home.png': require('./menu/home.png'),
+  'profile.png': require('./menu/profile.png'),
 
 
   //Folder Background

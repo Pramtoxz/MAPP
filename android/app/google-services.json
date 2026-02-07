@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "167641450399",
+    "project_id": "pmov2-50a69",
+    "storage_bucket": "pmov2-50a69.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167641450399:android:6dee6b4d027888dfe55faa",
+        "android_client_info": {
+          "package_name": "com.mapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaBO7mWjpFvYw_SOemE_O-BoBID392UTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

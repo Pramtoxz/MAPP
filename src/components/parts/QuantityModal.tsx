@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, TextInput } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -74,8 +75,15 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
             <View style={styles.quantityRow}>
               <Text style={styles.price}>{formatPrice(product.price)}</Text>
               <View style={styles.quantityControls}>
-                <TouchableOpacity style={styles.minusButton} onPress={handleMinus}>
-                  <Image source={getImage('ic_min_en.png')} style={styles.controlIcon} />
+                <TouchableOpacity onPress={handleMinus}>
+                  <LinearGradient
+                    colors={[colors.secondary, colors.secondaryDark]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.minusButton}
+                  >
+                    <Image source={getImage('ic_min_en.png')} style={styles.controlIcon} />
+                  </LinearGradient>
                 </TouchableOpacity>
                 <TextInput
                   style={styles.quantityInput}
@@ -85,19 +93,30 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
                   maxLength={6}
                   selectTextOnFocus
                 />
-                <TouchableOpacity style={styles.plusButton} onPress={handlePlus}>
-                  <Image source={getImage('ic_plus_en.png')} style={styles.controlIcon} />
+                <TouchableOpacity onPress={handlePlus}>
+                  <LinearGradient
+                    colors={[colors.secondary, colors.secondaryDark]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.plusButton}
+                  >
+                    <Image source={getImage('ic_plus_en.png')} style={styles.controlIcon} />
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
             </View>
 
-            <TouchableOpacity 
-              style={styles.confirmButton} 
-              onPress={handleConfirm}
-            >
-              <Text style={styles.confirmButtonText}>
-                {product.isReady ? 'Masuk Keranjang' : 'Pre-Order'}
-              </Text>
+            <TouchableOpacity onPress={handleConfirm}>
+              <LinearGradient
+                colors={[colors.primary, colors.primaryDark]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.confirmButton}
+              >
+                <Text style={styles.confirmButtonText}>
+                  {product.isReady ? 'Masuk Keranjang' : 'Pre-Order'}
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
@@ -170,7 +189,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -178,7 +196,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -199,7 +216,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   confirmButton: {
-    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     justifyContent: 'center',

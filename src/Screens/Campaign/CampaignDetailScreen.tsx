@@ -12,6 +12,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -149,8 +150,15 @@ const CampaignDetailScreen: React.FC = () => {
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
-        <TouchableOpacity style={styles.joinButton}>
-          <Text style={styles.joinButtonText}>Start Order</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <LinearGradient
+            colors={[colors.primary, colors.primaryDark]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.joinButton}
+          >
+            <Text style={styles.joinButtonText}>Start Order</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -196,7 +204,7 @@ const styles = StyleSheet.create({
   },
   heroImage: {
     width: '100%',
-    height: 240,
+    height: 180,
     resizeMode: 'cover',
   },
   content: {
@@ -253,7 +261,6 @@ const styles = StyleSheet.create({
     borderTopColor: '#E5E5E5',
   },
   joinButton: {
-    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     justifyContent: 'center',

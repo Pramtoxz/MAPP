@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Animated } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -65,8 +66,15 @@ const CartItemSwipeable: React.FC<CartItemSwipeableProps> = ({
           <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
         </View>
         <View style={styles.quantityControls}>
-          <TouchableOpacity style={styles.minusButton} onPress={() => onMinus(item.id)}>
-            <Image source={getImage('ic_min_en.png')} style={styles.controlIcon} />
+          <TouchableOpacity onPress={() => onMinus(item.id)}>
+            <LinearGradient
+              colors={[colors.secondary, colors.secondaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.minusButton}
+            >
+              <Image source={getImage('ic_min_en.png')} style={styles.controlIcon} />
+            </LinearGradient>
           </TouchableOpacity>
           <TextInput
             style={styles.quantityInput}
@@ -76,8 +84,15 @@ const CartItemSwipeable: React.FC<CartItemSwipeableProps> = ({
             maxLength={6}
             selectTextOnFocus
           />
-          <TouchableOpacity style={styles.plusButton} onPress={() => onPlus(item.id)}>
-            <Image source={getImage('ic_plus_en.png')} style={styles.controlIcon} />
+          <TouchableOpacity onPress={() => onPlus(item.id)}>
+            <LinearGradient
+              colors={[colors.secondary, colors.secondaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.plusButton}
+            >
+              <Image source={getImage('ic_plus_en.png')} style={styles.controlIcon} />
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </View>
@@ -132,7 +147,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -140,7 +154,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },

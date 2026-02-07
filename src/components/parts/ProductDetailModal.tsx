@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -72,13 +73,17 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </View>
             </View>
 
-            <TouchableOpacity 
-              style={styles.addButton} 
-              onPress={onAddToCart}
-            >
-              <Text style={styles.addButtonText}>
-                {product.isReady ? 'Add to Cart' : 'Order (Stock Tidak Ready)'}
-              </Text>
+            <TouchableOpacity onPress={onAddToCart}>
+              <LinearGradient
+                colors={[colors.primary, colors.primaryDark]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.addButton}
+              >
+                <Text style={styles.addButtonText}>
+                  {product.isReady ? 'Add to Cart' : 'Order (Stock Tidak Ready)'}
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
         </View>
@@ -222,7 +227,6 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   addButton: {
-    backgroundColor: colors.secondary,
     borderRadius: 16,
     height: 56,
     justifyContent: 'center',

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_BASE_URL } from './../config/api';
+import { notificationService } from './notification';
 
 const TOKEN_KEY = 'user_token';
 const USER_KEY = 'user_data';
@@ -86,6 +87,12 @@ class AuthService {
       if (result.success && result.data) {
         await AsyncStorage.setItem(TOKEN_KEY, result.data.token);
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data.user));
+
+        // Update FCM token after successful login
+        const fcmToken = await notificationService.getFCMToken();
+        if (fcmToken) {
+          await notificationService.updateFCMToken(fcmToken);
+        }
 
         return {
           success: true,
@@ -289,6 +296,12 @@ class AuthService {
       if (result.success && result.data) {
         await AsyncStorage.setItem(TOKEN_KEY, result.data.token);
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data.user));
+
+        // Update FCM token after successful OTP verification
+        const fcmToken = await notificationService.getFCMToken();
+        if (fcmToken) {
+          await notificationService.updateFCMToken(fcmToken);
+        }
 
         return {
           success: true,

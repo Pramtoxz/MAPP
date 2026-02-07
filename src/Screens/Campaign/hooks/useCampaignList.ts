@@ -8,7 +8,7 @@ export const useCampaignList = () => {
     percentage: 50,
     label: '50%',
     title: 'Gear Up & Get Rewarded',
-    endDate: '31 December 2025',
+    endDate: '',
   });
 
   useEffect(() => {

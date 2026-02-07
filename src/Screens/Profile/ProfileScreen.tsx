@@ -7,14 +7,13 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
-  TextInput,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
+import LinearGradient from 'react-native-linear-gradient';
 import { authService } from '../../services/auth';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
@@ -138,8 +137,15 @@ const ProfileScreen: React.FC = () => {
                 />
               </View>
 
-              <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
-                <Text style={styles.logoutButtonText}>Logout</Text>
+              <TouchableOpacity onPress={handleLogoutPress}>
+                <LinearGradient
+                  colors={[colors.primary, colors.primaryDark]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.logoutButton}
+                >
+                  <Text style={styles.logoutButtonText}>Logout</Text>
+                </LinearGradient>
               </TouchableOpacity>
 
               <Text style={styles.versionText}>Version 1.0.0</Text>
@@ -318,7 +324,6 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '180deg' }],
   },
   logoutButton: {
-    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     justifyContent: 'center',

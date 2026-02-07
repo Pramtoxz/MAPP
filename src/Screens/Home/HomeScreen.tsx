@@ -88,7 +88,6 @@ const HomeScreen: React.FC = () => {
           <HomeHeader
             cartCount={cartCount}
             onCartPress={() => navigation.navigate('Cart')}
-            onNotificationPress={() => {}}
           />
 
           <SearchBar

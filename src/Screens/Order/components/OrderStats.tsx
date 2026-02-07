@@ -27,28 +27,28 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders }) => {
       <View style={styles.statsRow}>
         <View style={styles.statItem}>
           <View style={styles.iconCircle}>
-            <Image source={getImage('ic_spring_fill.png')} style={styles.statIcon} />
+            <Image source={getImage('order.png')} style={styles.statIcon} />
           </View>
           <Text style={styles.statLabel}>Total Order</Text>
           <Text style={styles.statValue}>{totalOrders}</Text>
         </View>
         <View style={styles.statItem}>
           <View style={styles.iconCircle}>
-            <Image source={getImage('ic_list.png')} style={styles.statIcon} />
+            <Image source={getImage('ic_dus.png')} style={styles.statIcon} />
           </View>
           <Text style={styles.statLabel}>Pending</Text>
           <Text style={styles.statValue}>{pendingOrders}</Text>
         </View>
         <View style={styles.statItem}>
           <View style={styles.iconCircle}>
-            <Image source={getImage('ic_order.png')} style={styles.statIcon} />
+            <Image source={getImage('ic_delivery.png')} style={styles.statIcon} />
           </View>
           <Text style={styles.statLabel}>Back Order</Text>
           <Text style={styles.statValue}>{backOrders}</Text>
         </View>
         <View style={styles.statItem}>
           <View style={styles.iconCircle}>
-            <Image source={getImage('ic_profits.png')} style={styles.statIcon} />
+            <Image source={getImage('ic_fullfiment.png')} style={styles.statIcon} />
           </View>
           <Text style={styles.statLabel}>Completed</Text>
           <Text style={styles.statValue}>{completedOrders}</Text>
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     resizeMode: 'contain',
-    tintColor: colors.white,
   },
   statLabel: {
     fontSize: fonts.sizes.tiny,

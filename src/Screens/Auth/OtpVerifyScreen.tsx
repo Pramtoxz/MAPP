@@ -272,7 +272,7 @@ const OtpVerifyScreen: React.FC = () => {
         </Animated.View>
       </View>
 
-      <LoadingDialog visible={loading} message="Memproses..." />
+      <LoadingDialog visible={loading} message="Silahkan Di Order" />
       <CustomAlert
         visible={alertVisible}
         title={alertTitle}

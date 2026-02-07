@@ -13,6 +13,7 @@ export type RootStackParamList = {
   OtpVerify: { phone: string };
   MainTabs: NavigatorScreenParams<MainTabParamList> | undefined;
   Cart: undefined;
+  Notification: undefined;
   CampaignList: undefined;
   CampaignDetail: { campaignId: string };
   OrderDetail: { orderNumber: string };

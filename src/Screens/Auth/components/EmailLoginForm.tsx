@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../../config/colors';
 import { getImage } from '../../../assets/images';
 
@@ -76,8 +77,15 @@ const EmailLoginForm: React.FC<EmailLoginFormProps> = ({ onLogin }) => {
         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
-        <Text style={styles.loginButtonText}>LOGIN</Text>
+      <TouchableOpacity onPress={handleSubmit}>
+        <LinearGradient
+          colors={[colors.primary, colors.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.loginButton}
+        >
+          <Text style={styles.loginButtonText}>LOGIN</Text>
+        </LinearGradient>
       </TouchableOpacity>
     </View>
   );
@@ -134,7 +142,6 @@ const styles = StyleSheet.create({
     color: colors.grayText,
   },
   loginButton: {
-    backgroundColor: colors.primary,
     borderRadius: 28,
     height: 56,
     justifyContent: 'center',

@@ -68,7 +68,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
       <View style={styles.orderFooter}>
         <View style={styles.dateContainer}>
-          <Image source={getImage('ic_calendar_form.png')} style={styles.calendarIcon} />
+          <Image source={getImage('ic_date.png')} style={styles.calendarIcon} />
           <Text style={styles.orderDate}>{formatDate(order.orderDate)}</Text>
         </View>
         <Text style={styles.orderTotal}>{formatPrice(order.grandTotal)}</Text>
@@ -82,7 +82,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             onBackOrderPress();
           }}
         >
-          <Image source={getImage('ic_waiting_list.png')} style={styles.backOrderIcon} />
+          <Image source={getImage('ic_delivery.png')} style={styles.backOrderIcon} />
           <Text style={styles.backOrderText}>Lihat Back Order</Text>
         </TouchableOpacity>
       )}
@@ -169,10 +169,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   calendarIcon: {
-    width: 16,
-    height: 16,
+    width: 22,
+    height: 22,
     resizeMode: 'contain',
     marginRight: 4,
+    tintColor: colors.black,
   },
   orderDate: {
     fontSize: fonts.sizes.tiny,
@@ -194,14 +195,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   backOrderIcon: {
-    width: 16,
-    height: 16,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
     marginRight: 6,
+    tintColor: colors.primary,
   },
   backOrderText: {
     fontSize: fonts.sizes.tiny,
     fontFamily: fonts.semibold,
-    color: colors.warning,
+    color: colors.primary,
   },
 });

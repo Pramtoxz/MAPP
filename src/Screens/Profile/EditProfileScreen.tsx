@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import LinearGradient from 'react-native-linear-gradient';
 import { authService } from '../../services/auth';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
@@ -297,15 +298,23 @@ const EditProfileScreen: React.FC = () => {
           )}
 
           <TouchableOpacity 
-            style={[styles.saveButton, saving && styles.saveButtonDisabled]} 
             onPress={handleSave}
             disabled={saving}
           >
-            {saving ? (
-              <ActivityIndicator size="small" color={colors.white} />
-            ) : (
-              <Text style={styles.saveButtonText}>Simpan Perubahan</Text>
-            )}
+            <LinearGradient
+              colors={saving 
+                ? [colors.grayInactive, colors.grayInactive] 
+                : [colors.primary, colors.primaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.saveButton}
+            >
+              {saving ? (
+                <ActivityIndicator size="small" color={colors.white} />
+              ) : (
+                <Text style={styles.saveButtonText}>Simpan Perubahan</Text>
+              )}
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -468,16 +477,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   saveButton: {
-    backgroundColor: colors.primary,
     borderRadius: 12,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 20,
-  },
-  saveButtonDisabled: {
-    opacity: 0.6,
   },
   saveButtonText: {
     fontSize: 15,

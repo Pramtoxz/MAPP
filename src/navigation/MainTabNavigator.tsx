@@ -38,7 +38,7 @@ const MainTabNavigator: React.FC = () => {
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
             <Image
-              source={getImage('ic_homepage.png')}
+              source={getImage('home.png')}
               style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
             />
           ),
@@ -48,10 +48,10 @@ const MainTabNavigator: React.FC = () => {
         name="OrderTab"
         component={OrderScreen}
         options={{
-          tabBarLabel: 'Order',
+          tabBarLabel: 'History',
           tabBarIcon: ({ color, size }) => (
             <Image
-              source={getImage('ic_menu_katalog_en.png')}
+              source={getImage('order.png')}
               style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
             />
           ),
@@ -64,7 +64,7 @@ const MainTabNavigator: React.FC = () => {
           tabBarLabel: 'Collection',
           tabBarIcon: ({ color, size }) => (
             <Image
-              source={getImage('ic_menu_katalog_en.png')}
+              source={getImage('collection.png')}
               style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
             />
           ),
@@ -77,7 +77,7 @@ const MainTabNavigator: React.FC = () => {
           tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (
             <Image
-              source={getImage('ic_profile.png')}
+              source={getImage('profile.png')}
               style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
             />
           ),

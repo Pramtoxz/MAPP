@@ -3,17 +3,16 @@ import { View, Image, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { getImage } from '../../../assets/images';
 import { colors } from '../../../config/colors';
 import { fonts } from '../../../config/fonts';
+import { NotificationIcon } from '../../../components/NotificationIcon';
 
 interface HomeHeaderProps {
   cartCount: number;
   onCartPress: () => void;
-  onNotificationPress: () => void;
 }
 
 export const HomeHeader: React.FC<HomeHeaderProps> = ({
   cartCount,
   onCartPress,
-  onNotificationPress,
 }) => {
   return (
     <View style={styles.headerTop}>
@@ -29,9 +28,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
             </View>
           )}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-          <Image source={getImage('ic_notification.png')} style={styles.notificationIcon} />
-        </TouchableOpacity>
+        <NotificationIcon iconColor={colors.white} />
       </View>
     </View>
   );
@@ -87,19 +84,5 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 10,
     fontFamily: fonts.bold,
-  },
-  notificationButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  notificationIcon: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain',
-    tintColor: colors.white,
   },
 });

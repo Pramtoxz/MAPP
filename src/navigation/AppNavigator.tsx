@@ -7,6 +7,7 @@ import LoginScreen from '../Screens/Auth/LoginScreen';
 import OtpVerifyScreen from '../Screens/Auth/OtpVerifyScreen';
 import MainTabNavigator from './MainTabNavigator';
 import CartScreen from '../Screens/Cart/CartScreen';
+import NotificationScreen from '../Screens/Notification/NotificationScreen';
 import CampaignListScreen from '../Screens/Campaign/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/Campaign/CampaignDetailScreen';
 import OrderDetailScreen from '../Screens/Order/OrderDetailScreen';
@@ -39,6 +40,13 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen 
           name="Cart" 
           component={CartScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="Notification" 
+          component={NotificationScreen}
           options={{
             presentation: 'card',
           }}

@@ -29,7 +29,7 @@ const PrivacyPolicyScreen: React.FC = () => {
       </SafeAreaView>
 
       <WebView
-        source={{ uri: 'https://dealernms.menara-agung.com/public/kebijakan-privasi' }}
+        source={{ uri: 'https://animelaku.alrelshop.my.id/anime/one-piece-100' }}
         style={styles.webview}
         startInLoadingState={true}
         renderLoading={() => (

@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../../config/colors';
 import { fonts } from '../../../config/fonts';
 import { getImage } from '../../../assets/images';
@@ -61,11 +62,19 @@ const PhoneInputForm: React.FC<PhoneInputFormProps> = ({ onSubmit }) => {
       </View>
 
       <TouchableOpacity 
-        style={[styles.submitButton, phone.length < 9 && styles.submitButtonDisabled]} 
         onPress={handleSubmit}
         disabled={phone.length < 9}
       >
-        <Text style={styles.submitButtonText}>KIRIM OTP</Text>
+        <LinearGradient
+          colors={phone.length < 9 
+            ? [colors.grayInactive, colors.grayInactive] 
+            : [colors.primary, colors.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.submitButton}
+        >
+          <Text style={styles.submitButtonText}>KIRIM OTP</Text>
+        </LinearGradient>
       </TouchableOpacity>
     </View>
   );
@@ -119,7 +128,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
   },
   submitButton: {
-    backgroundColor: colors.primary,
     borderRadius: 28,
     height: 56,
     justifyContent: 'center',
@@ -132,9 +140,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-  },
-  submitButtonDisabled: {
-    opacity: 0.5,
   },
   submitButtonText: {
     fontSize: 16,

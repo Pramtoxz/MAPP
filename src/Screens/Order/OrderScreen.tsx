@@ -120,7 +120,7 @@ const OrderScreen: React.FC = () => {
           style={styles.filterButton}
           onPress={() => setShowDateFilter(true)}
         >
-          <Image source={getImage('ic_filter.png')} style={styles.filterIcon} />
+          <Image source={getImage('ic_date.png')} style={styles.filterIcon} />
           <Text style={styles.filterText}>Filter</Text>
         </TouchableOpacity>
       </View>
@@ -196,8 +196,7 @@ const styles = StyleSheet.create({
   },
   filterIcon: {
     width: 16,
-    height: 16,
-    tintColor: colors.white,
+    height: 25,
     resizeMode: 'contain',
     marginRight: 6,
   },

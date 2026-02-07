@@ -42,7 +42,7 @@ export const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange }) 
         onPress={() => onTabChange('completed')}
       >
         <Text style={[styles.tabText, activeTab === 'completed' && styles.tabTextActive]}>
-          Selesai
+          Fulfillment
         </Text>
       </TouchableOpacity>
     </View>

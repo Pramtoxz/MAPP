@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import LottieView from 'lottie-react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -191,11 +192,19 @@ const CartScreen: React.FC = () => {
           <Text style={styles.totalAmount}>{formatPrice(calculateTotal())}</Text>
         </View>
         <TouchableOpacity 
-          style={[styles.createButton, (checkoutLoading || cartItems.length === 0) && styles.createButtonDisabled]}
           onPress={handleCreatePO}
           disabled={checkoutLoading || cartItems.length === 0}
         >
-          <Text style={styles.createButtonText}>Create PO</Text>
+          <LinearGradient
+            colors={(checkoutLoading || cartItems.length === 0) 
+              ? [colors.grayInactive, colors.grayInactive] 
+              : [colors.primary, colors.primaryDark]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.createButton}
+          >
+            <Text style={styles.createButtonText}>Create PO</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
 
@@ -495,14 +504,10 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   createButton: {
-    backgroundColor: colors.primary,
     borderRadius: 16,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  createButtonDisabled: {
-    backgroundColor: colors.grayInactive,
   },
   createButtonText: {
     fontSize: fonts.sizes.medium,
