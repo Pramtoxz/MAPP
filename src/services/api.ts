@@ -39,6 +39,9 @@ class ApiService {
 
       if (this.pinCache && (endpoint.includes('/collections') || endpoint.includes('/auth/profile'))) {
         headers['X-Collection-Pin'] = this.pinCache;
+        console.log('PIN header added:', this.pinCache);
+      } else {
+        console.log('PIN not added. pinCache:', this.pinCache, 'endpoint:', endpoint);
       }
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {

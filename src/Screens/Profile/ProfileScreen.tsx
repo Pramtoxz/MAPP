@@ -118,6 +118,12 @@ const ProfileScreen: React.FC = () => {
                   onPress={() => navigation.navigate('EditProfile')}
                 />
                 <MenuItem
+                  icon={getImage('ic_password.png')}
+                  title="Ubah PIN"
+                  subtitle="Ubah PIN untuk Collection"
+                  onPress={() => navigation.navigate('ChangePin')}
+                />
+                <MenuItem
                   icon={getImage('ic_notification.png')}
                   title="Notifications"
                   subtitle="Manage notification preferences"

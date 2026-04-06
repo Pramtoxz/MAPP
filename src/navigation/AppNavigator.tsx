@@ -14,7 +14,7 @@ import OrderDetailScreen from '../Screens/Order/OrderDetailScreen';
 import BackOrderScreen from '../Screens/Order/BackOrderScreen';
 import CollectionScreen from '../Screens/Collection/CollectionScreen';
 import InvoiceDetailScreen from '../Screens/Collection/InvoiceDetailScreen';
-import EditProfileScreenWrapper from '../Screens/Profile/EditProfileScreenWrapper';
+import EditProfileScreen from '../Screens/Profile/EditProfileScreen';
 import ChangePinScreenWrapper from '../Screens/Profile/ChangePinScreenWrapper';
 import CatalogueScreen from '../Screens/Profile/CatalogueScreen';
 import PrivacyPolicyScreen from '../Screens/Profile/PrivacyPolicyScreen';
@@ -100,7 +100,7 @@ const AppNavigator: React.FC = () => {
         />
         <Stack.Screen 
           name="EditProfile" 
-          component={EditProfileScreenWrapper}
+          component={EditProfileScreen}
           options={{
             presentation: 'card',
           }}

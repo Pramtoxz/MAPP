@@ -207,19 +207,30 @@ class AuthService {
         };
       }
 
+      const { apiService } = await import('./api');
+      const pinCache = (apiService as any).pinCache;
+      
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+
+      if (pinCache) {
+        headers['X-Collection-Pin'] = pinCache;
+        console.log('PIN header added to update profile:', pinCache);
+      } else {
+        console.log('No PIN cache found for update profile');
+      }
+
       const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data),
       });
 
       const result: UpdateProfileResponse = await response.json();
 
       if (result.success && result.data) {
-        // Update local storage with new data
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(result.data));
         return {
           success: true,
