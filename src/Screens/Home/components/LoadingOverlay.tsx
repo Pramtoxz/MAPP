@@ -7,13 +7,15 @@ export const LoadingOverlay: React.FC = () => {
   return (
     <View style={styles.container}>
       <LottieView
-        source={require('../../../assets/lottie/rocket2.json')}
+        source={require('../../../assets/lottie/truck.json')}
         autoPlay
         loop
         style={styles.lottie}
       />
       <Text style={styles.title}>Sedang Menyiapkan</Text>
-      <Text style={styles.subtitle}>Mohon Tunggu Sebentar, Ga Bakal Lama Kok...</Text>
+      <Text style={styles.subtitle}>
+        Mohon Tunggu Sebentar, Ga Bakal Lama Kok...
+      </Text>
     </View>
   );
 };

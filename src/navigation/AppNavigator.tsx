@@ -12,8 +12,13 @@ import CampaignListScreen from '../Screens/Campaign/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/Campaign/CampaignDetailScreen';
 import OrderDetailScreen from '../Screens/Order/OrderDetailScreen';
 import BackOrderScreen from '../Screens/Order/BackOrderScreen';
-import EditProfileScreen from '../Screens/Profile/EditProfileScreen';
+import CollectionScreen from '../Screens/Collection/CollectionScreen';
+import InvoiceDetailScreen from '../Screens/Collection/InvoiceDetailScreen';
+import EditProfileScreenWrapper from '../Screens/Profile/EditProfileScreenWrapper';
+import ChangePinScreenWrapper from '../Screens/Profile/ChangePinScreenWrapper';
+import CatalogueScreen from '../Screens/Profile/CatalogueScreen';
 import PrivacyPolicyScreen from '../Screens/Profile/PrivacyPolicyScreen';
+import SetupCollectionPinScreen from '../Screens/Collection/SetupCollectionPinScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -80,8 +85,36 @@ const AppNavigator: React.FC = () => {
           }}
         />
         <Stack.Screen 
+          name="Collection" 
+          component={CollectionScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="InvoiceDetail" 
+          component={InvoiceDetailScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
           name="EditProfile" 
-          component={EditProfileScreen}
+          component={EditProfileScreenWrapper}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="ChangePin" 
+          component={ChangePinScreenWrapper}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="Catalogue" 
+          component={CatalogueScreen}
           options={{
             presentation: 'card',
           }}
@@ -89,6 +122,13 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen 
           name="PrivacyPolicy" 
           component={PrivacyPolicyScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="SetupCollectionPin" 
+          component={SetupCollectionPinScreen}
           options={{
             presentation: 'card',
           }}

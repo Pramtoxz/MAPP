@@ -131,6 +131,12 @@ const ProfileScreen: React.FC = () => {
                 />
                 <MenuItem
                   icon={getImage('ic_book_knowledge.png')}
+                  title="Catalogue"
+                  subtitle="Browse Honda spare parts catalogue"
+                  onPress={() => navigation.navigate('Catalogue')}
+                />
+                <MenuItem
+                  icon={getImage('ic_book_knowledge.png')}
                   title="Privacy & Policy"
                   subtitle="Read our terms and policies"
                   onPress={() => navigation.navigate('PrivacyPolicy')}

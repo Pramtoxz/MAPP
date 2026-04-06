@@ -17,13 +17,42 @@ import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { RootStackParamList } from '../../navigation/types';
 
-type PrivacyPolicyScreenNavigationProp = StackNavigationProp<
+type CatalogueScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'PrivacyPolicy'
+  'Catalogue'
 >;
 
-const PrivacyPolicyScreen: React.FC = () => {
-  const navigation = useNavigation<PrivacyPolicyScreenNavigationProp>();
+const CatalogueScreen: React.FC = () => {
+  const navigation = useNavigation<CatalogueScreenNavigationProp>();
+
+  const injectedJavaScript = `
+    (function() {
+      const meta = document.createElement('meta');
+      meta.setAttribute('name', 'viewport');
+      meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+      document.getElementsByTagName('head')[0].appendChild(meta);
+      
+      const style = document.createElement('style');
+      style.innerHTML = \`
+        * {
+          -webkit-overflow-scrolling: touch !important;
+          overflow-x: auto !important;
+        }
+        table {
+          display: block !important;
+          overflow-x: auto !important;
+          white-space: nowrap !important;
+          max-width: 100% !important;
+        }
+        body {
+          overflow-x: auto !important;
+        }
+      \`;
+      document.head.appendChild(style);
+      
+      true;
+    })();
+  `;
 
   return (
     <View style={styles.container}>
@@ -40,17 +69,25 @@ const PrivacyPolicyScreen: React.FC = () => {
               style={styles.backIcon}
             />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Privacy & Policy</Text>
+          <Text style={styles.headerTitle}>Catalogue</Text>
           <View style={{ width: 44 }} />
         </View>
       </SafeAreaView>
 
       <WebView
         source={{
-          uri: 'https://pmo.menara-agung.com/kebijakan-privasi',
+          uri: 'https://www.hondacengkareng.com/katalog-suku-cadang-motor-honda/',
         }}
         style={styles.webview}
         startInLoadingState={true}
+        scalesPageToFit={true}
+        injectedJavaScript={injectedJavaScript}
+        onMessage={() => {}}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        setBuiltInZoomControls={true}
+        setDisplayZoomControls={false}
+        nestedScrollEnabled={true}
         renderLoading={() => (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
@@ -115,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PrivacyPolicyScreen;
+export default CatalogueScreen;

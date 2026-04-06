@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    width: '60%',
-    height: 180,
+    width: '100%',
+    height: 130,
     resizeMode: 'cover',
   },
   content: {

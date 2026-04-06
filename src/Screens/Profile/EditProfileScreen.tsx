@@ -15,6 +15,8 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient';
 import { authService } from '../../services/auth';
+import { pinService } from '../../services/pin';
+import { apiService } from '../../services/api';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
@@ -33,6 +35,10 @@ const EditProfileScreen: React.FC = () => {
   const [npwp, setNpwp] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  
+  const [oldPin, setOldPin] = useState('');
+  const [newPin, setNewPin] = useState('');
+  const [newPinConfirmation, setNewPinConfirmation] = useState('');
   
   const [dealerCode, setDealerCode] = useState('');
   const [salesName, setSalesName] = useState('');
@@ -116,6 +122,24 @@ const EditProfileScreen: React.FC = () => {
       newErrors.password_confirmation = 'Konfirmasi password tidak cocok';
     }
     
+    if (oldPin || newPin || newPinConfirmation) {
+      if (!oldPin) {
+        newErrors.old_pin = 'PIN lama harus diisi';
+      } else if (oldPin.length !== 4) {
+        newErrors.old_pin = 'PIN harus 4 digit';
+      }
+      
+      if (!newPin) {
+        newErrors.new_pin = 'PIN baru harus diisi';
+      } else if (newPin.length !== 4) {
+        newErrors.new_pin = 'PIN harus 4 digit';
+      }
+      
+      if (newPin && newPin !== newPinConfirmation) {
+        newErrors.new_pin_confirmation = 'Konfirmasi PIN tidak cocok';
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -128,6 +152,20 @@ const EditProfileScreen: React.FC = () => {
     setSaving(true);
     setErrors({});
 
+    let pinChanged = false;
+    if (oldPin && newPin && newPinConfirmation) {
+      const pinResult = await pinService.changePin(oldPin, newPin, newPinConfirmation);
+      if (!pinResult.success) {
+        setSaving(false);
+        setAlertType('alert');
+        setAlertMessage(pinResult.message);
+        setAlertVisible(true);
+        return;
+      }
+      apiService.setPinForRequest(newPin);
+      pinChanged = true;
+    }
+
     const updateData: any = {};
     
     if (email) updateData.email = email;
@@ -139,24 +177,33 @@ const EditProfileScreen: React.FC = () => {
       updateData.password_confirmation = passwordConfirmation;
     }
 
-    const result = await authService.updateProfile(updateData);
-    setSaving(false);
+    if (Object.keys(updateData).length > 0) {
+      const result = await authService.updateProfile(updateData);
+      setSaving(false);
 
-    if (result.success) {
-      setAlertType('success');
-      setAlertMessage(result.message || 'Profil berhasil diupdate');
-      setAlertVisible(true);
-    } else {
-      if (result.errors) {
-        const formattedErrors: { [key: string]: string } = {};
-        Object.keys(result.errors).forEach(key => {
-          formattedErrors[key] = result.errors![key][0];
-        });
-        setErrors(formattedErrors);
+      if (result.success) {
+        setAlertType('success');
+        setAlertMessage(pinChanged ? 'PIN dan profil berhasil diupdate' : result.message || 'Profil berhasil diupdate');
+        setAlertVisible(true);
+      } else {
+        if (result.errors) {
+          const formattedErrors: { [key: string]: string } = {};
+          Object.keys(result.errors).forEach(key => {
+            formattedErrors[key] = result.errors![key][0];
+          });
+          setErrors(formattedErrors);
+        }
+        setAlertType('alert');
+        setAlertMessage(result.message || 'Gagal mengupdate profil');
+        setAlertVisible(true);
       }
-      setAlertType('alert');
-      setAlertMessage(result.message || 'Gagal mengupdate profil');
-      setAlertVisible(true);
+    } else {
+      setSaving(false);
+      if (pinChanged) {
+        setAlertType('success');
+        setAlertMessage('PIN berhasil diubah');
+        setAlertVisible(true);
+      }
     }
   };
 
@@ -294,6 +341,64 @@ const EditProfileScreen: React.FC = () => {
                 </TouchableOpacity>
               </View>
               {errors.password_confirmation && <Text style={styles.errorText}>{errors.password_confirmation}</Text>}
+            </>
+          )}
+
+          <Text style={styles.label}>PIN Lama <Text style={styles.optional}>(opsional)</Text></Text>
+          <TextInput
+            style={[styles.input, errors.old_pin && styles.inputError]}
+            placeholder="Masukkan PIN lama 4 digit"
+            placeholderTextColor={colors.grayHint}
+            value={oldPin}
+            onChangeText={(text) => {
+              if (/^\d*$/.test(text) && text.length <= 4) {
+                setOldPin(text);
+                if (errors.old_pin) setErrors(prev => ({ ...prev, old_pin: '' }));
+              }
+            }}
+            keyboardType="number-pad"
+            maxLength={4}
+            secureTextEntry
+          />
+          {errors.old_pin && <Text style={styles.errorText}>{errors.old_pin}</Text>}
+
+          {oldPin.length > 0 && (
+            <>
+              <Text style={styles.label}>PIN Baru</Text>
+              <TextInput
+                style={[styles.input, errors.new_pin && styles.inputError]}
+                placeholder="Masukkan PIN baru 4 digit"
+                placeholderTextColor={colors.grayHint}
+                value={newPin}
+                onChangeText={(text) => {
+                  if (/^\d*$/.test(text) && text.length <= 4) {
+                    setNewPin(text);
+                    if (errors.new_pin) setErrors(prev => ({ ...prev, new_pin: '' }));
+                  }
+                }}
+                keyboardType="number-pad"
+                maxLength={4}
+                secureTextEntry
+              />
+              {errors.new_pin && <Text style={styles.errorText}>{errors.new_pin}</Text>}
+
+              <Text style={styles.label}>Konfirmasi PIN Baru</Text>
+              <TextInput
+                style={[styles.input, errors.new_pin_confirmation && styles.inputError]}
+                placeholder="Ulangi PIN baru"
+                placeholderTextColor={colors.grayHint}
+                value={newPinConfirmation}
+                onChangeText={(text) => {
+                  if (/^\d*$/.test(text) && text.length <= 4) {
+                    setNewPinConfirmation(text);
+                    if (errors.new_pin_confirmation) setErrors(prev => ({ ...prev, new_pin_confirmation: '' }));
+                  }
+                }}
+                keyboardType="number-pad"
+                maxLength={4}
+                secureTextEntry
+              />
+              {errors.new_pin_confirmation && <Text style={styles.errorText}>{errors.new_pin_confirmation}</Text>}
             </>
           )}
 

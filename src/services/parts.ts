@@ -8,8 +8,8 @@ export interface Part {
   description: string;
   price: number;
   category: string;
-  // Field only available in detail - for internal use only, not displayed to user
   isReady?: boolean;
+  stock?: number;
 }
 
 export interface VehicleType {

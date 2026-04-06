@@ -187,7 +187,6 @@ export const useHomeScreen = () => {
   };
 
   const handleProductPress = async (product: Part) => {
-    // Load detail with stock info
     const result = await partsService.getPartDetail(product.partNumber);
     if (result.success && result.data) {
       setSelectedProduct(result.data);
@@ -196,7 +195,6 @@ export const useHomeScreen = () => {
   };
 
   const handleAddPress = async (product: Part) => {
-    // Load detail with stock info
     const result = await partsService.getPartDetail(product.partNumber);
     if (result.success && result.data) {
       setSelectedProduct(result.data);

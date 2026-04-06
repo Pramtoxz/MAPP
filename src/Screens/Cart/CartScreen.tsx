@@ -91,9 +91,9 @@ const CartScreen: React.FC = () => {
 
   const confirmCreatePO = async () => {
     setShowCheckoutConfirm(false);
-    
+
     const result = await handleCheckout();
-    
+
     if (result.success && result.data) {
       setCheckoutData(result.data);
       setShowCheckoutSuccess(true);
@@ -129,15 +129,18 @@ const CartScreen: React.FC = () => {
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
+              <Image
+                source={getImage('ic_arrow_back.png')}
+                style={styles.backIcon}
+              />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Cart</Text>
             <View style={styles.headerRight} />
           </View>
         </View>
 
-        <ScrollView 
-          style={styles.scrollView} 
+        <ScrollView
+          style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -152,7 +155,7 @@ const CartScreen: React.FC = () => {
             {loading ? (
               <View style={styles.loadingContainer}>
                 <LottieView
-                  source={require('../../assets/lottie/rocket.json')}
+                  source={require('../../assets/lottie/truck.json')}
                   autoPlay
                   loop
                   style={styles.rocketLottie}
@@ -168,7 +171,7 @@ const CartScreen: React.FC = () => {
                 <FlatList
                   data={cartItems}
                   scrollEnabled={false}
-                  keyExtractor={(item) => item.id}
+                  keyExtractor={item => item.id}
                   renderItem={({ item }) => (
                     <CartItemSwipeable
                       item={item}
@@ -186,78 +189,87 @@ const CartScreen: React.FC = () => {
           </View>
         </ScrollView>
 
-      <View style={styles.footer}>
-        <View style={styles.totalContainer}>
-          <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalAmount}>{formatPrice(calculateTotal())}</Text>
-        </View>
-        <TouchableOpacity 
-          onPress={handleCreatePO}
-          disabled={checkoutLoading || cartItems.length === 0}
-        >
-          <LinearGradient
-            colors={(checkoutLoading || cartItems.length === 0) 
-              ? [colors.grayInactive, colors.grayInactive] 
-              : [colors.primary, colors.primaryDark]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.createButton}
+        <View style={styles.footer}>
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalLabel}>Total</Text>
+            <Text style={styles.totalAmount}>
+              {formatPrice(calculateTotal())}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={handleCreatePO}
+            disabled={checkoutLoading || cartItems.length === 0}
           >
-            <Text style={styles.createButtonText}>Create PO</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
+            <LinearGradient
+              colors={
+                checkoutLoading || cartItems.length === 0
+                  ? [colors.grayInactive, colors.grayInactive]
+                  : [colors.primary, colors.primaryDark]
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.createButton}
+            >
+              <Text style={styles.createButtonText}>Create PO</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
 
-      <CustomAlert
-        visible={showDeleteAlert}
-        title="Hapus Item"
-        message="Apakah Anda yakin ingin menghapus item ini dari keranjang?"
-        type="confirm"
-        onConfirm={confirmDelete}
-        onCancel={cancelDelete}
-        confirmText="Hapus"
-        cancelText="Batal"
-      />
+        <CustomAlert
+          visible={showDeleteAlert}
+          title="Hapus Item"
+          message="Apakah Anda yakin ingin menghapus item ini dari keranjang?"
+          type="confirm"
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+          confirmText="Hapus"
+          cancelText="Batal"
+        />
 
-      <CustomAlert
-        visible={showCheckoutConfirm}
-        title="Konfirmasi Pesanan"
-        message={`Apakah Anda yakin ingin membuat Purchase Order dengan total ${formatPrice(calculateTotal())}?`}
-        type="confirm"
-        onConfirm={confirmCreatePO}
-        onCancel={() => setShowCheckoutConfirm(false)}
-        confirmText="Ya, Buat PO"
-        cancelText="Batal"
-      />
+        <CustomAlert
+          visible={showCheckoutConfirm}
+          title="Konfirmasi Pesanan"
+          message={`Apakah Anda yakin ingin membuat Purchase Order dengan total ${formatPrice(
+            calculateTotal(),
+          )}?`}
+          type="confirm"
+          onConfirm={confirmCreatePO}
+          onCancel={() => setShowCheckoutConfirm(false)}
+          confirmText="Ya, Buat PO"
+          cancelText="Batal"
+        />
 
-      <CustomAlert
-        visible={showSuccessAlert}
-        title="Berhasil"
-        message="Item berhasil dihapus dari keranjang"
-        type="success"
-        onConfirm={() => setShowSuccessAlert(false)}
-        confirmText="OK"
-      />
+        <CustomAlert
+          visible={showSuccessAlert}
+          title="Berhasil"
+          message="Item berhasil dihapus dari keranjang"
+          type="success"
+          onConfirm={() => setShowSuccessAlert(false)}
+          confirmText="OK"
+        />
 
-      <SuccessModal
-        visible={showCheckoutSuccess}
-        title="Order Berhasil Dibuat!"
-        message={checkoutData ? `No. SO: ${checkoutData.no_so}` : ''}
-        onComplete={handleCheckoutSuccessConfirm}
-        duration={2500}
-      />
+        <SuccessModal
+          visible={showCheckoutSuccess}
+          title="Order Berhasil Dibuat!"
+          message={checkoutData ? `No. SO: ${checkoutData.no_so}` : ''}
+          onComplete={handleCheckoutSuccessConfirm}
+          duration={2500}
+        />
 
-      <CustomAlert
-        visible={showErrorAlert}
-        title="Checkout Gagal"
-        message={errorMessage}
-        type="alert"
-        onConfirm={() => setShowErrorAlert(false)}
-        confirmText="OK"
-      />
+        <CustomAlert
+          visible={showErrorAlert}
+          title="Checkout Gagal"
+          message={errorMessage}
+          type="alert"
+          onConfirm={() => setShowErrorAlert(false)}
+          confirmText="OK"
+        />
 
-      <LoadingDialog visible={checkoutLoading} message="Memproses pesanan..." />
-    </SafeAreaView>
+        <LoadingDialog
+          visible={checkoutLoading}
+          message="Memproses pesanan..."
+        />
+      </SafeAreaView>
     </GestureHandlerRootView>
   );
 };

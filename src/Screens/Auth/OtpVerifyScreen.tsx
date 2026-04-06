@@ -129,7 +129,6 @@ const OtpVerifyScreen: React.FC = () => {
         'Verifikasi Gagal',
         result.message || 'Kode OTP tidak valid atau sudah kadaluarsa'
       );
-      // Clear OTP on error
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     }

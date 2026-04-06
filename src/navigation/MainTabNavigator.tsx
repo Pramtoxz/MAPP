@@ -8,7 +8,7 @@ import { getImage } from '../assets/images';
 import { MainTabParamList } from './types';
 import HomeScreen from '../Screens/Home/HomeScreen';
 import OrderScreen from '../Screens/Order/OrderScreen';
-import CollectionScreen from '../Screens/Collection/CollectionScreen';
+import CollectionScreenWrapper from '../Screens/Collection/CollectionScreenWrapper';
 import ProfileScreen from '../Screens/Profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -59,7 +59,7 @@ const MainTabNavigator: React.FC = () => {
       />
       <Tab.Screen
         name="CollectionTab"
-        component={CollectionScreen}
+        component={CollectionScreenWrapper}
         options={{
           tabBarLabel: 'Collection',
           tabBarIcon: ({ color, size }) => (

@@ -18,7 +18,7 @@ const LoadingDialog: React.FC<LoadingDialogProps> = ({
   return (
     <View style={styles.container}>
       <LottieView
-        source={require('../assets/lottie/rocket.json')}
+        source={require('../assets/lottie/truck.json')}
         autoPlay
         loop
         style={styles.lottie}

@@ -22,8 +22,11 @@ export const colors = {
   
   // Status colors
   success: '#4CAF50',
+  successLight: '#81C784',
   warning: '#FF9800',
+  warningLight: '#FFB74D',
   error: '#F44336',
+  errorLight: '#FFCDD2',
   errorBadge: '#FF5252',
   info: '#757575',
   
@@ -36,6 +39,7 @@ export const colors = {
   backgroundFaint: '#FAFAFA',
   
   // Border colors
+  border: '#E0E0E0',
   borderLight: '#F0F0F0',
   borderGray: '#E0E0E0',
   borderInput: '#dddddd',

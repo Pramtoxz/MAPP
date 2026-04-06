@@ -11,6 +11,16 @@ interface ApiResponse<T> {
 }
 
 class ApiService {
+  private pinCache: string | null = null;
+
+  setPinForRequest(pin: string) {
+    this.pinCache = pin;
+  }
+
+  clearPin() {
+    this.pinCache = null;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -25,6 +35,10 @@ class ApiService {
 
       if (token && !endpoint.includes('/auth/login')) {
         headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      if (this.pinCache && (endpoint.includes('/collections') || endpoint.includes('/auth/profile'))) {
+        headers['X-Collection-Pin'] = this.pinCache;
       }
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
