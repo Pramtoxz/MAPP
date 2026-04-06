@@ -6,18 +6,18 @@ export const useCampaignDetail = (campaignId: string) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const loadCampaignDetail = async () => {
+      setLoading(true);
+      const result = await campaignService.getCampaignDetail(campaignId);
+      setLoading(false);
+
+      if (result.success && result.data) {
+        setCampaign(result.data);
+      }
+    };
+
     loadCampaignDetail();
   }, [campaignId]);
-
-  const loadCampaignDetail = async () => {
-    setLoading(true);
-    const result = await campaignService.getCampaignDetail(campaignId);
-    setLoading(false);
-
-    if (result.success && result.data) {
-      setCampaign(result.data);
-    }
-  };
 
   return {
     campaign,

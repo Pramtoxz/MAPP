@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/types';
-import { orderService, Order, OrderDetail } from '../../../services';
+import { orderService, Order } from '../../../services';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 

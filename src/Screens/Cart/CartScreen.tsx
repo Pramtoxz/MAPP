@@ -110,7 +110,7 @@ const CartScreen: React.FC = () => {
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={styles.gestureRoot}>
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar
           translucent
@@ -275,6 +275,9 @@ const CartScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  gestureRoot: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.primary,

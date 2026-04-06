@@ -41,6 +41,7 @@ const NotificationScreen: React.FC = () => {
     });
 
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadNotifications = async () => {
@@ -134,8 +135,8 @@ const NotificationScreen: React.FC = () => {
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  const renderNotification = ({ item, index }: { item: Notification; index: number }) => (
-    <Animated.View style={{ opacity: 1 }}>
+  const renderNotification = ({ item }: { item: Notification; index: number }) => (
+    <Animated.View style={styles.animatedView}>
       <TouchableOpacity
         style={[styles.notificationCard, !item.is_read && styles.unreadCard]}
         onPress={() => handleNotificationPress(item)}
@@ -508,6 +509,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     color: colors.grayText,
     textAlign: 'center',
+  },
+  animatedView: {
+    opacity: 1,
   },
 });
 

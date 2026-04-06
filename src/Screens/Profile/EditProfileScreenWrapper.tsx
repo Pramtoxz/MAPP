@@ -15,7 +15,6 @@ const EditProfileScreenWrapper: React.FC = () => {
   const [verifying, setVerifying] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [verifiedPin, setVerifiedPin] = useState<string>('');
 
   const handlePinConfirm = async (pin: string) => {
     setVerifying(true);
@@ -23,8 +22,6 @@ const EditProfileScreenWrapper: React.FC = () => {
     setVerifying(false);
 
     if (result.success && result.verified) {
-      console.log('PIN verified, setting PIN:', pin);
-      setVerifiedPin(pin);
       apiService.setPinForRequest(pin);
       setPinVerified(true);
       setShowPinDialog(false);

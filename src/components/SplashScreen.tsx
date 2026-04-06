@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Image, Text, StatusBar, StyleSheet } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { authService } from '../services/auth';
 import { RootStackParamList } from '../navigation/types';
@@ -8,12 +8,9 @@ import { colors } from '../config/colors';
 import { getImage } from '../assets/images';
 
 type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splash'>;
-type SplashScreenRouteProp = RouteProp<RootStackParamList, 'Splash'>;
 
 const SplashScreen: React.FC = () => {
   const navigation = useNavigation<SplashScreenNavigationProp>();
-  const route = useRoute<SplashScreenRouteProp>();
-  const showWelcome = route.params?.showWelcome || false;
 
   useEffect(() => {
     const checkUserSession = async () => {

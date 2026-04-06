@@ -169,7 +169,7 @@ const ChangePinScreen: React.FC = () => {
           <Image source={getImage('ic_arrow_back.png')} style={styles.backIcon} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Ubah PIN</Text>
-        <View style={{ width: 44 }} />
+        <View style={styles.headerRightSpacer} />
       </View>
 
       <View style={styles.content}>
@@ -401,6 +401,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
     color: colors.primary,
     textDecorationLine: 'underline',
+  },
+  headerRightSpacer: {
+    width: 44,
   },
 });
 

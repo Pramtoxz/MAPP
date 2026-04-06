@@ -28,8 +28,6 @@ interface FilterModalProps {
 const FilterModal: React.FC<FilterModalProps> = ({
   visible,
   onClose,
-  selectedVehicleType,
-  selectedCategory,
   onApply,
 }) => {
   const [tempVehicleType, setTempVehicleType] = useState<VehicleType | undefined>();
@@ -73,6 +71,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
       slideAnim.setValue(0);
       fadeAnim.setValue(0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   const handleClose = () => {

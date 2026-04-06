@@ -72,8 +72,8 @@ class PinService {
         requires_setup: true,
         message: result.message || 'Gagal mengecek status PIN',
       };
-    } catch (error) {
-      console.error('Check PIN status error:', error);
+    } catch (_error) {
+      console.error('Check PIN status error:', _error);
       return {
         success: false,
         has_pin: false,
@@ -118,8 +118,8 @@ class PinService {
         success: false,
         message: result.message || 'Gagal mengatur PIN',
       };
-    } catch (error) {
-      console.error('Setup PIN error:', error);
+    } catch (_error) {
+      console.error('Setup PIN error:', _error);
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -160,8 +160,8 @@ class PinService {
         verified: false,
         message: result.message || 'PIN salah',
       };
-    } catch (error) {
-      console.error('Verify PIN error:', error);
+    } catch (_error) {
+      console.error('Verify PIN error:', _error);
       return {
         success: false,
         verified: false,
@@ -205,8 +205,8 @@ class PinService {
         success: false,
         message: result.message || 'Gagal mengubah PIN',
       };
-    } catch (error) {
-      console.error('Change PIN error:', error);
+    } catch (_error) {
+      console.error('Change PIN error:', _error);
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -218,7 +218,7 @@ class PinService {
     try {
       const cached = await AsyncStorage.getItem(PIN_STATUS_KEY);
       return cached ? JSON.parse(cached) : null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -226,8 +226,8 @@ class PinService {
   async clearPinStatus(): Promise<void> {
     try {
       await AsyncStorage.removeItem(PIN_STATUS_KEY);
-    } catch (error) {
-      console.error('Clear PIN status error:', error);
+    } catch (_error) {
+      console.error('Clear PIN status error:', _error);
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
@@ -23,8 +23,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onPress,
   onAddPress,
 }) => {
-  const formatPrice = (price: number) => {
-    return `Rp ${price.toLocaleString('id-ID')}`;
+  const formatPrice = (priceValue: number) => {
+    return `Rp ${priceValue.toLocaleString('id-ID')}`;
   };
 
   return (

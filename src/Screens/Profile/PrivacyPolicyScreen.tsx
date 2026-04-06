@@ -41,7 +41,7 @@ const PrivacyPolicyScreen: React.FC = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Privacy & Policy</Text>
-          <View style={{ width: 44 }} />
+          <View style={styles.headerRightSpacer} />
         </View>
       </SafeAreaView>
 
@@ -112,6 +112,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 14,
     color: colors.grayText,
+  },
+  headerRightSpacer: {
+    width: 44,
   },
 });
 

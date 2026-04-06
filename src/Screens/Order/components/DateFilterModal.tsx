@@ -79,10 +79,7 @@ export const DateFilterModal: React.FC<DateFilterModalProps> = ({
                 fontFamily: fonts.bold,
                 color: colors.white,
               }}
-              todayContainerStyle={{
-                borderWidth: 1,
-                borderColor: colors.primary,
-              }}
+              todayContainerStyle={styles.todayContainer}
               headerButtonColor={colors.primary}
               headerTextStyle={{
                 fontFamily: fonts.bold,
@@ -209,5 +206,9 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.default,
     fontFamily: fonts.semibold,
     color: colors.white,
+  },
+  todayContainer: {
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
 });

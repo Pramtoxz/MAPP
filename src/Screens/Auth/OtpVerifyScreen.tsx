@@ -57,7 +57,7 @@ const OtpVerifyScreen: React.FC = () => {
     ]).start();
 
     setTimeout(() => inputRefs.current[0]?.focus(), 300);
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   useEffect(() => {
     if (countdown > 0) {

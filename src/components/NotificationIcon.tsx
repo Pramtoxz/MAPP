@@ -31,7 +31,7 @@ export const NotificationIcon: React.FC<NotificationIconProps> = ({
     });
 
     // Listen for incoming push notifications
-    const unsubscribeMessage = notificationService.onMessageReceived((message) => {
+    const unsubscribeMessage = notificationService.onMessageReceived((_message) => {
       loadUnreadCount();
     });
 
@@ -45,6 +45,7 @@ export const NotificationIcon: React.FC<NotificationIconProps> = ({
       unsubscribeMessage();
       clearInterval(interval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadUnreadCount = async () => {

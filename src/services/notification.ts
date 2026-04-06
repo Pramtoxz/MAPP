@@ -73,7 +73,7 @@ class NotificationService {
         success: false,
         error: response.error?.message || 'Failed to fetch notifications',
       };
-    } catch (error: any) {
+    } catch {
       return {
         success: false,
         error: 'Failed to fetch notifications',
@@ -101,7 +101,7 @@ class NotificationService {
         success: false,
         error: response.error?.message || 'Failed to fetch unread count',
       };
-    } catch (error: any) {
+    } catch {
       return {
         success: false,
         error: 'Failed to fetch unread count',
@@ -119,7 +119,7 @@ class NotificationService {
         success: false,
         error: response.error?.message || 'Failed to mark as read',
       };
-    } catch (error: any) {
+    } catch {
       return {
         success: false,
         error: 'Failed to mark as read',
@@ -137,7 +137,7 @@ class NotificationService {
         success: false,
         error: response.error?.message || 'Failed to mark all as read',
       };
-    } catch (error: any) {
+    } catch {
       return {
         success: false,
         error: 'Failed to mark all as read',
@@ -155,7 +155,7 @@ class NotificationService {
         success: false,
         error: response.error?.message || 'Failed to send test notification',
       };
-    } catch (error: any) {
+    } catch {
       return {
         success: false,
         error: 'Failed to send test notification',

@@ -34,7 +34,7 @@ class ApiService {
       };
 
       if (token && !endpoint.includes('/auth/login')) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
       }
 
       if (this.pinCache && (endpoint.includes('/collections') || endpoint.includes('/auth/profile'))) {

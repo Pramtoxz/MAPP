@@ -80,6 +80,7 @@ const PinInputDialog: React.FC<PinInputDialogProps> = ({
     if (error) {
       shake();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   return (

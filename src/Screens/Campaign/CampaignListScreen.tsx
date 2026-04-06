@@ -23,7 +23,7 @@ type CampaignListScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const CampaignListScreen: React.FC = () => {
   const navigation = useNavigation<CampaignListScreenNavigationProp>();
-  const { campaigns, loading, achievement } = useCampaignList();
+  const { campaigns, loading } = useCampaignList();
 
   const handleCampaignPress = (campaign: Campaign) => {
     navigation.navigate('CampaignDetail', { campaignId: campaign.id });
@@ -80,9 +80,9 @@ const CampaignListScreen: React.FC = () => {
         </View> */}
 
         {loading ? (
-          <View style={{ padding: 40, alignItems: 'center' }}>
+          <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={{ marginTop: 16, color: colors.grayText }}>
+            <Text style={styles.loadingText}>
               Loading campaigns...
             </Text>
           </View>
@@ -91,7 +91,7 @@ const CampaignListScreen: React.FC = () => {
             {campaigns.map(item => (
               <View key={item.id}>{renderCampaignCard({ item })}</View>
             ))}
-            <View style={{ height: 100 }} />
+            <View style={styles.spacer} />
           </View>
         )}
       </ScrollView>
@@ -208,6 +208,17 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.small,
     fontFamily: fonts.regular,
     color: colors.grayText,
+  },
+  loadingContainer: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    color: colors.grayText,
+  },
+  spacer: {
+    height: 100,
   },
 });
 

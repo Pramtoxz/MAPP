@@ -31,21 +31,22 @@ const InvoiceDetailScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadInvoiceDetail();
-  }, []);
-
-  const loadInvoiceDetail = async () => {
-    setLoading(true);
-    try {
-      const result = await collectionService.getInvoiceDetail(noFaktur);
-      if (result.success && result.data) {
-        setInvoice(result.data);
+    const loadInvoiceDetail = async () => {
+      setLoading(true);
+      try {
+        const result = await collectionService.getInvoiceDetail(noFaktur);
+        if (result.success && result.data) {
+          setInvoice(result.data);
+        }
+      } catch (error) {
+        console.error('Error loading invoice detail:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading invoice detail:', error);
-    }
-    setLoading(false);
-  };
+    };
+
+    loadInvoiceDetail();
+  }, [noFaktur]);
 
   const formatPrice = (price: number) => {
     return `Rp ${price.toLocaleString('id-ID')}`;

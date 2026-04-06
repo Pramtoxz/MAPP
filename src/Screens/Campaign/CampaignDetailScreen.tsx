@@ -33,7 +33,7 @@ const CampaignDetailScreen: React.FC = () => {
   const formatDate = (dateString: string) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const [year, month, day] = dateString.split('-');
-    return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+    return `${parseInt(day, 10)} ${months[parseInt(month, 10) - 1]} ${year}`;
   };
 
   if (loading) {
@@ -49,9 +49,9 @@ const CampaignDetailScreen: React.FC = () => {
           <Text style={styles.headerTitle}>Campaign Detail</Text>
           <View style={styles.headerRight} />
         </View>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={{ marginTop: 16, color: colors.grayText }}>Loading campaign...</Text>
+          <Text style={styles.loadingText}>Loading campaign...</Text>
         </View>
       </SafeAreaView>
     );
@@ -70,8 +70,8 @@ const CampaignDetailScreen: React.FC = () => {
           <Text style={styles.headerTitle}>Campaign Detail</Text>
           <View style={styles.headerRight} />
         </View>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: colors.grayText }}>Campaign not found</Text>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.emptyText}>Campaign not found</Text>
         </View>
       </SafeAreaView>
     );
@@ -145,7 +145,7 @@ const CampaignDetailScreen: React.FC = () => {
             </View>
           )}
 
-          <View style={{ height: 100 }} />
+          <View style={styles.spacer} />
         </View>
       </ScrollView>
 
@@ -270,6 +270,21 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.medium,
     fontFamily: fonts.bold,
     color: colors.white,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    color: colors.grayText,
+  },
+  emptyText: {
+    color: colors.grayText,
+  },
+  spacer: {
+    height: 100,
   },
 });
 

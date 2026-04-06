@@ -26,7 +26,7 @@ const TabSwitcher: React.FC<TabSwitcherProps> = ({ activeTab, onTabChange }) => 
       tension: 50,
       friction: 7,
     }).start();
-  }, [activeTab]);
+  }, [activeTab, slideAnim]);
 
   const tabIndicatorTranslate = slideAnim.interpolate({
     inputRange: [0, 1],

@@ -70,7 +70,7 @@ const CatalogueScreen: React.FC = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Catalogue</Text>
-          <View style={{ width: 44 }} />
+          <View style={styles.headerRightSpacer} />
         </View>
       </SafeAreaView>
 
@@ -149,6 +149,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 14,
     color: colors.grayText,
+  },
+  headerRightSpacer: {
+    width: 44,
   },
 });
 

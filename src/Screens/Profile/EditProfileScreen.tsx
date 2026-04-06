@@ -205,7 +205,7 @@ const EditProfileScreen: React.FC = () => {
             <Image source={getImage('ic_arrow_back.png')} style={styles.backIco} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={{ width: 44 }} />
+          <View style={styles.headerRightSpacer} />
         </View>
       </SafeAreaView>
 
@@ -523,6 +523,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: fonts.bold,
     color: colors.white,
+  },
+  headerRightSpacer: {
+    width: 44,
   },
 });
 

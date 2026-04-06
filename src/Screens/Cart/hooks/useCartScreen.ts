@@ -77,7 +77,7 @@ export const useCartScreen = () => {
 
   const handleQuantityChange = async (id: string, text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '');
-    const quantity = parseInt(numericValue) || 1;
+    const quantity = parseInt(numericValue, 10) || 1;
     const result = await cartService.updateCartItem(id, { quantity });
     if (result.success) {
       const item = cartItems.find(i => i.id === id);
@@ -119,6 +119,7 @@ export const useCartScreen = () => {
         };
       }
     } catch (error) {
+      console.error('Checkout error:', error);
       setCheckoutLoading(false);
       return {
         success: false,

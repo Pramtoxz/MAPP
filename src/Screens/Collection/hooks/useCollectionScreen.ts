@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/types';
@@ -14,10 +14,6 @@ export const useCollectionScreen = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [currentFilter, setCurrentFilter] = useState<FilterType>('outstanding');
-
-  useEffect(() => {
-    loadCollections();
-  }, []);
 
   const loadCollections = async (dari?: string, sampai?: string, filter?: FilterType) => {
     setLoading(true);

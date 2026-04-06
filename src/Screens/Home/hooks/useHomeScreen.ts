@@ -27,6 +27,7 @@ export const useHomeScreen = () => {
     loadParts(true);
     loadCartCount();
     loadCampaigns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Reload cart count setiap kali screen di-focus
@@ -36,7 +37,7 @@ export const useHomeScreen = () => {
     }, [])
   );
 
-  const loadParts = async (reset: boolean = false) => {
+  const loadParts = useCallback(async (reset: boolean = false) => {
     if (reset) {
       setLoading(true);
       setCurrentPage(1);
@@ -68,14 +69,14 @@ export const useHomeScreen = () => {
       setHasMore(result.data.pagination.hasMore);
       setCurrentPage(result.data.pagination.currentPage);
     }
-  };
+  }, [currentPage, searchQuery, selectedCategory, selectedVehicleType]);
 
   const loadMore = useCallback(() => {
     if (!loadingMore && hasMore) {
       setCurrentPage(prev => prev + 1);
       loadParts(false);
     }
-  }, [loadingMore, hasMore, currentPage]);
+  }, [loadingMore, hasMore, loadParts]);
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -108,20 +109,20 @@ export const useHomeScreen = () => {
         setShowSuggestions(result.data.items.length > 0);
       }
     }, 300);
-  }, []);
+  }, [loadParts]);
 
   const handleSelectSuggestion = useCallback((part: Part) => {
     setSearchQuery(part.partNumber);
     setShowSuggestions(false);
     handleProductPress(part);
-  }, []);
+  }, [handleProductPress]);
 
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
     setShowSuggestions(false);
     setSearchSuggestions([]);
     loadParts(true);
-  }, []);
+  }, [loadParts]);
 
   const handleSearchSubmit = useCallback(() => {
     // Hide suggestions
@@ -130,7 +131,7 @@ export const useHomeScreen = () => {
     
     // Load parts with current search query
     loadParts(true);
-  }, [searchQuery, selectedCategory, selectedVehicleType]);
+  }, [loadParts]);
 
   const handleOpenFilter = useCallback(() => {
     setFilterModalVisible(true);
@@ -186,13 +187,13 @@ export const useHomeScreen = () => {
     }
   };
 
-  const handleProductPress = async (product: Part) => {
+  const handleProductPress = useCallback(async (product: Part) => {
     const result = await partsService.getPartDetail(product.partNumber);
     if (result.success && result.data) {
       setSelectedProduct(result.data);
       setDetailModalVisible(true);
     }
-  };
+  }, []);
 
   const handleAddPress = async (product: Part) => {
     const result = await partsService.getPartDetail(product.partNumber);

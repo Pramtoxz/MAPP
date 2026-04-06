@@ -106,8 +106,8 @@ class AuthService {
             'Coba ingat-ingat lagi, jangan pake perasaan ya!',
         };
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (_error) {
+      console.error('Login error:', _error);
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -131,8 +131,8 @@ class AuthService {
 
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
-    } catch (error) {
-      console.error('Logout error:', error);
+    } catch (_error) {
+      console.error('Logout error:', _error);
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
     }
@@ -142,7 +142,7 @@ class AuthService {
     try {
       const token = await AsyncStorage.getItem(TOKEN_KEY);
       return token !== null;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -150,7 +150,7 @@ class AuthService {
   async getToken(): Promise<string | null> {
     try {
       return await AsyncStorage.getItem(TOKEN_KEY);
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -159,7 +159,7 @@ class AuthService {
     try {
       const userData = await AsyncStorage.getItem(USER_KEY);
       return userData ? JSON.parse(userData) : null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -188,8 +188,8 @@ class AuthService {
       }
 
       return null;
-    } catch (error) {
-      console.error('Refresh profile error:', error);
+    } catch (_error) {
+      console.error('Refresh profile error:', _error);
       return null;
     }
   }
@@ -244,8 +244,8 @@ class AuthService {
           errors: result.errors,
         };
       }
-    } catch (error) {
-      console.error('Update profile error:', error);
+    } catch (_error) {
+      console.error('Update profile error:', _error);
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -280,8 +280,8 @@ class AuthService {
           message: result.error?.message || result.message || 'Nomor HP tidak terdaftar',
         };
       }
-    } catch (error) {
-      console.error('Request OTP error:', error);
+    } catch (_error) {
+      console.error('Request OTP error:', _error);
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -324,8 +324,8 @@ class AuthService {
           message: result.error?.message || 'Kode OTP tidak valid atau sudah kadaluarsa',
         };
       }
-    } catch (error) {
-      console.error('Verify OTP error:', error);
+    } catch (_error) {
+      console.error('Verify OTP error:', _error);
       return {
         success: false,
         message: 'Koneksi ke server gagal',

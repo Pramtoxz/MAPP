@@ -28,14 +28,14 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
   if (!product) return null;
 
   const handleMinus = () => {
-    const currentQty = parseInt(quantity) || 1;
+    const currentQty = parseInt(quantity, 10) || 1;
     if (currentQty > 1) {
       setQuantity((currentQty - 1).toString());
     }
   };
 
   const handlePlus = () => {
-    const currentQty = parseInt(quantity) || 0;
+    const currentQty = parseInt(quantity, 10) || 0;
     setQuantity((currentQty + 1).toString());
   };
 
@@ -45,7 +45,7 @@ const QuantityModal: React.FC<QuantityModalProps> = ({
   };
 
   const handleConfirm = () => {
-    const finalQty = parseInt(quantity) || 1;
+    const finalQty = parseInt(quantity, 10) || 1;
     onConfirm(finalQty);
     setQuantity('1');
     onClose();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../config/colors';
@@ -12,6 +12,35 @@ import CollectionScreenWrapper from '../Screens/Collection/CollectionScreenWrapp
 import ProfileScreen from '../Screens/Profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+// Extract tab icons to prevent unstable nested components
+const HomeIcon = ({ color, size }: { color: string; size: number }) => (
+  <Image
+    source={getImage('home.png')}
+    style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
+  />
+);
+
+const OrderIcon = ({ color, size }: { color: string; size: number }) => (
+  <Image
+    source={getImage('order.png')}
+    style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
+  />
+);
+
+const CollectionIcon = ({ color, size }: { color: string; size: number }) => (
+  <Image
+    source={getImage('collection.png')}
+    style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
+  />
+);
+
+const ProfileIcon = ({ color, size }: { color: string; size: number }) => (
+  <Image
+    source={getImage('profile.png')}
+    style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
+  />
+);
 
 const MainTabNavigator: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -36,12 +65,7 @@ const MainTabNavigator: React.FC = () => {
         component={HomeScreen}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={getImage('home.png')}
-              style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
-            />
-          ),
+          tabBarIcon: HomeIcon,
         }}
       />
       <Tab.Screen
@@ -49,12 +73,7 @@ const MainTabNavigator: React.FC = () => {
         component={OrderScreen}
         options={{
           tabBarLabel: 'History',
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={getImage('order.png')}
-              style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
-            />
-          ),
+          tabBarIcon: OrderIcon,
         }}
       />
       <Tab.Screen
@@ -62,12 +81,7 @@ const MainTabNavigator: React.FC = () => {
         component={CollectionScreenWrapper}
         options={{
           tabBarLabel: 'Collection',
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={getImage('collection.png')}
-              style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
-            />
-          ),
+          tabBarIcon: CollectionIcon,
         }}
       />
       <Tab.Screen
@@ -75,12 +89,7 @@ const MainTabNavigator: React.FC = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={getImage('profile.png')}
-              style={[styles.tabIcon, { tintColor: color, width: size, height: size }]}
-            />
-          ),
+          tabBarIcon: ProfileIcon,
         }}
       />
     </Tab.Navigator>

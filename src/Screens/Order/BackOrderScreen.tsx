@@ -32,6 +32,7 @@ const BackOrderScreen: React.FC = () => {
 
   useEffect(() => {
     loadBackOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadBackOrder = async () => {

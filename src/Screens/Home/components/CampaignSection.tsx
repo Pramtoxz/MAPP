@@ -17,7 +17,7 @@ export const CampaignSection: React.FC<CampaignSectionProps> = ({
   onSeeMorePress,
 }) => {
   return (
-    <View style={{ marginHorizontal: -8, marginTop: -16 }}>
+    <View style={styles.sectionWrapper}>
       <View style={styles.campaignSection}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Campaign</Text>
@@ -35,7 +35,7 @@ export const CampaignSection: React.FC<CampaignSectionProps> = ({
             />
           </View>
         ) : (
-          <View style={{ padding: 20, alignItems: 'center' }}>
+          <View style={styles.loadingContainer}>
             <ActivityIndicator size="small" color={colors.primary} />
           </View>
         )}
@@ -45,6 +45,10 @@ export const CampaignSection: React.FC<CampaignSectionProps> = ({
 };
 
 const styles = StyleSheet.create({
+  sectionWrapper: {
+    marginHorizontal: -8,
+    marginTop: -16,
+  },
   campaignSection: {
     backgroundColor: colors.white,
     paddingTop: 24,
@@ -68,5 +72,9 @@ const styles = StyleSheet.create({
   },
   campaignWrapper: {
     marginBottom: 24,
+  },
+  loadingContainer: {
+    padding: 20,
+    alignItems: 'center',
   },
 });
