@@ -1,6 +1,7 @@
 import { apiService } from './api';
 
 export interface CollectionSummary {
+  cached?: boolean; // true = fast (< 1 detik), false = slow (2-5 menit)
   totalTagihan: number;
   totalTerbayar: number;
   totalOutstanding: number;
@@ -63,16 +64,33 @@ interface RemindersParams {
   days?: number;
 }
 
+// Helper to get default date range (30 days)
+const getDefaultDateRange = () => {
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+  
+  return {
+    dari: thirtyDaysAgo.toISOString().split('T')[0], // YYYY-MM-DD
+    sampai: today.toISOString().split('T')[0], // YYYY-MM-DD
+  };
+};
+
 class CollectionService {
   async getCollectionsList(params?: CollectionsParams) {
     const queryParams = new URLSearchParams();
 
-    if (params?.dari) queryParams.append('dari', params.dari);
-    if (params?.sampai) queryParams.append('sampai', params.sampai);
+    // If no date params provided, use default 30 days (for cache/performance)
+    const dateRange = (params?.dari && params?.sampai) 
+      ? { dari: params.dari, sampai: params.sampai }
+      : getDefaultDateRange();
+
+    queryParams.append('dari', dateRange.dari);
+    queryParams.append('sampai', dateRange.sampai);
+    
     if (params?.filter) queryParams.append('filter', params.filter);
 
-    const query = queryParams.toString();
-    const endpoint = query ? `/collections?${query}` : '/collections';
+    const endpoint = `/collections?${queryParams.toString()}`;
 
     return apiService.get<CollectionsListResponse>(endpoint);
   }
@@ -80,13 +98,30 @@ class CollectionService {
   async getSummary(dari?: string, sampai?: string) {
     const queryParams = new URLSearchParams();
 
-    if (dari) queryParams.append('dari', dari);
-    if (sampai) queryParams.append('sampai', sampai);
+    // If no date params provided, use default 30 days (for cache/performance)
+    const dateRange = (dari && sampai) 
+      ? { dari, sampai }
+      : getDefaultDateRange();
 
-    const query = queryParams.toString();
-    const endpoint = query ? `/collections/summary?${query}` : '/collections/summary';
+    queryParams.append('dari', dateRange.dari);
+    queryParams.append('sampai', dateRange.sampai);
+
+    const endpoint = `/collections/summary?${queryParams.toString()}`;
 
     return apiService.get<CollectionSummary>(endpoint);
+  }
+
+  // Helper method to check if date range is using cache (30 days)
+  isUsingCache(dari?: string, sampai?: string): boolean {
+    if (!dari || !sampai) return true; // Default uses cache
+    
+    const defaultRange = getDefaultDateRange();
+    return dari === defaultRange.dari && sampai === defaultRange.sampai;
+  }
+
+  // Get default date range for UI
+  getDefaultDateRange() {
+    return getDefaultDateRange();
   }
 
   async getInvoiceDetail(noFaktur: string) {

@@ -42,8 +42,8 @@ const BackOrderScreen: React.FC = () => {
       if (result.success && result.data) {
         setBackOrder(result.data);
       }
-    } catch (error) {
-      console.error('Error loading back order:', error);
+    } catch {
+      // Silent fail
     }
     setLoading(false);
   };

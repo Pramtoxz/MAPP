@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../../navigation/types';
@@ -15,10 +15,17 @@ export const useCollectionScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [currentFilter, setCurrentFilter] = useState<FilterType>('outstanding');
 
+  // Load collections on mount
+  useEffect(() => {
+    loadCollections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const loadCollections = async (dari?: string, sampai?: string, filter?: FilterType) => {
     setLoading(true);
     try {
       const apiFilter = filter || currentFilter;
+      
       const result = await collectionService.getCollectionsList({
         dari,
         sampai,
@@ -34,11 +41,9 @@ export const useCollectionScreen = () => {
           setAllInvoices(result.data.paid);
         }
       } else {
-        console.error('Failed to load collections:', result.error);
         setAllInvoices([]);
       }
-    } catch (error) {
-      console.error('Error loading collections:', error);
+    } catch {
       setAllInvoices([]);
     }
     setLoading(false);

@@ -51,8 +51,8 @@ const NotificationScreen: React.FC = () => {
       if (result.success && result.data) {
         setNotifications(result.data);
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
+      // Silent fail
     }
     setLoading(false);
   };

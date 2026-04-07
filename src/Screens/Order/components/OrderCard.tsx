@@ -82,7 +82,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             onBackOrderPress();
           }}
         >
-          <Image source={getImage('ic_delivery.png')} style={styles.backOrderIcon} />
           <Text style={styles.backOrderText}>Lihat Back Order</Text>
         </TouchableOpacity>
       )}

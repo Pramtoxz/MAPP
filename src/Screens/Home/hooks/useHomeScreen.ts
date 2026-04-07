@@ -221,7 +221,7 @@ export const useHomeScreen = () => {
       await loadCartCount();
       setSelectedProduct(null);
     } else {
-      console.error('Failed to add to cart:', result.error);
+      // Failed to add to cart
     }
   };
 

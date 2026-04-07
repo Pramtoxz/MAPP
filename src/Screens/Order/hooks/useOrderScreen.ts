@@ -46,11 +46,9 @@ export const useOrderScreen = () => {
         }));
         setAllOrders(orders);
       } else {
-        console.error('Failed to load orders:', result.error);
         setAllOrders([]);
       }
-    } catch (error) {
-      console.error('Error loading orders:', error);
+    } catch {
       setAllOrders([]);
     }
     setLoading(false);

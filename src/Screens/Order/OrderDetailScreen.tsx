@@ -49,8 +49,8 @@ const OrderDetailScreen: React.FC = () => {
       if (result.success && result.data) {
         setOrder(result.data);
       }
-    } catch (error) {
-      console.error('Error loading order detail:', error);
+    } catch {
+      // Silent fail
     }
     setLoading(false);
   };

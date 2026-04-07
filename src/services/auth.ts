@@ -106,8 +106,7 @@ class AuthService {
             'Coba ingat-ingat lagi, jangan pake perasaan ya!',
         };
       }
-    } catch (_error) {
-      console.error('Login error:', _error);
+    } catch {
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -131,10 +130,17 @@ class AuthService {
 
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
-    } catch (_error) {
-      console.error('Logout error:', _error);
+      
+      // Clear PIN cache on logout
+      const { apiService } = await import('./api');
+      apiService.clearPin();
+    } catch {
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
+      
+      // Clear PIN cache on logout
+      const { apiService } = await import('./api');
+      apiService.clearPin();
     }
   }
 
@@ -188,8 +194,7 @@ class AuthService {
       }
 
       return null;
-    } catch (_error) {
-      console.error('Refresh profile error:', _error);
+    } catch {
       return null;
     }
   }
@@ -217,9 +222,6 @@ class AuthService {
 
       if (pinCache) {
         headers['X-Collection-Pin'] = pinCache;
-        console.log('PIN header added to update profile:', pinCache);
-      } else {
-        console.log('No PIN cache found for update profile');
       }
 
       const response = await fetch(`${API_BASE_URL}/auth/profile`, {
@@ -244,8 +246,7 @@ class AuthService {
           errors: result.errors,
         };
       }
-    } catch (_error) {
-      console.error('Update profile error:', _error);
+    } catch {
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -280,8 +281,7 @@ class AuthService {
           message: result.error?.message || result.message || 'Nomor HP tidak terdaftar',
         };
       }
-    } catch (_error) {
-      console.error('Request OTP error:', _error);
+    } catch {
       return {
         success: false,
         message: 'Koneksi ke server gagal',
@@ -324,8 +324,7 @@ class AuthService {
           message: result.error?.message || 'Kode OTP tidak valid atau sudah kadaluarsa',
         };
       }
-    } catch (_error) {
-      console.error('Verify OTP error:', _error);
+    } catch {
       return {
         success: false,
         message: 'Koneksi ke server gagal',

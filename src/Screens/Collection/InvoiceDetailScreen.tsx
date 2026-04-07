@@ -38,8 +38,8 @@ const InvoiceDetailScreen: React.FC = () => {
         if (result.success && result.data) {
           setInvoice(result.data);
         }
-      } catch (error) {
-        console.error('Error loading invoice detail:', error);
+      } catch {
+        // Silent fail
       } finally {
         setLoading(false);
       }

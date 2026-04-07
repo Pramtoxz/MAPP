@@ -39,27 +39,19 @@ class ApiService {
 
       if (this.pinCache && (endpoint.includes('/collections') || endpoint.includes('/auth/profile'))) {
         headers['X-Collection-Pin'] = this.pinCache;
-        console.log('PIN header added:', this.pinCache);
-      } else {
-        console.log('PIN not added. pinCache:', this.pinCache, 'endpoint:', endpoint);
       }
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
       });
-
-      console.log(`API ${options.method || 'GET'} ${endpoint}:`, response.status);
       
       const text = await response.text();
-      console.log(`Response text (${endpoint}):`, text.substring(0, 200));
       
       let result;
       try {
         result = text ? JSON.parse(text) : {};
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError);
-        console.error('Response text:', text);
+      } catch {
         return {
           success: false,
           error: {
@@ -80,8 +72,7 @@ class ApiService {
       }
 
       return result;
-    } catch (error) {
-      console.error('API Error:', error);
+    } catch {
       return {
         success: false,
         error: {

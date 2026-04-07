@@ -25,10 +25,12 @@ const CollectionScreenWrapper: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       checkPinStatus();
+      
       return () => {
+        // Reset local state but keep PIN cache for child screens
         setPinVerified(false);
         setShowPinDialog(false);
-        apiService.clearPin();
+        // Don't clear apiService.pinCache here - it's needed for InvoiceDetail
       };
     }, [])
   );

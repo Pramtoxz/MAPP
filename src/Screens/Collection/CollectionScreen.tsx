@@ -16,6 +16,7 @@ import { colors } from '../../config/colors';
 import { fonts } from '../../config/fonts';
 import { getImage } from '../../assets/images';
 import { useCollectionScreen } from './hooks/useCollectionScreen';
+import { collectionService } from '../../services';
 import { LoadingOverlay } from '../Home/components';
 import { DateFilterModal } from '../Order/components';
 import {
@@ -52,6 +53,7 @@ const CollectionScreen: React.FC = () => {
     startDate: undefined,
     endDate: undefined,
   });
+  const [showSlowWarning, setShowSlowWarning] = useState(false);
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -68,6 +70,15 @@ const CollectionScreen: React.FC = () => {
     if (dateRange.startDate && dateRange.endDate) {
       const startDateStr = dayjs(dateRange.startDate).format('YYYY-MM-DD');
       const endDateStr = dayjs(dateRange.endDate).format('YYYY-MM-DD');
+      
+      // Check if using cache (30 days)
+      const isUsingCache = collectionService.isUsingCache(startDateStr, endDateStr);
+      
+      if (!isUsingCache) {
+        // Show warning for custom date (slow query)
+        setShowSlowWarning(true);
+      }
+      
       handleFilterChange(activeTab, startDateStr, endDateStr);
     }
     setShowDateFilter(false);
@@ -78,6 +89,7 @@ const CollectionScreen: React.FC = () => {
       startDate: undefined,
       endDate: undefined,
     });
+    setShowSlowWarning(false);
     handleFilterChange(activeTab);
     setShowDateFilter(false);
   };
@@ -129,6 +141,20 @@ const CollectionScreen: React.FC = () => {
               {summary && (
                 <CollectionSummaryCard summary={summary} formatPrice={formatPrice} />
               )}
+              
+              {/* Warning banner for slow query */}
+              {showSlowWarning && !summary?.cached && (
+                <View style={styles.warningBanner}>
+                  <Image source={getImage('ic_info_badge.png')} style={styles.warningIcon} />
+                  <View style={styles.warningTextContainer}>
+                    <Text style={styles.warningTitle}>Loading data...</Text>
+                    <Text style={styles.warningText}>
+                      Custom date range may take 2-5 minutes. Use last 30 days for faster results.
+                    </Text>
+                  </View>
+                </View>
+              )}
+              
               <CollectionTabs activeTab={activeTab} onTabChange={handleTabChange} />
               {activeTab === 'paid' && (
                 <View style={styles.filterContainer}>
@@ -219,6 +245,38 @@ const styles = StyleSheet.create({
     fontSize: fonts.sizes.default,
     fontFamily: fonts.semibold,
     color: colors.primary,
+  },
+  warningBanner: {
+    backgroundColor: '#FFF3CD',
+    borderLeftWidth: 4,
+    borderLeftColor: '#FFC107',
+    padding: 12,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  warningIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#FFC107',
+    marginRight: 12,
+  },
+  warningTextContainer: {
+    flex: 1,
+  },
+  warningTitle: {
+    fontSize: fonts.sizes.default,
+    fontFamily: fonts.bold,
+    color: '#856404',
+    marginBottom: 4,
+  },
+  warningText: {
+    fontSize: fonts.sizes.small,
+    fontFamily: fonts.regular,
+    color: '#856404',
+    lineHeight: 18,
   },
 });
 

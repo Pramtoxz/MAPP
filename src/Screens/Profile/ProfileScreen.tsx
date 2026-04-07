@@ -112,18 +112,6 @@ const ProfileScreen: React.FC = () => {
                   onPress={() => navigation.navigate('ChangePin')}
                 />
                 <MenuItem
-                  icon={getImage('ic_notification.png')}
-                  title="Notifications"
-                  subtitle="Manage notification preferences"
-                  onPress={() => {}}
-                />
-                <MenuItem
-                  icon={getImage('ic_order.png')}
-                  title="Order History"
-                  subtitle="View all your past orders"
-                  onPress={() => navigation.navigate('MainTabs', { screen: 'OrderTab' })}
-                />
-                <MenuItem
                   icon={getImage('ic_book_knowledge.png')}
                   title="Catalogue"
                   subtitle="Browse Honda spare parts catalogue"

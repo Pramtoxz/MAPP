@@ -23,8 +23,8 @@ const SplashScreen: React.FC = () => {
         } else {
           navigation.replace('Login');
         }
-      } catch (error) {
-        console.error('Error checking session:', error);
+      } catch {
+        // Silent fail
         navigation.replace('Login');
       }
     };

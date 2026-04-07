@@ -29,11 +29,9 @@ export const useCartScreen = () => {
       if (result.success && result.data) {
         setCartItems(result.data.items || []);
       } else {
-        console.error('Failed to load cart:', result.error);
         setCartItems([]);
       }
-    } catch (error) {
-      console.error('Error loading cart:', error);
+    } catch {
       setCartItems([]);
     }
     setLoading(false);
@@ -54,8 +52,6 @@ export const useCartScreen = () => {
         setCartItems(cartItems.map(i => 
           i.id === id ? { ...i, quantity: newQuantity, subtotal: i.price * newQuantity } : i
         ));
-      } else {
-        console.error('Failed to update cart:', result.error);
       }
     }
   };
@@ -69,8 +65,6 @@ export const useCartScreen = () => {
         setCartItems(cartItems.map(i => 
           i.id === id ? { ...i, quantity: newQuantity, subtotal: i.price * newQuantity } : i
         ));
-      } else {
-        console.error('Failed to update cart:', result.error);
       }
     }
   };
@@ -87,7 +81,7 @@ export const useCartScreen = () => {
         ));
       }
     } else {
-      console.error('Failed to update cart:', result.error);
+      // Failed to update
     }
   };
 
@@ -96,7 +90,7 @@ export const useCartScreen = () => {
     if (result.success) {
       setCartItems(cartItems.filter(item => item.id !== id));
     } else {
-      console.error('Failed to delete item:', result.error);
+      // Failed to delete
     }
   };
 
@@ -118,8 +112,7 @@ export const useCartScreen = () => {
           error: result.error?.message || 'Checkout failed',
         };
       }
-    } catch (error) {
-      console.error('Checkout error:', error);
+    } catch {
       setCheckoutLoading(false);
       return {
         success: false,

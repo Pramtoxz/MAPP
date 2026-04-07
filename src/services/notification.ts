@@ -16,9 +16,8 @@ class NotificationService {
   async requestPermission(): Promise<boolean> {
     try {
       const settings = await notifee.requestPermission();
-      return settings.authorizationStatus >= 1; // 1 = authorized, 2 = provisional
-    } catch (error) {
-      console.error('Error requesting permission:', error);
+      return settings.authorizationStatus >= 1;
+    } catch {
       return false;
     }
   }
@@ -32,8 +31,7 @@ class NotificationService {
 
       const token = await messaging().getToken();
       return token;
-    } catch (error) {
-      console.error('Error getting FCM token:', error);
+    } catch {
       return null;
     }
   }
@@ -41,8 +39,8 @@ class NotificationService {
   async updateFCMToken(token: string): Promise<void> {
     try {
       await apiService.post('/fcm/update-token', { fcm_token: token });
-    } catch (error) {
-      console.error('Error updating FCM token:', error);
+    } catch {
+      // Silent fail
     }
   }
 
@@ -52,8 +50,8 @@ class NotificationService {
       if (token) {
         await this.updateFCMToken(token);
       }
-    } catch (error) {
-      console.error('Error initializing notifications:', error);
+    } catch {
+      // Silent fail
     }
   }
 
