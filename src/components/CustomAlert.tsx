@@ -136,6 +136,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.grayBorder,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   confirmButtonText: {
     fontSize: fonts.sizes.medium,
