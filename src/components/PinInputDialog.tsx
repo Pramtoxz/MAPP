@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { colors } from '../config/colors';
 import { fonts } from '../config/fonts';
+import LottieView from 'lottie-react-native';
 
 interface PinInputDialogProps {
   visible: boolean;
@@ -22,7 +23,7 @@ interface PinInputDialogProps {
 
 const PinInputDialog: React.FC<PinInputDialogProps> = ({
   visible,
-  title = 'Masukkan PIN',
+  title = 'Masukkan PIN OWNER',
   message = 'Masukkan PIN 4 digit untuk melanjutkan',
   onConfirm,
   onCancel,
@@ -92,6 +93,13 @@ const PinInputDialog: React.FC<PinInputDialogProps> = ({
     >
       <View style={styles.overlay}>
         <View style={styles.dialog}>
+          <LottieView
+                  source={require('../assets/lottie/pin.json')}
+                  autoPlay
+                  loop
+                  style={styles.lottie}
+                />
+          {/* <Image source={getImage('logomd.png')} style={styles.logomd}/> */}
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
 
@@ -160,10 +168,15 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
+  // logomd:{
+  //   width: 300,
+  //   height:70,
+  //   resizeMode: 'center',
+  // },
   title: {
     fontSize: fonts.sizes.large,
     fontFamily: fonts.bold,
-    color: colors.black,
+    color: colors.primary,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -220,8 +233,13 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: fonts.sizes.medium,
     fontFamily: fonts.semibold,
-    color: colors.grayText,
+    color: colors.primary,
   },
+ lottie:{
+  width: 300,
+  height: 110,
+  resizeMode: 'center'
+ },
 });
 
 export default PinInputDialog;

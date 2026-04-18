@@ -245,12 +245,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     paddingTop: 24,
     paddingHorizontal: 24,
-    marginTop: -60,
     minHeight: 600,
     paddingBottom: 40,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: fonts.sizes.small,

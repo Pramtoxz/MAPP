@@ -20,7 +20,10 @@ import { getImage } from '../../assets/images';
 import CustomAlert from '../../components/CustomAlert';
 import LoadingDialog from '../../components/LoadingDialog';
 
-type OtpVerifyScreenNavigationProp = StackNavigationProp<RootStackParamList, 'OtpVerify'>;
+type OtpVerifyScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'OtpVerify'
+>;
 type OtpVerifyScreenRouteProp = RouteProp<RootStackParamList, 'OtpVerify'>;
 
 const OtpVerifyScreen: React.FC = () => {
@@ -39,7 +42,9 @@ const OtpVerifyScreen: React.FC = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const boxAnimations = useRef(
-    Array(6).fill(0).map(() => new Animated.Value(1))
+    Array(6)
+      .fill(0)
+      .map(() => new Animated.Value(1)),
   ).current;
 
   useEffect(() => {
@@ -127,7 +132,7 @@ const OtpVerifyScreen: React.FC = () => {
     } else {
       showAlert(
         'Verifikasi Gagal',
-        result.message || 'Kode OTP tidak valid atau sudah kadaluarsa'
+        result.message || 'Kode OTP tidak valid atau sudah kadaluarsa',
       );
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
@@ -210,13 +215,13 @@ const OtpVerifyScreen: React.FC = () => {
             >
               <View style={[styles.otpBox, digit && styles.otpBoxFilled]}>
                 <TextInput
-                  ref={(ref) => {
+                  ref={ref => {
                     inputRefs.current[index] = ref;
                   }}
                   style={styles.otpInput}
                   value={digit}
-                  onChangeText={(value) => handleOtpChange(value, index)}
-                  onKeyPress={(e) => handleKeyPress(e, index)}
+                  onChangeText={value => handleOtpChange(value, index)}
+                  onKeyPress={e => handleKeyPress(e, index)}
                   keyboardType="number-pad"
                   maxLength={1}
                   selectTextOnFocus
@@ -243,7 +248,8 @@ const OtpVerifyScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.verifyButton,
-              (loading || otp.join('').length < 6) && styles.verifyButtonDisabled,
+              (loading || otp.join('').length < 6) &&
+                styles.verifyButtonDisabled,
             ]}
             onPress={() => handleVerifyOtp()}
             disabled={loading || otp.join('').length < 6}
