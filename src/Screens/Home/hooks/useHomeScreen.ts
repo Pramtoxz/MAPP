@@ -78,6 +78,14 @@ export const useHomeScreen = () => {
     }
   }, [loadingMore, hasMore, loadParts]);
 
+  const handleProductPress = useCallback(async (product: Part) => {
+    const result = await partsService.getPartDetail(product.partNumber);
+    if (result.success && result.data) {
+      setSelectedProduct(result.data);
+      setDetailModalVisible(true);
+    }
+  }, []);
+
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     
@@ -187,15 +195,12 @@ export const useHomeScreen = () => {
     }
   };
 
-  const handleProductPress = useCallback(async (product: Part) => {
-    const result = await partsService.getPartDetail(product.partNumber);
-    if (result.success && result.data) {
-      setSelectedProduct(result.data);
-      setDetailModalVisible(true);
-    }
-  }, []);
-
   const handleAddPress = async (product: Part) => {
+    // Prevent opening quantity modal if part is discontinued
+    if (product.isDiscontinued) {
+      return;
+    }
+    
     const result = await partsService.getPartDetail(product.partNumber);
     if (result.success && result.data) {
       setSelectedProduct(result.data);
@@ -204,12 +209,22 @@ export const useHomeScreen = () => {
   };
 
   const handleAddToCart = () => {
+    // Prevent opening quantity modal if part is discontinued
+    if (selectedProduct?.isDiscontinued) {
+      return;
+    }
     setDetailModalVisible(false);
     setQuantityModalVisible(true);
   };
 
   const handleConfirmQuantity = async (quantity: number) => {
     if (!selectedProduct) return;
+
+    // Check if part is discontinued
+    if (selectedProduct.isDiscontinued) {
+      // Show error - part is discontinued
+      return;
+    }
 
     const result = await cartService.addToCart({
       partId: selectedProduct.id,
@@ -221,7 +236,8 @@ export const useHomeScreen = () => {
       await loadCartCount();
       setSelectedProduct(null);
     } else {
-      // Failed to add to cart
+      // Failed to add to cart - could be discontinued or other error
+      // Error message will be shown by the cart service
     }
   };
 

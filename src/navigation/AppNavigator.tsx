@@ -17,6 +17,7 @@ import InvoiceDetailScreen from '../Screens/Collection/InvoiceDetailScreen';
 import EditProfileScreen from '../Screens/Profile/EditProfileScreen';
 import ChangePinScreenWrapper from '../Screens/Profile/ChangePinScreenWrapper';
 import CatalogueScreen from '../Screens/Profile/CatalogueScreen';
+import CataloguePDFScreen from '../Screens/Profile/CataloguePDFScreen';
 import PrivacyPolicyScreen from '../Screens/Profile/PrivacyPolicyScreen';
 import SetupCollectionPinScreen from '../Screens/Collection/SetupCollectionPinScreen';
 
@@ -115,6 +116,13 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen 
           name="Catalogue" 
           component={CatalogueScreen}
+          options={{
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen 
+          name="CataloguePDF" 
+          component={CataloguePDFScreen}
           options={{
             presentation: 'card',
           }}

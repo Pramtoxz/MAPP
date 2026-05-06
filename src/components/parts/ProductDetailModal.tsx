@@ -15,6 +15,9 @@ interface ProductDetailModalProps {
     description: string;
     price: number;
     isReady?: boolean;
+    isDiscontinued?: boolean;
+    canOrder?: boolean;
+    discontinuedMessage?: string;
   } | null;
   onAddToCart: () => void;
 }
@@ -31,6 +34,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     return `Rp ${price.toLocaleString('id-ID')}`;
   };
 
+  const canAddToCart = !product.isDiscontinued && (product.canOrder !== false);
+
   return (
     <Modal
       visible={visible}
@@ -46,19 +51,32 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
           <View style={styles.imageContainer}>
             <Image source={{ uri: product.image }} style={styles.image} />
-            {!product.isReady && (
+            {product.isDiscontinued ? (
+              <View style={styles.discontinuedOverlay}>
+                <View style={styles.discontinuedBadge}>
+                  <Text style={styles.discontinuedText}>DISCONTINUED</Text>
+                </View>
+              </View>
+            ) : !product.isReady ? (
               <View style={styles.outOfStockOverlay}>
                 <View style={styles.outOfStockBadge}>
                   <Text style={styles.outOfStockText}>OUT OF STOCK</Text>
                 </View>
               </View>
-            )}
+            ) : null}
           </View>
 
           <View style={styles.content}>
             <Text style={styles.partNumber}>{product.partNumber}</Text>
             <Text style={styles.name}>{product.name}</Text>
             <Text style={styles.description}>{product.description}</Text>
+
+            {product.isDiscontinued && product.discontinuedMessage && (
+              <View style={styles.warningBox}>
+                <Image source={getImage('ic_warning.png')} style={styles.warningIcon} />
+                <Text style={styles.warningText}>{product.discontinuedMessage}</Text>
+              </View>
+            )}
 
             <View style={styles.infoRow}>
               <View style={styles.infoBox}>
@@ -67,21 +85,37 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoLabel}>Stock</Text>
-                <View style={[styles.statusBadge, product.isReady ? styles.statusReady : styles.statusNotReady]}>
-                  <Text style={styles.statusText}>{product.isReady ? 'Ready' : 'Not Ready'}</Text>
+                <View style={[
+                  styles.statusBadge, 
+                  product.isDiscontinued 
+                    ? styles.statusDiscontinued 
+                    : product.isReady 
+                      ? styles.statusReady 
+                      : styles.statusNotReady
+                ]}>
+                  <Text style={styles.statusText}>
+                    {product.isDiscontinued ? 'Discontinued' : product.isReady ? 'Ready' : 'Not Ready'}
+                  </Text>
                 </View>
               </View>
             </View>
 
-            <TouchableOpacity onPress={onAddToCart}>
+            <TouchableOpacity 
+              onPress={onAddToCart}
+              disabled={!canAddToCart}
+            >
               <LinearGradient
-                colors={[colors.primary, colors.primaryDark]}
+                colors={canAddToCart ? [colors.primary, colors.primaryDark] : [colors.grayInactive, colors.grayInactive]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={styles.addButton}
+                style={[styles.addButton, !canAddToCart && styles.addButtonDisabled]}
               >
                 <Text style={styles.addButtonText}>
-                  {product.isReady ? 'Add to Cart' : 'Order (Stock Tidak Ready)'}
+                  {product.isDiscontinued 
+                    ? 'Cannot Order (Discontinued)' 
+                    : product.isReady 
+                      ? 'Add to Cart' 
+                      : 'Order (Stock Tidak Ready)'}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -165,6 +199,34 @@ const styles = StyleSheet.create({
     color: colors.white,
     letterSpacing: 1.5,
   },
+  discontinuedOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  discontinuedBadge: {
+    backgroundColor: colors.warning,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    transform: [{ rotate: '-15deg' }],
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  discontinuedText: {
+    fontSize: fonts.sizes.medium,
+    fontFamily: fonts.bold,
+    color: colors.white,
+    letterSpacing: 1.5,
+  },
   content: {
     padding: 24,
   },
@@ -186,6 +248,29 @@ const styles = StyleSheet.create({
     color: colors.grayText,
     marginBottom: 24,
     lineHeight: 22,
+  },
+  warningBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.backgroundWarning,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.warning,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  warningIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+    tintColor: colors.warning,
+  },
+  warningText: {
+    flex: 1,
+    fontSize: fonts.sizes.small,
+    fontFamily: fonts.regular,
+    color: colors.textWarning,
+    lineHeight: 18,
   },
   infoRow: {
     flexDirection: 'row',
@@ -221,6 +306,9 @@ const styles = StyleSheet.create({
   statusNotReady: {
     backgroundColor: colors.warning,
   },
+  statusDiscontinued: {
+    backgroundColor: colors.grayInactive,
+  },
   statusText: {
     fontSize: fonts.sizes.small,
     fontFamily: fonts.semibold,
@@ -231,6 +319,9 @@ const styles = StyleSheet.create({
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  addButtonDisabled: {
+    opacity: 0.6,
   },
   addButtonText: {
     fontSize: fonts.sizes.medium,

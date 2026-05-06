@@ -61,6 +61,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             name={item.name}
             price={item.price}
             isReady={item.isReady}
+            isDiscontinued={item.isDiscontinued}
             onPress={() => onProductPress(item)}
             onAddPress={() => onAddPress(item)}
           />

@@ -23,6 +23,7 @@ export type RootStackParamList = {
   EditProfile: undefined;
   ChangePin: undefined;
   Catalogue: undefined;
+  CataloguePDF: { pdfUrl?: string; title?: string };
   PrivacyPolicy: undefined;
   SetupCollectionPin: undefined;
 };

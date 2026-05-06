@@ -10,6 +10,7 @@ interface ProductCardProps {
   name: string;
   price: number;
   isReady?: boolean;
+  isDiscontinued?: boolean;
   onPress: () => void;
   onAddPress: () => void;
 }
@@ -20,6 +21,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   name,
   price,
   isReady = true,
+  isDiscontinued = false,
   onPress,
   onAddPress,
 }) => {
@@ -27,17 +29,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
     return `Rp ${priceValue.toLocaleString('id-ID')}`;
   };
 
+  const handleAddPress = () => {
+    if (!isDiscontinued) {
+      onAddPress();
+    }
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: image }} style={styles.image} />
-        {!isReady && (
+        {isDiscontinued ? (
+          <View style={styles.discontinuedOverlay}>
+            <View style={styles.discontinuedBadge}>
+              <Text style={styles.discontinuedText}>DISCONTINUED</Text>
+            </View>
+          </View>
+        ) : !isReady ? (
           <View style={styles.outOfStockOverlay}>
             <View style={styles.outOfStockBadge}>
               <Text style={styles.outOfStockText}>OUT OF STOCK</Text>
             </View>
           </View>
-        )}
+        ) : null}
       </View>
       <View style={styles.content}>
         <Text style={styles.partNumber}>{partNumber}</Text>
@@ -45,8 +59,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <View style={styles.footer}>
           <Text style={styles.price}>{formatPrice(price)}</Text>
           <TouchableOpacity 
-            style={styles.addButton} 
-            onPress={onAddPress}
+            style={[styles.addButton, isDiscontinued && styles.addButtonDisabled]} 
+            onPress={handleAddPress}
+            disabled={isDiscontinued}
           >
             <Image source={getImage('ic_plus_en.png')} style={styles.buttonIcon} />
           </TouchableOpacity>
@@ -103,6 +118,34 @@ const styles = StyleSheet.create({
     color: colors.white,
     letterSpacing: 1,
   },
+  discontinuedOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  discontinuedBadge: {
+    backgroundColor: colors.warning,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    transform: [{ rotate: '-15deg' }],
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  discontinuedText: {
+    fontSize: fonts.sizes.small,
+    fontFamily: fonts.bold,
+    color: colors.white,
+    letterSpacing: 1,
+  },
   content: {
     padding: 12,
   },
@@ -136,6 +179,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  addButtonDisabled: {
+    backgroundColor: colors.grayInactive,
+    opacity: 0.5,
   },
   buttonIcon: {
     width: 16,

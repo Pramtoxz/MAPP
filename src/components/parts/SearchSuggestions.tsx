@@ -62,11 +62,15 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
                 style={styles.suggestionImage}
                 resizeMode="contain"
               />
-              {item.isReady === false && (
+              {item.isDiscontinued ? (
+                <View style={styles.discontinuedBadge}>
+                  <Text style={styles.discontinuedText}>DISCONTINUED</Text>
+                </View>
+              ) : item.isReady === false ? (
                 <View style={styles.outOfStockBadge}>
                   <Text style={styles.outOfStockText}>OUT OF STOCK</Text>
                 </View>
-              )}
+              ) : null}
             </View>
             <View style={styles.suggestionInfo}>
               <Text style={styles.partNumber}>{item.partNumber}</Text>
@@ -162,6 +166,25 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-15deg' }],
   },
   outOfStockText: {
+    fontSize: 9,
+    fontFamily: fonts.bold,
+    color: colors.white,
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  discontinuedBadge: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 152, 0, 0.9)',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ rotate: '-15deg' }],
+  },
+  discontinuedText: {
     fontSize: 9,
     fontFamily: fonts.bold,
     color: colors.white,

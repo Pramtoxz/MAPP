@@ -10,6 +10,9 @@ export interface Part {
   category: string;
   isReady?: boolean;
   stock?: number;
+  isDiscontinued?: boolean;
+  canOrder?: boolean;
+  discontinuedMessage?: string;
 }
 
 export interface VehicleType {
