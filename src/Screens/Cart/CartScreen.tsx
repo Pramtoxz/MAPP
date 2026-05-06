@@ -25,6 +25,7 @@ import CustomAlert from '../../components/CustomAlert';
 import SuccessModal from '../../components/SuccessModal';
 import LoadingDialog from '../../components/LoadingDialog';
 import { useCartScreen } from './hooks/useCartScreen';
+import { analyticsService } from '../../services/analytics';
 
 type CartScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -66,7 +67,13 @@ const CartScreen: React.FC = () => {
 
   const confirmDelete = () => {
     if (itemToDelete) {
+      const itemToDeleteData = cartItems.find(item => item.id === itemToDelete);
       deleteItem(itemToDelete);
+      analyticsService.logEvent('cart_item_removed', {
+        item_id: itemToDelete,
+        item_name: itemToDeleteData?.name,
+        part_number: itemToDeleteData?.partNumber,
+      });
     }
     setShowDeleteAlert(false);
     setItemToDelete(null);
@@ -85,7 +92,11 @@ const CartScreen: React.FC = () => {
       return;
     }
 
-    // Show confirmation dialog
+    analyticsService.logButtonClick('create_po', 'CartScreen', {
+      item_count: cartItems.length,
+      total_amount: calculateTotal(),
+    });
+
     setShowCheckoutConfirm(true);
   };
 
@@ -95,9 +106,20 @@ const CartScreen: React.FC = () => {
     const result = await handleCheckout();
 
     if (result.success && result.data) {
+      analyticsService.logEvent('purchase_order_created', {
+        no_so: result.data.no_so,
+        jenis_so: result.data.jenis_so,
+        grand_total: result.data.grand_total,
+        status: result.data.status,
+        item_count: cartItems.length,
+      });
       setCheckoutData(result.data);
       setShowCheckoutSuccess(true);
     } else {
+      analyticsService.logError('checkout_failed', result.error || 'Unknown error', undefined, {
+        item_count: cartItems.length,
+        total_amount: calculateTotal(),
+      });
       setErrorMessage(result.error || 'Checkout gagal');
       setShowErrorAlert(true);
     }

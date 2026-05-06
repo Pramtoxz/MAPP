@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useRef } from 'react';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import SplashScreen from '../components/SplashScreen';
@@ -20,12 +20,20 @@ import CatalogueScreen from '../Screens/Profile/CatalogueScreen';
 import CataloguePDFScreen from '../Screens/Profile/CataloguePDFScreen';
 import PrivacyPolicyScreen from '../Screens/Profile/PrivacyPolicyScreen';
 import SetupCollectionPinScreen from '../Screens/Collection/SetupCollectionPinScreen';
+import { useAnalyticsScreenTracking } from '../hooks/useAnalyticsScreenTracking';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator: React.FC = () => {
+  const navigationRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
+  const { onReady, onStateChange } = useAnalyticsScreenTracking(navigationRef);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={onReady}
+      onStateChange={onStateChange}
+    >
       <Stack.Navigator
         initialRouteName="Splash"
         screenOptions={{

@@ -131,16 +131,20 @@ class AuthService {
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
       
-      // Clear PIN cache on logout
       const { apiService } = await import('./api');
       apiService.clearPin();
+
+      const { analyticsService } = await import('./analytics');
+      await analyticsService.resetAnalyticsData();
     } catch {
       await AsyncStorage.removeItem(TOKEN_KEY);
       await AsyncStorage.removeItem(USER_KEY);
       
-      // Clear PIN cache on logout
       const { apiService } = await import('./api');
       apiService.clearPin();
+
+      const { analyticsService } = await import('./analytics');
+      await analyticsService.resetAnalyticsData();
     }
   }
 

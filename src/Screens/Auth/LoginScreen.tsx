@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
 import { authService } from '../../services/auth';
+import { analyticsService } from '../../services/analytics';
 import { colors } from '../../config/colors';
 import { getImage } from '../../assets/images';
 import CustomAlert from '../../components/CustomAlert';
@@ -49,8 +50,19 @@ const LoginScreen: React.FC = () => {
     setLoading(false);
 
     if (result.success) {
+      analyticsService.logFormSubmit('email_login', true, {
+        login_method: 'email',
+      });
+      if (result.data) {
+        analyticsService.setUserId(result.data.id);
+        analyticsService.setUserProperty('dealer_code', result.data.dealerCode);
+      }
       navigation.replace('MainTabs');
     } else {
+      analyticsService.logFormSubmit('email_login', false, {
+        login_method: 'email',
+        error: result.message,
+      });
       showAlert(
         'Email atau Password Salah',
         result.message || 'Coba ingat-ingat lagi, jangan pake perasaan ya!'
@@ -64,13 +76,24 @@ const LoginScreen: React.FC = () => {
       return;
     }
 
+    analyticsService.logButtonClick('request_otp', 'LoginScreen', {
+      login_method: 'otp',
+    });
+
     setLoading(true);
     const result = await authService.requestOtp(phone);
     setLoading(false);
 
     if (result.success) {
+      analyticsService.logFormSubmit('otp_request', true, {
+        login_method: 'otp',
+      });
       navigation.navigate('OtpVerify', { phone });
     } else {
+      analyticsService.logFormSubmit('otp_request', false, {
+        login_method: 'otp',
+        error: result.message,
+      });
       showAlert(
         'Gagal Mengirim OTP',
         result.message || 'Nomor HP tidak terdaftar'

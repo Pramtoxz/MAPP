@@ -6,6 +6,7 @@ export { notificationService } from './notification';
 export { orderService } from './order';
 export { collectionService } from './collection';
 export { apiService } from './api';
+export { analyticsService } from './analytics';
 
 export type { Part, VehicleType, Category } from './parts';
 export type { CartItem } from './cart';

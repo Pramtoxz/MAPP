@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { colors } from '../config/colors';
 import { fonts } from '../config/fonts';
 import { getImage } from '../assets/images';
+import { analyticsService } from '../services/analytics';
 
 interface NotificationDetailModalProps {
   visible: boolean;
@@ -28,6 +29,25 @@ const NotificationDetailModal: React.FC<NotificationDetailModalProps> = ({
   onClose,
   notification,
 }) => {
+  const openTimeRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (visible && notification) {
+      openTimeRef.current = Date.now();
+      analyticsService.logModalOpen('notification_detail', 'notification_list');
+      analyticsService.logNotificationOpened(
+        notification.created_at,
+        notification.type
+      );
+    }
+  }, [visible, notification]);
+
+  const handleClose = () => {
+    const duration = Date.now() - openTimeRef.current;
+    analyticsService.logModalClose('notification_detail', duration);
+    onClose();
+  };
+
   if (!notification) return null;
 
   const formatDate = (dateString: string) => {
@@ -76,7 +96,7 @@ const NotificationDetailModal: React.FC<NotificationDetailModalProps> = ({
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
             <Image source={getImage('ic_close_rounded.png')} style={styles.closeIcon} />
           </TouchableOpacity>
 

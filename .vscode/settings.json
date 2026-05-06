@@ -1,5 +1,5 @@
 {
   "typescript.autoClosingTags": false,
-  "kiroAgent.configureMCP": "Disabled",
+  "kiroAgent.configureMCP": "Enabled",
   "java.compile.nullAnalysis.mode": "disabled"
 }
