@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { cartService, CartItem } from '../../../services';
+import { cartService, CartItem, analyticsService } from '../../../services';
 
 interface CheckoutResult {
   success: boolean;
@@ -31,8 +31,11 @@ export const useCartScreen = () => {
       } else {
         setCartItems([]);
       }
-    } catch {
+    } catch (error) {
       setCartItems([]);
+      if (error instanceof Error) {
+        analyticsService.recordError(error, 'Failed to load cart');
+      }
     }
     setLoading(false);
   };
@@ -112,8 +115,11 @@ export const useCartScreen = () => {
           error: result.error?.message || 'Checkout failed',
         };
       }
-    } catch {
+    } catch (error) {
       setCheckoutLoading(false);
+      if (error instanceof Error) {
+        analyticsService.recordError(error, 'Checkout process failed');
+      }
       return {
         success: false,
         error: 'An error occurred during checkout',

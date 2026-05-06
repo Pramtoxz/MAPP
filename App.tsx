@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import messaging from '@react-native-firebase/messaging';
+import crashlytics from '@react-native-firebase/crashlytics';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 
-// Create notification channel
 async function createNotificationChannel() {
   await notifee.createChannel({
     id: 'default',
@@ -15,10 +15,10 @@ async function createNotificationChannel() {
 
 function App() {
   useEffect(() => {
-    // Create channel on app start
+    crashlytics().log('App mounted');
+    
     createNotificationChannel();
 
-    // Handle foreground notifications with Notifee
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       try {
         const { notification, data } = remoteMessage;
@@ -39,6 +39,9 @@ function App() {
         }
       } catch (error) {
         console.error('Error displaying notification:', error);
+        if (error instanceof Error) {
+          crashlytics().recordError(error);
+        }
       }
     });
 

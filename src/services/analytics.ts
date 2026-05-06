@@ -1,4 +1,5 @@
 import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 export const AnalyticsEvents = {
   SCREEN_VIEW: 'screen_view',
@@ -25,6 +26,7 @@ class AnalyticsService {
   async logEvent(eventName: string, params?: EventParams) {
     try {
       await analytics().logEvent(eventName, params);
+      crashlytics().log(`Event: ${eventName}`);
     } catch (error) {
       console.error('Analytics error:', error);
     }
@@ -36,6 +38,7 @@ class AnalyticsService {
         screen_name: screenName,
         screen_class: screenClass || screenName,
       });
+      crashlytics().log(`Screen: ${screenName}`);
     } catch (error) {
       console.error('Screen view error:', error);
     }
@@ -140,11 +143,21 @@ class AnalyticsService {
       stack_trace: stackTrace,
       ...additionalParams,
     });
+    
+    try {
+      crashlytics().log(`Error: ${errorName} - ${errorMessage}`);
+      await crashlytics().recordError(new Error(errorMessage), errorName);
+    } catch (error) {
+      console.error('Crashlytics error:', error);
+    }
   }
 
   async setUserId(userId: string) {
     try {
-      await analytics().setUserId(userId);
+      await Promise.all([
+        analytics().setUserId(userId),
+        crashlytics().setUserId(userId),
+      ]);
     } catch (error) {
       console.error('Set user ID error:', error);
     }
@@ -152,9 +165,20 @@ class AnalyticsService {
 
   async setUserProperty(name: string, value: string) {
     try {
-      await analytics().setUserProperty(name, value);
+      await Promise.all([
+        analytics().setUserProperty(name, value),
+        crashlytics().setAttribute(name, value),
+      ]);
     } catch (error) {
       console.error('Set user property error:', error);
+    }
+  }
+
+  async setUserAttributes(attributes: Record<string, string>) {
+    try {
+      await crashlytics().setAttributes(attributes);
+    } catch (error) {
+      console.error('Set user attributes error:', error);
     }
   }
 
@@ -163,6 +187,25 @@ class AnalyticsService {
       await analytics().resetAnalyticsData();
     } catch (error) {
       console.error('Reset analytics error:', error);
+    }
+  }
+
+  async recordError(error: Error, context?: string) {
+    try {
+      if (context) {
+        crashlytics().log(context);
+      }
+      await crashlytics().recordError(error);
+    } catch (err) {
+      console.error('Record error failed:', err);
+    }
+  }
+
+  async setCrashlyticsEnabled(enabled: boolean) {
+    try {
+      await crashlytics().setCrashlyticsCollectionEnabled(enabled);
+    } catch (error) {
+      console.error('Set crashlytics enabled error:', error);
     }
   }
 }

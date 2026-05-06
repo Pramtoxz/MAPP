@@ -19,17 +19,15 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
       source={{ uri: pdfUrl, cache: true }}
       style={styles.pdf}
       trustAllCerts={false}
-      onLoadComplete={(numberOfPages, filePath) => {
+      onLoadComplete={(numberOfPages, _filePath) => {
         onLoadComplete?.(numberOfPages);
       }}
-      onPageChanged={(page, numberOfPages) => {
-        // Page changed
+      onPageChanged={(_page, _numberOfPages) => {
       }}
       onError={(error) => {
         onError?.(error);
       }}
-      onPressLink={(uri) => {
-        // Link pressed
+      onPressLink={(_uri) => {
       }}
       enablePaging={true}
       horizontal={false}

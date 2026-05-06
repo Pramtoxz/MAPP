@@ -37,7 +37,7 @@ const CataloguePDFScreen: React.FC = () => {
     setTotalPages(numberOfPages);
   };
 
-  const handleError = (error: any) => {
+  const handleError = (_error: any) => {
     Alert.alert(
       'Error',
       'Gagal memuat PDF. Pastikan koneksi internet Anda stabil.',

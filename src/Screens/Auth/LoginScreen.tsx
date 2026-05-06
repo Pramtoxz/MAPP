@@ -54,8 +54,12 @@ const LoginScreen: React.FC = () => {
         login_method: 'email',
       });
       if (result.data) {
-        analyticsService.setUserId(result.data.id);
-        analyticsService.setUserProperty('dealer_code', result.data.dealerCode);
+        await analyticsService.setUserId(result.data.id);
+        await analyticsService.setUserAttributes({
+          dealer_code: result.data.dealerCode,
+          dealer_name: result.data.dealerName,
+          email: result.data.email || '',
+        });
       }
       navigation.replace('MainTabs');
     } else {
