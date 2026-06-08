@@ -3,7 +3,17 @@ import { Alert } from 'react-native';
 import { analyticsService } from './analytics';
 
 class AppDistributionService {
+  private isSupported(): boolean {
+    // Hanya aktif di debug build — mencegah dialog "Sign in as tester"
+    // muncul ke user Play Store pada release build
+    return __DEV__;
+  }
+
   async checkForUpdate(): Promise<void> {
+    if (!this.isSupported()) {
+      return;
+    }
+
     try {
       const isTesterSignedIn = await appDistribution().isTesterSignedIn();
       
@@ -30,6 +40,10 @@ class AppDistributionService {
   }
 
   async signInTester(): Promise<void> {
+    if (!this.isSupported()) {
+      return;
+    }
+
     try {
       await appDistribution().signInTester();
       await analyticsService.logEvent('app_distribution_signin', {
@@ -43,6 +57,10 @@ class AppDistributionService {
   }
 
   async signOutTester(): Promise<void> {
+    if (!this.isSupported()) {
+      return;
+    }
+
     try {
       await appDistribution().signOutTester();
       await analyticsService.logEvent('app_distribution_signout', {
@@ -55,10 +73,17 @@ class AppDistributionService {
   }
 
   async isTesterSignedIn(): Promise<boolean> {
+    if (!this.isSupported()) {
+      return false;
+    }
     return await appDistribution().isTesterSignedIn();
   }
 
   async checkForUpdateWithCustomUI(): Promise<boolean> {
+    if (!this.isSupported()) {
+      return false;
+    }
+
     try {
       const isTesterSignedIn = await this.isTesterSignedIn();
       

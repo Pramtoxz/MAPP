@@ -21,6 +21,8 @@ export const useHomeScreen = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchingParts, setSearchingParts] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -236,8 +238,9 @@ export const useHomeScreen = () => {
       await loadCartCount();
       setSelectedProduct(null);
     } else {
-      // Failed to add to cart - could be discontinued or other error
-      // Error message will be shown by the cart service
+      setQuantityModalVisible(false);
+      setAlertMessage(result.error?.message || 'Gagal menambahkan item ke keranjang.');
+      setAlertVisible(true);
     }
   };
 
@@ -247,6 +250,10 @@ export const useHomeScreen = () => {
 
   const handleCloseQuantityModal = () => {
     setQuantityModalVisible(false);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertVisible(false);
   };
 
   const handleRefresh = async () => {
@@ -279,6 +286,8 @@ export const useHomeScreen = () => {
     showSuggestions,
     searchingParts,
     refreshing,
+    alertVisible,
+    alertMessage,
     hasActiveFilters,
     handleProductPress,
     handleAddPress,
@@ -294,6 +303,7 @@ export const useHomeScreen = () => {
     handleClearSearch,
     handleSearchSubmit,
     handleRefresh,
+    handleCloseAlert,
     loadMore,
     loadParts,
   };

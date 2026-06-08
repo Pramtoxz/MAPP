@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,27 @@ import { useCampaignList } from './hooks/useCampaignList';
 
 type CampaignListScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
+const DynamicCampaignImage: React.FC<{ uri: string }> = ({ uri }) => {
+  const [aspectRatio, setAspectRatio] = useState(16 / 9);
+
+  useEffect(() => {
+    if (!uri) return;
+    Image.getSize(
+      uri,
+      (w, h) => { if (h > 0) setAspectRatio(w / h); },
+      () => {},
+    );
+  }, [uri]);
+
+  return (
+    <Image
+      source={{ uri }}
+      style={[styles.campaignImage, { aspectRatio }]}
+      resizeMode="cover"
+    />
+  );
+};
+
 const CampaignListScreen: React.FC = () => {
   const navigation = useNavigation<CampaignListScreenNavigationProp>();
   const { campaigns, loading } = useCampaignList();
@@ -35,7 +56,7 @@ const CampaignListScreen: React.FC = () => {
       onPress={() => handleCampaignPress(item)}
       activeOpacity={0.7}
     >
-      <Image source={{ uri: item.image }} style={styles.campaignImage} />
+      <DynamicCampaignImage uri={item.image} />
       <View style={styles.campaignContent}>
         <Text style={styles.campaignTitle}>{item.title}</Text>
         <Text style={styles.campaignPeriod}>{item.description}</Text>
@@ -192,8 +213,6 @@ const styles = StyleSheet.create({
   },
   campaignImage: {
     width: '100%',
-    height: 180,
-    resizeMode: 'cover',
   },
   campaignContent: {
     padding: 16,

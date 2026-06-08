@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   StatusBar,
   ScrollView,
   ActivityIndicator,
+  Modal,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -29,6 +31,18 @@ const CampaignDetailScreen: React.FC = () => {
   const { campaignId } = route.params;
 
   const { campaign, loading } = useCampaignDetail(campaignId);
+  const { width: screenWidth } = useWindowDimensions();
+  const [imageAspectRatio, setImageAspectRatio] = useState(16 / 9);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (!campaign?.image) return;
+    Image.getSize(
+      campaign.image,
+      (w, h) => { if (h > 0) setImageAspectRatio(w / h); },
+      () => {},
+    );
+  }, [campaign?.image]);
 
   const formatDate = (dateString: string) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -96,8 +110,37 @@ const CampaignDetailScreen: React.FC = () => {
         <View style={styles.headerRight} />
       </View>
 
+      <Modal
+        visible={imageModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setImageModalVisible(false)}
+        statusBarTranslucent
+      >
+        <View style={styles.modalContainer}>
+          <TouchableOpacity
+            style={styles.modalCloseButton}
+            onPress={() => setImageModalVisible(false)}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Text style={styles.modalCloseText}>✕</Text>
+          </TouchableOpacity>
+          <Image
+            source={{ uri: campaign.image }}
+            style={[styles.modalImage, { width: screenWidth }]}
+            resizeMode="contain"
+          />
+        </View>
+      </Modal>
+
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <Image source={{ uri: campaign.image }} style={styles.heroImage} />
+        <TouchableOpacity activeOpacity={0.85} onPress={() => setImageModalVisible(true)}>
+          <Image
+            source={{ uri: campaign.image }}
+            style={[styles.heroImage, { aspectRatio: imageAspectRatio }]}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
 
         <View style={styles.content}>
           <View style={styles.periodSection}>
@@ -204,8 +247,32 @@ const styles = StyleSheet.create({
   },
   heroImage: {
     width: '100%',
-    height: 180,
-    resizeMode: 'cover',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.92)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCloseButton: {
+    position: 'absolute',
+    top: 52,
+    right: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  modalCloseText: {
+    color: colors.white,
+    fontSize: 16,
+    fontFamily: fonts.bold,
+  },
+  modalImage: {
+    height: '85%',
   },
   content: {
     padding: 24,

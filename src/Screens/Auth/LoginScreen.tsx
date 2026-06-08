@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  StatusBar,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
@@ -26,7 +20,7 @@ type LoginScreenNavigationProp = StackNavigationProp<
 
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  
+
   const [activeTab, setActiveTab] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -69,7 +63,7 @@ const LoginScreen: React.FC = () => {
       });
       showAlert(
         'Email atau Password Salah',
-        result.message || 'Coba ingat-ingat lagi, jangan pake perasaan ya!'
+        result.message || 'Coba ingat-ingat lagi, jangan pake perasaan ya!',
       );
     }
   };
@@ -100,7 +94,7 @@ const LoginScreen: React.FC = () => {
       });
       showAlert(
         'Gagal Mengirim OTP',
-        result.message || 'Nomor HP tidak terdaftar'
+        result.message || 'Nomor HP tidak terdaftar',
       );
     }
   };
@@ -114,7 +108,7 @@ const LoginScreen: React.FC = () => {
       />
 
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Mobile Part{'\n'}Ordering</Text>
+        <Text style={styles.headerTitle}>Parts Mobile{'\n'}Ordering</Text>
         <Text style={styles.headerSubtitle}>
           Salam SATU HATI Silahkan masukan akun untuk{'\n'}mengakses aplikasi
         </Text>

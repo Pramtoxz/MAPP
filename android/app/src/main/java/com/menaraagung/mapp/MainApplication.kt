@@ -1,4 +1,4 @@
-package com.mapp
+package com.menaraagung.mapp
 
 import android.app.Application
 import com.facebook.react.PackageList

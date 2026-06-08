@@ -7,6 +7,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { getImage } from '../../assets/images';
 import { RootStackParamList, MainTabParamList } from '../../navigation/types';
+import CustomAlert from '../../components/CustomAlert';
 import ProductDetailModal from '../../components/parts/ProductDetailModal';
 import QuantityModal from '../../components/parts/QuantityModal';
 import SearchSuggestions from '../../components/parts/SearchSuggestions';
@@ -46,6 +47,8 @@ const HomeScreen: React.FC = () => {
     showSuggestions,
     searchingParts,
     refreshing,
+    alertVisible,
+    alertMessage,
     hasActiveFilters,
     handleProductPress,
     handleAddPress,
@@ -61,6 +64,7 @@ const HomeScreen: React.FC = () => {
     handleClearSearch,
     handleSearchSubmit,
     handleRefresh,
+    handleCloseAlert,
     loadMore,
   } = useHomeScreen();
 
@@ -123,7 +127,9 @@ const HomeScreen: React.FC = () => {
           ListHeaderComponent={
             <CampaignSection
               campaigns={campaigns}
-              onCampaignPress={(campaignId) => navigation.navigate('CampaignDetail', { campaignId })}
+              onCampaignPress={campaignId =>
+                navigation.navigate('CampaignDetail', { campaignId })
+              }
               onSeeMorePress={() => navigation.navigate('CampaignList')}
             />
           }
@@ -150,6 +156,14 @@ const HomeScreen: React.FC = () => {
         selectedVehicleType={selectedVehicleType}
         selectedCategory={selectedCategory}
         onApply={handleApplyFilter}
+      />
+
+      <CustomAlert
+        visible={alertVisible}
+        title="Upppss!!!"
+        message={alertMessage}
+        type="alert"
+        onConfirm={handleCloseAlert}
       />
     </SafeAreaView>
   );
