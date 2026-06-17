@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://partpmo.menara-agung.com/api';
+export const API_BASE_URL = 'https://pmo.menara-agung.com/api';
 
 export const API_TIMEOUT = 30000;
 
